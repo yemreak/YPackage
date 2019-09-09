@@ -1,7 +1,7 @@
 from distutils.core import setup
 import setuptools
 
-VERSION = "0.1.2"
+VERSION = "0.1.3"
 
 long_description = ""
 with open("README.md", "r", encoding="utf-8") as file:
@@ -18,6 +18,7 @@ setup(
     # Give a short description about your library
     description='Sık kullanılan python işlemleri için hazır paket',
     long_description=long_description,
+    long_description_content_type="text/markdown",
     author='Yunus Emre Ak',                   # Type in your name
     author_email='yedhrab@gmail.com',      # Type in your E-Mail
     # Provide either the link to your github or to your website
