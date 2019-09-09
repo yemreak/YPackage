@@ -2,8 +2,8 @@ from distutils.core import setup
 import setuptools
 
 long_description = ""
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+with open("README.md", "r", encoding="utf-8") as file:
+    long_description = file.read()
 
 
 setup(
