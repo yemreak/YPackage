@@ -24,7 +24,7 @@ setup(
     # Provide either the link to your github or to your website
     url='https://github.com/yedhrab/YPackage',
     # I explain this later on
-    download_url=f'https://github.com/yedhrab/YPackage/archive/v{VERSION}.tar.gz',
+    download_url=f'https://github.com/yedhrab/YPackage/archive/{VERSION}.tar.gz',
     # Keywords that define your package best
     keywords=['ypackage', 'yedhrab', 'yemreak'],
     install_requires=[            # I get to this in a second

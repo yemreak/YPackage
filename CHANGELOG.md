@@ -9,6 +9,8 @@
 
 ### 🌌 Değişikler
 
+* 🚀 Markdown ve filestyem metodları yenilendi. [Yunus Emre]
+
 * Update setup.py. [Yunus Emre]
 
 * Update setup.py. [Yunus Emre]
