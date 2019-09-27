@@ -1,34 +1,4 @@
-import json
 import os
-
-
-def write_file(filepath, string, debug=False):
-    filepath = os.path.realpath(filepath)
-    with open(filepath, "w", encoding="utf-8") as file:
-        file.write(string)
-
-        if debug:
-            print(f"Değişen dosya: {file.name}")
-
-
-def read_file(filepath, debug=False) -> str:
-    string = ""
-    filepath = os.path.realpath(filepath)
-    with open(filepath, "r", encoding="utf-8") as file:
-        string = file.read()
-        if debug:
-            print(f"Okunan dosya: {file.name}")
-
-    return string
-
-
-def read_json(filepath, debug=False) -> dict:
-    return json.loads(read_file(filepath, debug=debug))
-
-
-def create_dir(path):
-    if not os.path.isdir(path):
-        os.mkdir(path)
 
 
 def find_level(root, startpath):
@@ -36,7 +6,7 @@ def find_level(root, startpath):
 
 
 def print_files(startpath):
-    for root, _, files in os.walk(startpath):
+    for root, dirs, files in os.walk(startpath):
         level = find_level(root, startpath)
         indent = ' ' * 4 * (level)
         print('{}{}/'.format(indent, os.path.basename(root)))
@@ -45,18 +15,25 @@ def print_files(startpath):
             print('{}{}'.format(subindent, f))
 
 
+def write_file(filepath, string, debug=False):
+    with open(filepath, "w", encoding="utf-8") as file:
+        file.write(string)
+
+        if debug:
+            print(f"File changed: {file.name}")
+
+
 def insert_file(filepath, string, index, new_index=None, debug=False):
     def get_index():
         return new_index if new_index else index
 
     def generate_insertion():
-        index = get_index()
-        insertion = index + "\n\n"
-
+        insertion = ""
         if bool(string):
-            insertion += string + "\n\n"
-
-        insertion += index + "\n"
+            index = get_index()
+            insertion += index + "\n\n"
+            insertion += string + "\n"
+            insertion += index + "\n"
         return insertion
 
     filestr = ""
@@ -83,11 +60,14 @@ def insert_file(filepath, string, index, new_index=None, debug=False):
 
     # If no insertion happend, create new section
     if not inserted:
-        # BUG: Yeni indeks girildiğinde, eski indeks bulunmazsa birden fazla yazılıyor
+        # BUG: If index is not found in the file while new index used, index string is dublicated
+        # WARN: "\n" olmazsa satırın ucuna eklemekte, bu da indexin olduğu satırın kaybolmasından dolayı verinin silinmesine neden olmakta
+        new_line_count = 2 - filestr[-2:].count("\n")
+        filestr += "\n" * new_line_count
         filestr += generate_insertion()
         inserted = True
 
     write_file(filepath, filestr, inserted)
 
     if debug:
-        print(f"İndeks: {index} Yeni İndeks: {new_index}")
+        print(f"Index: {index} New Index: {new_index}")

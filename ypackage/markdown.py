@@ -111,10 +111,21 @@ def make_comment(string):
     return f"<!--{string}-->"
 
 
-def insert_file(filepath, string, index, new_index=None):
+def insert_file(filepath, string, index, force=False, fileheader=None, new_index=None):
+    if force and not os.path.exists(filepath):
+        create_markdown_file(filepath, header=fileheader)
+
     index = make_comment(index)
 
-    if new_index:
+    if bool(new_index):
         new_index = make_comment(new_index)
 
     fs_insert_file(filepath, string, index, new_index)
+
+
+def create_markdown_file(filepath, header=None):
+    if not bool(header):
+        header = os.path.basename(filepath)
+
+    with open(filepath, "w", encoding="utf-8") as file:
+        file.write(create_header(header,  1))
