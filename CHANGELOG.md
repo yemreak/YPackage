@@ -3,11 +3,22 @@
 
 ## ✨ Güncel
 
+### 🌌 Değişikler
+
+* Update setup.py. [Yunus Emre]
+
+* Update README.md. [Yunus Emre]
+
+
+## 0.2 (2019-09-27)
+
 ### 🚀 Yenilikler
 
 * Create regex.py. [Yunus Emre]
 
 ### 🌌 Değişikler
+
+* Versiyon etiketi yenilendi. [Yunus Emre]
 
 * 🚀 Markdown ve filestyem metodları yenilendi. [Yunus Emre]
 
