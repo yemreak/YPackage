@@ -3,6 +3,13 @@
 
 ## ✨ Güncel
 
+### 🗽 Düzeltmeler
+
+* Hatalar giderildi. [Yunus Emre]
+
+
+## 0.2.1 (2019-09-27)
+
 ### 🌌 Değişikler
 
 * Update setup.py. [Yunus Emre]
