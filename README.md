@@ -2,6 +2,9 @@
 
 Kişisel python paketlerim 📦
 
+- [PYPI](https://pypi.org/project/ypackage/)
+- [Github](https://github.com/yedhrab/YPackage)
+
 ## 🗽 Açıklama
 
 Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>` şeklinde erişilir.
