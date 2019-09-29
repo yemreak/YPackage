@@ -1,6 +1,13 @@
 # Changelog
 
 
+## ✨ Güncel
+
+### 🗽 Düzeltmeler
+
+* Ufak hata düzeltmesi. [Yunus Emre]
+
+
 ## 0.3 (2019-09-27)
 
 ### 🚀 Yenilikler
