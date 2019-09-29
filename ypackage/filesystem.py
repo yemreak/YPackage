@@ -67,7 +67,7 @@ def insert_file(filepath, string, index, new_index=None, debug=False):
         filestr += generate_insertion()
         inserted = True
 
-    write_file(filepath, filestr, inserted)
+    write_file(filepath, filestr, debug=debug)
 
     if debug:
         print(f"Index: {index} New Index: {new_index}")

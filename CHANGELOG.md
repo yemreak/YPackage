@@ -1,7 +1,14 @@
 # Changelog
 
 
-## ✨ Güncel
+## 0.3 (2019-09-27)
+
+### 🚀 Yenilikler
+
+* GitBook eklendi. [Yunus Emre]
+
+
+## 0.2.2 (2019-09-27)
 
 ### 🗽 Düzeltmeler
 

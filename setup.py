@@ -1,7 +1,7 @@
 from distutils.core import setup
 import setuptools
 
-VERSION = "0.3"
+VERSION = "0.3.1"
 
 long_description = ""
 with open("README.md", "r", encoding="utf-8") as file:
@@ -24,7 +24,7 @@ setup(
     # Provide either the link to your github or to your website
     url='https://github.com/yedhrab/YPackage',
     # I explain this later on
-    download_url=f'https://github.com/yedhrab/YPackage/archive/{VERSION}.tar.gz',
+    # download_url=f'https://github.com/yedhrab/YPackage/archive/{VERSION}.tar.gz',
     # Keywords that define your package best
     keywords=['ypackage', 'yedhrab', 'yemreak'],
     install_requires=[            # I get to this in a second
