@@ -1,12 +1,18 @@
 import os
 from ypackage.filesystem import find_level
-from ypackage.markdown import create_indent, create_link, create_header, read_first_header, insert_file, create_markdown_file
+from ypackage.markdown import create_indent, create_link, create_header, read_first_header, insert_file, create_markdown_file, relativepath, encodedpath
 
 SUMMARY_FILE_HEADER = "# Summary"
 SUMMARY_FILE = "SUMMARY.md"
 README_FILE = "README.md"
 CHANGELOG_FILE = "CHANGELOG.md"
 CHANGELOG_HEADER = u"👀 Neler değişti"
+
+
+def create_file_link(path: str, root: os.getcwd()):
+    path = relativepath(path, root=root)
+    path = encodedpath(path)
+    return r'{% file src="' + path + r'" %}' + '\n'
 
 
 def list_workspace(startpath, level_limit: int = -1, privates=[], debug=False):
@@ -97,7 +103,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         links = []
         for f in files:
             if not ".md" in f:
-                links.append(create_link(
+                links.append(create_file_link(
                     os.path.join(".", f), root=startpath))
 
         if bool(links):
@@ -110,6 +116,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         return os.path.join(root, README_FILE)
 
     def generate_markdown_files_for_subitems(startpath) -> str:
+        # DEV: Aynı dizindekiler aynı dosya altına yazılacak
         for root, _, files in os.walk(startpath):
             if root == startpath:
                 continue
@@ -125,7 +132,10 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
 
             for f in files:
                 subfilepath = os.path.join(root, f)
-                filestr += create_link(subfilepath, root=link_root)
+                if not ".md" in f:
+                    filestr += create_file_link(subfilepath, root=link_root)
+                else:
+                    filestr += create_link(subfilepath, root=link_root)
 
             if bool(filestr):
                 insert_file(filepath, filestr, index=index,
