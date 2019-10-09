@@ -1,5 +1,5 @@
-rm -rf ./dist
-python setup.py sdist
+rm -rf ./dist ./build
+python setup.py sdist bdist_wheel
 twine upload dist/*
-gitchangelog.exe > CHANGELOG.md
-gbash github .
+ygitchangelog.exe > CHANGELOG.md
+bash github .

@@ -6,4 +6,5 @@ __pycache__
 
 # Diğer
 dist
+build
 YPackage.egg-info
