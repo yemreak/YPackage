@@ -3,6 +3,15 @@
 
 ## ✨ Güncel
 
+### 🌌 Değişikler
+
+* 🚀 Artık dosyalar GitHub'tan bağımsız 🚀 [Yunus Emre]
+
+  - Dosyaların GitHub'a yönlendirmesi engellendi
+  - WebSitesi üzerinden direkt olarak indirilebilmekte
+
+* ✨ Versiyon güncelleme yapısı yenilendi. [Yunus Emre]
+
 ### 🗽 Düzeltmeler
 
 * Ufak hata düzeltmesi. [Yunus Emre]
