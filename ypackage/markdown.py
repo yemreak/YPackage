@@ -70,6 +70,10 @@ def create_indent(level, size=4):
     return ' ' * size * (level)
 
 
+def make_linkstr(header, link):
+    return f"- [{header}]({link})\n"
+
+
 def create_link(path: str, header=None, root=os.getcwd()) -> str:
     """Verilen yola uygun kodlanmış markdown linki oluşturma
 
@@ -85,8 +89,7 @@ def create_link(path: str, header=None, root=os.getcwd()) -> str:
     path = relativepath(path, root=root)
     path = encodedpath(path)
 
-    link = f"- [{pathname}]({path})\n"
-    return link
+    return make_linkstr(pathname, path)
 
 
 def create_header(name: str, headerlvl: int) -> str:

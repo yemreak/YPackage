@@ -1,7 +1,7 @@
 from distutils.core import setup
 import setuptools
 
-VERSION = "0.3.3"
+VERSION = "0.4"
 
 long_description = ""
 with open("README.md", "r", encoding="utf-8") as file:

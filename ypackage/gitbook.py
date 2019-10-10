@@ -1,18 +1,35 @@
 import os
 from ypackage.filesystem import find_level
-from ypackage.markdown import create_indent, create_link, create_header, read_first_header, insert_file, create_markdown_file, relativepath, encodedpath
+from ypackage.markdown import create_indent, make_linkstr, create_header, read_first_header, insert_file, create_markdown_file, relativepath, encodedpath, create_link
 
 SUMMARY_FILE_HEADER = "# Summary"
 SUMMARY_FILE = "SUMMARY.md"
 README_FILE = "README.md"
 CHANGELOG_FILE = "CHANGELOG.md"
 CHANGELOG_HEADER = u"👀 Neler değişti"
+GITHUB_USERNAME = "yedhrab"
 
 
-def create_file_link(path: str, root: os.getcwd()):
-    path = relativepath(path, root=root)
-    path = encodedpath(path)
-    return r'{% file src="' + path + r'" %}' + '\n'
+def get_github_raw_link(filepath: str):
+    def get_github_url():
+        return r"https://github.com/"
+
+    def get_github_userprofile_url(username):
+        return get_github_url() + "/" + username
+
+    def get_github_repo_url():
+        return get_github_userprofile_url(GITHUB_USERNAME) + "/" + os.path.basename(os.getcwd())
+
+    def get_raw_master_url() -> str:
+        return get_github_repo_url() + "/raw/master"
+
+    filepath = os.path.relpath(filepath, start=os.getcwd())
+    filepath = encodedpath(filepath)
+    return get_raw_master_url() + "/" + filepath
+
+
+def make_file_link(filepath: str, root: str = os.getcwd()) -> str:
+    return make_linkstr(os.path.basename(filepath), get_github_raw_link(filepath))
 
 
 def list_workspace(startpath, level_limit: int = -1, privates=[], debug=False):
@@ -103,8 +120,8 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         links = []
         for f in files:
             if not ".md" in f:
-                links.append(create_file_link(
-                    os.path.join(".", f), root=startpath))
+                links.append(make_file_link(
+                    os.path.join(".", f)))
 
         if bool(links):
             filestr = create_header(header, 2)
@@ -133,7 +150,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
             for f in files:
                 subfilepath = os.path.join(root, f)
                 if not ".md" in f:
-                    filestr += create_file_link(subfilepath, root=link_root)
+                    filestr += make_file_link(subfilepath)
                 else:
                     filestr += create_link(subfilepath, root=link_root)
 
