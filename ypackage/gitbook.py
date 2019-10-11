@@ -12,7 +12,7 @@ GITHUB_USERNAME = "yedhrab"
 
 def get_github_raw_link(filepath: str):
     def get_github_url():
-        return r"https://github.com/"
+        return r"https://github.com"
 
     def get_github_userprofile_url(username):
         return get_github_url() + "/" + username
