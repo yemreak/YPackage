@@ -9,6 +9,8 @@
 
 ### 🌌 Değişikler
 
+* Versiyon yenilendi. [Yunus Emre]
+
 * Update setup.py. [Yunus Emre]
 
 * ✨ Dosya linkleri formatı seçmeli hale getirildi. [Yunus Emre]
