@@ -9,6 +9,8 @@
 
 ### 🌌 Değişikler
 
+* Update setup.py. [Yunus Emre]
+
 * ✨ Dosya linkleri formatı seçmeli hale getirildi. [Yunus Emre]
 
   Artık github veya normal link şeklinde yapılandırabilirsiniz
@@ -21,6 +23,11 @@
 * ✨ Versiyon güncelleme yapısı yenilendi. [Yunus Emre]
 
 ### 🗽 Düzeltmeler
+
+* 🐞 Link sorunları düzeltildi. [Yunus Emre]
+
+  - Path'lerde oluşan sorunlar giderildi
+  - Default path ayarlandı
 
 * Github linklerindeki `//` sorunu giderildi. [Yunus Emre]
 
