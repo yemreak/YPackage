@@ -28,7 +28,10 @@ def get_github_raw_link(filepath: str):
     return get_raw_master_url() + "/" + filepath
 
 
-def make_file_link(filepath: str, root: str = os.getcwd(), direct_link: bool = False) -> str:
+def make_file_link(filepath: str, root: str = None, direct_link: bool = False) -> str:
+    if root is None:
+        root = os.path.dirname(filepath)
+
     if direct_link:
         return make_linkstr(os.path.basename(filepath), get_github_raw_link(filepath))
     else:
@@ -153,7 +156,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
             for f in files:
                 subfilepath = os.path.join(root, f)
                 if not ".md" in f:
-                    filestr += make_file_link(subfilepath,
+                    filestr += make_file_link(subfilepath, root=startpath,
                                               direct_link=direct_link)
                 else:
                     filestr += create_link(subfilepath, root=link_root)
