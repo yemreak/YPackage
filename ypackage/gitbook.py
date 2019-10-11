@@ -28,8 +28,11 @@ def get_github_raw_link(filepath: str):
     return get_raw_master_url() + "/" + filepath
 
 
-def make_file_link(filepath: str, root: str = os.getcwd()) -> str:
-    return make_linkstr(os.path.basename(filepath), get_github_raw_link(filepath))
+def make_file_link(filepath: str, root: str = os.getcwd(), direct_link: bool = False) -> str:
+    if direct_link:
+        return make_linkstr(os.path.basename(filepath), get_github_raw_link(filepath))
+    else:
+        return create_link(filepath, root=root)
 
 
 def list_workspace(startpath, level_limit: int = -1, privates=[], debug=False):
@@ -108,7 +111,7 @@ def generate_summary(inputDir, level_limit: int = -1, privates=[], footer_path=N
     insert_file(filepath, filestr, index=index, new_index=new_index)
 
 
-def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index", header="📂 Harici Dosyalar", new_index=None, clearify=False):
+def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index", header="📂 Harici Dosyalar", new_index=None, clearify=False, direct_link: bool = False):
     # DEV: Ders notlarını README'ye ekleme direkt olarak dizin dosya oluştur
     def clear_private_dirs() -> list:
         return [d for d in dirs if not d.startswith(
@@ -121,7 +124,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         for f in files:
             if not ".md" in f:
                 links.append(make_file_link(
-                    os.path.join(".", f)))
+                    os.path.join(".", f), direct_link=direct_link))
 
         if bool(links):
             filestr = create_header(header, 2)
@@ -150,7 +153,8 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
             for f in files:
                 subfilepath = os.path.join(root, f)
                 if not ".md" in f:
-                    filestr += make_file_link(subfilepath)
+                    filestr += make_file_link(subfilepath,
+                                              direct_link=direct_link)
                 else:
                     filestr += create_link(subfilepath, root=link_root)
 
