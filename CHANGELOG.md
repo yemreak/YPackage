@@ -3,7 +3,15 @@
 
 ## ✨ Güncel
 
+### 🚀 Yenilikler
+
+* GitBook için direkt indirme linki oluşturm özelliği eklendi. [Yunus Emre]
+
 ### 🌌 Değişikler
+
+* ✨ Dosya linkleri formatı seçmeli hale getirildi. [Yunus Emre]
+
+  Artık github veya normal link şeklinde yapılandırabilirsiniz
 
 * 🚀 Artık dosyalar GitHub'tan bağımsız 🚀 [Yunus Emre]
 
@@ -13,6 +21,8 @@
 * ✨ Versiyon güncelleme yapısı yenilendi. [Yunus Emre]
 
 ### 🗽 Düzeltmeler
+
+* Github linklerindeki `//` sorunu giderildi. [Yunus Emre]
 
 * Ufak hata düzeltmesi. [Yunus Emre]
 
