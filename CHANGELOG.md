@@ -5,6 +5,10 @@
 
 ### 🚀 Yenilikler
 
+* ✨ Fonksiyonellik arttırıldı. [Yunus Emre]
+
+* ➕ Verilen listedeki tüm elemanları çarpan fonksiyon eklendi. [Yunus Emre]
+
 * GitBook için direkt indirme linki oluşturm özelliği eklendi. [Yunus Emre]
 
 ### 🌌 Değişikler
