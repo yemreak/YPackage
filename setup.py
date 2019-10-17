@@ -4,7 +4,7 @@ import setuptools
 
 VERSION = ""
 with open(".version", "r", encoding="utf-8") as file:
-    VERSION = float(file.read().strip()) + 0.1
+    VERSION = (int(file.read().strip()) + 1) / 10
 
 long_description = ""
 with open("README.md", "r", encoding="utf-8") as file:
