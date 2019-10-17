@@ -2,12 +2,12 @@
 
 Kişisel python paketlerim 📦
 
-- [PYPI](https://pypi.org/project/ypackage/)
-- [Github](https://github.com/yedhrab/YPackage)
-
 ## 🗽 Açıklama
 
 Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>` şeklinde erişilir.
+
+- 📦 [PYPI](https://pypi.org/project/ypackage/)
+- 🐙 [Github](https://github.com/yedhrab/YPackage)
 
 | Modül        | Açıklama                 |
 | ------------ | ------------------------ |
@@ -15,7 +15,6 @@ Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>`
 | `filesystem` | Dosya işlemleri          |
 | `gitbook`    | GitBook için scriptlerim |
 | `markdown`   | Markdown scriptlerim     |
-
 
 ## 💖 Destek ve İletişim
 
