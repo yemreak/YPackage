@@ -6,7 +6,7 @@ def find_level(root, startpath):
 
 
 def print_files(startpath):
-    for root, dirs, files in os.walk(startpath):
+    for root, _, files in os.walk(startpath):
         level = find_level(root, startpath)
         indent = ' ' * 4 * (level)
         print('{}{}/'.format(indent, os.path.basename(root)))
@@ -71,3 +71,15 @@ def insert_file(filepath, string, index, new_index=None, debug=False):
 
     if debug:
         print(f"Index: {index} New Index: {new_index}")
+
+
+def listdir_grouped(root: str, privates=[], include_hidden=False) -> tuple:
+    paths = os.listdir(root)
+    dirs, files = [], []
+    for path in paths:
+        if not (not include_hidden and path.startswith('.')) and path not in privates:
+            path = os.path.join(root, path)
+            dirs.append(path) if os.path.isdir(
+                path) else files.append(path)
+
+    return dirs, files

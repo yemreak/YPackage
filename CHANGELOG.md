@@ -39,6 +39,10 @@
 
 * Ufak hata düzeltmesi. [Yunus Emre]
 
+### 📡 Diğerler
+
+* 💞 Versiyon sistemi otomatikleştirildi. [Yunus Emre]
+
 
 ## 0.3 (2019-09-27)
 
