@@ -1,7 +1,10 @@
 from distutils.core import setup
 import setuptools
 
-VERSION = "0.4.2"
+
+VERSION = ""
+with open(".version", "r", encoding="utf-8") as file:
+    VERSION = float(file.read().strip()) + 0.1
 
 long_description = ""
 with open("README.md", "r", encoding="utf-8") as file:
@@ -44,3 +47,6 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
 )
+
+with open(".version", "w", encoding="utf-8") as file:
+    file.write(str(VERSION))
