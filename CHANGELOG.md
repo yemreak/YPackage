@@ -5,6 +5,8 @@
 
 ### 🚀 Yenilikler
 
+* ✨ Yapıda güzelleştirme yapıldı, dizin öncelikli sıralama eklendi. [Yunus Emre]
+
 * ✨ Fonksiyonellik arttırıldı. [Yunus Emre]
 
 * ➕ Verilen listedeki tüm elemanları çarpan fonksiyon eklendi. [Yunus Emre]
