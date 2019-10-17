@@ -38,11 +38,11 @@ def make_file_link(filepath: str, root: str = None, direct_link: bool = False) -
         return create_link(filepath, root=root)
 
 
-def list_workspace(startpath, level_limit: int = -1, privates=[], debug=False):
+def list_workspace(startpath, level_limit: int = -1, privates=[], debug=False) -> list:
     # Fixs "Folder\" "Folder" difference. All of them is equel "Folder"
     startpath = os.path.normpath(startpath)
 
-    lines = [SUMMARY_FILE_HEADER + "\n\n"]
+    lines = []
     for root, dirs, files in os.walk(startpath):
         # Remove private directories
         dirs[:] = [d for d in dirs if not d.startswith(
@@ -100,18 +100,46 @@ def list_workspace(startpath, level_limit: int = -1, privates=[], debug=False):
     return lines
 
 
-def generate_summary(inputDir, level_limit: int = -1, privates=[], footer_path=None, index="Index", new_index=None):
-    filepath = os.path.join(inputDir, SUMMARY_FILE)
-    lines = list_workspace(
-        inputDir, level_limit=level_limit, privates=privates)
+def get_summary_path(workdir: str):
+    return os.path.join(workdir, SUMMARY_FILE)
+
+
+def create_summary_file(workdir: str):
+    filepath = get_summary_path(workdir)
+    if not os.path.exists(filepath):
+        with open(filepath, "w", encoding="utf-8") as file:
+            file.write(SUMMARY_FILE_HEADER + "\n\n")
+
+
+def generate_summary_filestr(workdir, level_limit: int = -1, privates=[], footer_path=None):
+    def append_markdown_links(filestr: str):
+        lines = list_workspace(
+            workdir, level_limit=level_limit, privates=privates)
+        filestr += "".join(lines)
+        return filestr
+
+    def append_footer(filestr: str):
+        if footer_path and os.path.isfile(footer_path):
+            with open(os.path.join(footer_path), "r", encoding="utf-8") as file:
+                filestr = "\n" + file.read()
+        return filestr
 
     filestr = ""
-    if footer_path and os.path.isfile(footer_path):
-        with open(os.path.join(footer_path), "r", encoding="utf-8") as file:
-            filestr = "\n" + file.read()
+    filestr = append_markdown_links(filestr)
+    filestr = append_footer(filestr)
 
-    filestr = "".join(lines) + filestr
-    insert_file(filepath, filestr, index=index, new_index=new_index)
+    return filestr
+
+
+def insert_summary_file(workdir: str, filestr: str, index: str = "Index", new_index: str = None):
+    FILEPATH = get_summary_path(workdir)
+    insert_file(FILEPATH, filestr, index=index, new_index=new_index)
+
+
+def generate_summary(workdir, level_limit: int = -1, privates=[], footer_path=None, index: str = "Index", new_index: str = None):
+    filestr = generate_summary_filestr(
+        workdir, level_limit=level_limit, privates=privates, footer_path=footer_path)
+    insert_summary_file(workdir, filestr, index=index, new_index=new_index)
 
 
 def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index", header="📂 Harici Dosyalar", new_index=None, clearify=False, direct_link: bool = False):
