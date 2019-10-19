@@ -1,8 +1,33 @@
 import os
+import json
 
 
-def find_level(root, startpath):
+def find_level(root: str, startpath: str) -> int:
     return root.replace(startpath, '').count(os.sep)
+
+
+def write_file(filepath: str, string: str, debug=False):
+    filepath = os.path.realpath(filepath)
+    with open(filepath, "w", encoding="utf-8") as file:
+        file.write(string)
+
+        if debug:
+            print(f"Değişen dosya: {file.name}")
+
+
+def read_file(filepath: str, debug=False) -> str:
+    string = ""
+    filepath = os.path.realpath(filepath)
+    with open(filepath, "r", encoding="utf-8") as file:
+        string = file.read()
+        if debug:
+            print(f"Okunan dosya: {file.name}")
+
+    return string
+
+
+def read_json(filepath, debug=False) -> dict:
+    return json.loads(read_file(filepath, debug=debug))
 
 
 def print_files(startpath):

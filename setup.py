@@ -2,9 +2,9 @@ from distutils.core import setup
 import setuptools
 
 
-VERSION = ""
+version = ""
 with open(".version", "r", encoding="utf-8") as file:
-    VERSION = (int(file.read().strip()) + 1) / 10
+    version = (int(file.read().strip()) + 1) / 10
 
 long_description = ""
 with open("README.md", "r", encoding="utf-8") as file:
@@ -15,7 +15,7 @@ setup(
     name='ypackage',         # How you named your package folder (MyLib)
     packages=['ypackage'],   # Chose the same as "name"
     # Start with a small number and increase it with every change you make
-    version=VERSION,
+    version=version,
     # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     license='MIT',
     # Give a short description about your library
@@ -27,7 +27,7 @@ setup(
     # Provide either the link to your github or to your website
     url='https://github.com/yedhrab/YPackage',
     # I explain this later on
-    # download_url=f'https://github.com/yedhrab/YPackage/archive/{VERSION}.tar.gz',
+    download_url=f'https://github.com/yedhrab/YPackage/archive/{version}.tar.gz',
     # Keywords that define your package best
     keywords=['ypackage', 'yedhrab', 'yemreak'],
     install_requires=[            # I get to this in a second
@@ -49,4 +49,4 @@ setup(
 )
 
 with open(".version", "w", encoding="utf-8") as file:
-    file.write(str(VERSION))
+    file.write(str(version * 10))

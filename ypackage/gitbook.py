@@ -54,6 +54,8 @@ def make_file_link(filepath: str, root: str = None, direct_link: bool = False) -
 
 
 def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit: int = -1, privates=[]) -> list:
+    # TODO: Buranın markdown'a aktarılması lazım
+    # RES: Decalator kavramının araştırılması lazım olabilir
 
     def append_sumfile_header(lines: list) -> list:
         headpath = os.path.join(startpath, README_FILE)
@@ -67,7 +69,8 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
                 level = find_level(root, startpath) + 1  # Sadece 1 master link olur (indent)
 
                 changelog_path = os.path.join(root, CHANGELOG_FILE)
-                changelog_link = generate_filelink(changelog_path, header=CHANGELOG_HEADER, startpath=startpath, ilvl=level, isize=2)
+                changelog_link = generate_filelink(
+                    changelog_path, header=CHANGELOG_HEADER, startpath=startpath, ilvl=level, isize=2)
                 lines.append(changelog_link)
 
         return lines
@@ -106,6 +109,7 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
                 lines = append_sublinks(lines, root, level + 1, dirs_only=True)
         else:
             level = find_level(root, startpath)
+            # BUG: Dosya ve dizin aynı isimde olunca dizine link veriyor
             if level_limit == -1 or level <= level_limit:
                 lines = append_rootlink(lines, root, level)
                 lines = append_sublinks(lines, root, level + 1)
@@ -151,7 +155,8 @@ def insert_summary_file(workdir: str, filestr: str, index: str = "Index", new_in
 
 
 def generate_summary(workdir, level_limit: int = -1, privates=[], footer_path=None, index: str = "Index", new_index: str = None):
-    filestr = generate_summary_filestr(workdir, level_limit=level_limit, privates=privates, footer_path=footer_path)
+    filestr = generate_summary_filestr(
+        workdir, level_limit=level_limit, privates=privates, footer_path=footer_path)
     insert_summary_file(workdir, filestr, index=index, new_index=new_index)
 
 
@@ -200,7 +205,8 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
                     filestr += create_link(subfilepath, root=link_root)
 
             if bool(filestr):
-                insert_file(filepath, filestr, index=index, force=True, fileheader=fileheader, new_index=new_index)
+                insert_file(filepath, filestr, index=index, force=True,
+                            fileheader=fileheader, new_index=new_index)
 
     filestr = ""
     for root, dirs, files in os.walk(startpath):
@@ -228,4 +234,5 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         if bool(filestr):
             filepath = get_readme_path(root)
             fileheader = os.path.basename(root)
-            insert_file(filepath, filestr, index=index, force=True, fileheader=fileheader, new_index=new_index)
+            insert_file(filepath, filestr, index=index, force=True,
+                        fileheader=fileheader, new_index=new_index)
