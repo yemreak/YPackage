@@ -5,6 +5,24 @@
 
 ### 🚀 Yenilikler
 
+* Json okuma ve hızlı dosya okuma yazma işlemleri eklendi. [Yunus Emre]
+
+### 🗽 Düzeltmeler
+
+* 🐞 Versiyon yapısı düzeltildi. [Yunus Emre]
+
+
+## 1.2 (2019-10-17)
+
+### 🌌 Değişikler
+
+* ✨ Açıklama dosyası yenilendi. [Yunus Emre]
+
+
+## 1.1 (2019-10-17)
+
+### 🚀 Yenilikler
+
 * ✨ Yapıda güzelleştirme yapıldı, dizin öncelikli sıralama eklendi. [Yunus Emre]
 
 * ✨ Fonksiyonellik arttırıldı. [Yunus Emre]
