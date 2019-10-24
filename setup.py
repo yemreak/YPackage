@@ -13,7 +13,7 @@ with open("README.md", "r", encoding="utf-8") as file:
 
 setup(
     name='ypackage',         # How you named your package folder (MyLib)
-    packages=['ypackage'],   # Chose the same as "name"
+    packages=setuptools.find_packages(),   # Chose the same as "name"
     # Start with a small number and increase it with every change you make
     version=version,
     # Chose a license from here: https://help.github.com/articles/licensing-a-repository
@@ -49,4 +49,4 @@ setup(
 )
 
 with open(".version", "w", encoding="utf-8") as file:
-    file.write(str(version * 10))
+    file.write(str(int(version * 10)))
