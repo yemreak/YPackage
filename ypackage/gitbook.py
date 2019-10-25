@@ -19,6 +19,8 @@ SUMMARY_FILE_HEADER = "# Summary"
 SUMMARY_FILE = "SUMMARY.md"
 CHANGELOG_FILE = "CHANGELOG.md"
 CHANGELOG_HEADER = u"👀 Neler değişti"
+CONTRIBUTİNG_FILE = "CONTRIBUTING.md"
+CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
 
 
@@ -75,6 +77,18 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
 
         return lines
 
+    def append_contributing(lines: list) -> list:
+        for fpath in os.listdir(startpath):
+            if os.path.isfile(fpath) and os.path.basename(fpath) == CONTRIBUTİNG_FILE:
+                level = find_level(root, startpath) + 1  # Sadece 1 master link olur (indent)
+
+                changelog_path = os.path.join(root, CONTRIBUTİNG_FILE)
+                changelog_link = generate_filelink(
+                    changelog_path, header=CONTRIBUTING_HEADER, startpath=startpath, ilvl=level, isize=2)
+                lines.append(changelog_link)
+
+        return lines
+
     def append_rootlink(lines: list, root: str, level: int) -> str:
         dirlink = generate_dirlink(root, startpath=startpath, ilvl=level, isize=2)
         lines.append(dirlink)
@@ -102,6 +116,7 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
         if startpath is None:
             startpath = os.path.normpath(root)
             lines = append_sumfile_header(lines)
+            lines = append_contributing(lines)
             lines = append_changelog(lines)
 
             level = find_level(root, startpath)
