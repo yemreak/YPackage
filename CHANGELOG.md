@@ -5,11 +5,22 @@
 
 ### 🚀 Yenilikler
 
+* 🤝 Contributing desteği eklendi. [Yunus Emre]
+
 * Json okuma ve hızlı dosya okuma yazma işlemleri eklendi. [Yunus Emre]
 
 ### 🗽 Düzeltmeler
 
 * 🐞 Versiyon yapısı düzeltildi. [Yunus Emre]
+
+### 📡 Diğerler
+
+* 🚀 Yeni yapı tam anlamıyla kuruldu. [Yunus Emre]
+
+  - 🧹 Eski yapıdakiler kaldırıldı
+  - 💫 Eski'den yeniye otomatik düzeltme yapılmakta
+
+* ✨ [Yunus Emre]
 
 
 ## 1.2 (2019-10-17)
