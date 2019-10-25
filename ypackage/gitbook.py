@@ -116,8 +116,8 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
         if startpath is None:
             startpath = os.path.normpath(root)
             lines = append_sumfile_header(lines)
-            lines = append_contributing(lines)
             lines = append_changelog(lines)
+            lines = append_contributing(lines)
 
             level = find_level(root, startpath)
             if level_limit == -1 or level <= level_limit:
@@ -204,8 +204,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
                 continue
 
             filestr = ""
-            fileheader = os.path.basename(root)
-            filepath = os.path.join(startpath, fileheader + ".md")
+            filepath = os.path.join(root, README_FILE)
 
             level = find_level(root, startpath)
             link_root = os.path.dirname(root)
@@ -216,12 +215,22 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
                 subfilepath = os.path.join(root, f)
                 if not ".md" in f:
                     filestr += make_file_link(subfilepath, root=startpath, direct_link=direct_link)
-                else:
+                elif f != README_FILE:
+                    # DEV: Markdown dosyaları README'nin altına eklensin
                     filestr += create_link(subfilepath, root=link_root)
 
             if bool(filestr):
+                if not os.path.exists(filepath):
+                    oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
+                    try:
+                        os.rename(oldfile, filepath)
+                        print(oldfile + " -> " + filepath)
+                    except Exception as e:
+                        create_markdown_file(filepath, os.path.basename(root))
+                        print(f"`{oldfile}` aktarılamadı. {e}")
+
                 insert_file(filepath, filestr, index=index, force=True,
-                            fileheader=fileheader, new_index=new_index)
+                            fileheader=README_FILE, new_index=new_index)
 
     filestr = ""
     for root, dirs, files in os.walk(startpath):
@@ -242,8 +251,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
             if clearify and level > level_limit:
                 readme_path = get_readme_path(root)
                 if os.path.exists(readme_path):
-                    os.remove(
-                        readme_path)
+                    os.remove(readme_path)
             continue
 
         if bool(filestr):
