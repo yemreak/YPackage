@@ -11,6 +11,10 @@
 
 ### 🗽 Düzeltmeler
 
+* 🐞 Hata düzeltmesi. [Yunus Emre]
+
+  Dosyanın olmaması durumunda linklerin isteğe bağlı döndürülmesi sağlandı
+
 * 🧹 Gereksizler kaldırıldı. [Yunus Emre]
 
 ### 📡 Diğerler

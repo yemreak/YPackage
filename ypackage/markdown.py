@@ -2,7 +2,7 @@ import os
 from enum import Enum
 from urllib.parse import quote
 
-from .filesystem import insert_file as fs_insert_file, listdir_grouped
+from .filesystem import insert_file as fs_insert_file
 
 
 class SpecialFile(Enum):
