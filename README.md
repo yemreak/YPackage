@@ -9,6 +9,8 @@ Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>`
 - 📦 [PYPI](https://pypi.org/project/ypackage/)
 - 🐙 [Github](https://github.com/yedhrab/YPackage)
 
+> ✨ Yenilikler için [CHANAGELOG](./CHANGELOG.md) alanına bakın.
+
 | Modül        | Açıklama                 |
 | ------------ | ------------------------ |
 | `common`     | Sık kullanılan metotlar  |

@@ -1,27 +1,30 @@
 import os
 from ypackage.filesystem import find_level, listdir_grouped
 from ypackage.markdown import (
-    create_indent,
     make_linkstr,
     create_header,
-    read_first_header,
     insert_file,
     create_markdown_file,
-    relativepath,
     encodedpath,
     create_link,
     generate_filelink,
-    README_FILE,
-    generate_dirlink
+    generate_dirlink,
+    SpecialFile
 )
 
-SUMMARY_FILE_HEADER = "# Summary"
+
 SUMMARY_FILE = "SUMMARY.md"
-CHANGELOG_FILE = "CHANGELOG.md"
+SUMMARY_FILE_HEADER = "# Summary"
 CHANGELOG_HEADER = u"👀 Neler değişti"
-CONTRIBUTİNG_FILE = "CONTRIBUTING.md"
 CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
+
+
+def get_specialfile_header(specialfile: SpecialFile) -> str:
+    if specialfile == SpecialFile.CHANGELOG_FILE:
+        return CHANGELOG_HEADER
+    elif specialfile == SpecialFile.CONTRIBUTİNG_FILE:
+        return CONTRIBUTING_HEADER
 
 
 def get_github_raw_link(filepath: str):
@@ -59,33 +62,24 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
     # TODO: Buranın markdown'a aktarılması lazım
     # RES: Decalator kavramının araştırılması lazım olabilir
 
-    def append_sumfile_header(lines: list) -> list:
-        headpath = os.path.join(startpath, README_FILE)
+    def append_firstline(lines: list) -> list:
+        headpath = SpecialFile.README_FILE.get_filepath(root=startpath)
         header_link = generate_filelink(headpath, startpath=startpath)
         lines.append(header_link)
         return lines
 
-    def append_changelog(lines: list) -> list:
-        for fpath in os.listdir(startpath):
-            if os.path.isfile(fpath) and os.path.basename(fpath) == CHANGELOG_FILE:
-                level = find_level(root, startpath) + 1  # Sadece 1 master link olur (indent)
-
-                changelog_path = os.path.join(root, CHANGELOG_FILE)
-                changelog_link = generate_filelink(
-                    changelog_path, header=CHANGELOG_HEADER, startpath=startpath, ilvl=level, isize=2)
-                lines.append(changelog_link)
-
-        return lines
-
-    def append_contributing(lines: list) -> list:
-        for fpath in os.listdir(startpath):
-            if os.path.isfile(fpath) and os.path.basename(fpath) == CONTRIBUTİNG_FILE:
-                level = find_level(root, startpath) + 1  # Sadece 1 master link olur (indent)
-
-                changelog_path = os.path.join(root, CONTRIBUTİNG_FILE)
-                changelog_link = generate_filelink(
-                    changelog_path, header=CONTRIBUTING_HEADER, startpath=startpath, ilvl=level, isize=2)
-                lines.append(changelog_link)
+    def append_specialfiles(lines: list, *specialfiles: SpecialFile) -> list:
+        for specialfile in specialfiles:
+            specialfile_path = specialfile.get_filepath(startpath)
+            if specialfile:
+                specialfile_link = generate_filelink(
+                    specialfile_path,
+                    header=get_specialfile_header(specialfile),
+                    startpath=startpath,
+                    ilvl=find_level(root, startpath) + 1,
+                    isize=2
+                )
+                lines.append(specialfile_link)
 
         return lines
 
@@ -115,9 +109,12 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
         nonlocal startpath
         if startpath is None:
             startpath = os.path.normpath(root)
-            lines = append_sumfile_header(lines)
-            lines = append_changelog(lines)
-            lines = append_contributing(lines)
+            lines = append_firstline(lines)
+            lines = append_specialfiles(
+                lines,
+                SpecialFile.CHANGELOG_FILE,
+                SpecialFile.CONTRIBUTİNG_FILE
+            )
 
             level = find_level(root, startpath)
             if level_limit == -1 or level <= level_limit:
@@ -194,17 +191,15 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
 
         return filestr
 
-    def get_readme_path(root) -> str:
-        return os.path.join(root, README_FILE)
-
-    def generate_markdown_files_for_subitems(startpath) -> str:
+    def generate_markdown_files_for_subitems(startpath, clearify=False) -> str:
         # DEV: Aynı dizindekiler aynı dosya altına yazılacak
         for root, _, files in os.walk(startpath):
             if root == startpath:
                 continue
 
             filestr = ""
-            filepath = os.path.join(root, README_FILE)
+            # SpecialFile.README_FILE.get_filepath(root)
+            filepath = SpecialFile.README_FILE.get_filepath(root)
 
             level = find_level(root, startpath)
             link_root = os.path.dirname(root)
@@ -214,23 +209,24 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
             for f in files:
                 subfilepath = os.path.join(root, f)
                 if not ".md" in f:
-                    filestr += make_file_link(subfilepath, root=startpath, direct_link=direct_link)
-                elif f != README_FILE:
+                    filestr += make_file_link(subfilepath, root=root, direct_link=direct_link)
+                elif f != SpecialFile.README_FILE.value:
                     # DEV: Markdown dosyaları README'nin altına eklensin
                     filestr += create_link(subfilepath, root=link_root)
 
             if bool(filestr):
-                if not os.path.exists(filepath):
+                if not filepath:
                     oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
-                    try:
-                        os.rename(oldfile, filepath)
-                        print(oldfile + " -> " + filepath)
-                    except Exception as e:
-                        create_markdown_file(filepath, os.path.basename(root))
-                        print(f"`{oldfile}` aktarılamadı. {e}")
+                    if clearify:
+                        try:
+                            os.rename(oldfile, filepath)
+                            print(oldfile + " -> " + filepath)
+                        except Exception as e:
+                            create_markdown_file(filepath, os.path.basename(root))
+                            print(f"`{oldfile}` aktarılamadı. {e}")
 
                 insert_file(filepath, filestr, index=index, force=True,
-                            fileheader=README_FILE, new_index=new_index)
+                            fileheader=SpecialFile.README_FILE.value, new_index=new_index)
 
     filestr = ""
     for root, dirs, files in os.walk(startpath):
@@ -246,16 +242,16 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         if level_limit == -1 or level < level_limit:
             filestr = generate_links_for_nonmarkdowns(files)
         elif level == level_limit:  # 1
-            generate_markdown_files_for_subitems(root)
+            generate_markdown_files_for_subitems(root, clearify=clearify)
         else:
             if clearify and level > level_limit:
-                readme_path = get_readme_path(root)
+                readme_path = SpecialFile.README_FILE.get_filepath(root)
                 if os.path.exists(readme_path):
                     os.remove(readme_path)
             continue
 
         if bool(filestr):
-            filepath = get_readme_path(root)
+            filepath = SpecialFile.README_FILE.get_filepath(root)
             fileheader = os.path.basename(root)
             insert_file(filepath, filestr, index=index, force=True,
                         fileheader=fileheader, new_index=new_index)
