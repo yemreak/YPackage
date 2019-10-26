@@ -3,6 +3,13 @@
 
 ## ✨ Güncel
 
+### 📡 Diğerler
+
+* 🚀 Kodlarda güzelleştirildi. [Yunus Emre]
+
+
+## 1.4 (2019-10-25)
+
 ### 🚀 Yenilikler
 
 * 🤝 Contributing desteği eklendi. [Yunus Emre]
@@ -14,6 +21,8 @@
 * 🐞 Versiyon yapısı düzeltildi. [Yunus Emre]
 
 ### 📡 Diğerler
+
+* ✨ Yeni versiyon yayınlandı. [Yunus Emre]
 
 * 🚀 Yeni yapı tam anlamıyla kuruldu. [Yunus Emre]
 
