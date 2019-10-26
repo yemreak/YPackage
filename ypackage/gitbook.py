@@ -197,8 +197,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
                 continue
 
             filestr = ""
-            # SpecialFile.README_FILE.get_filepath(root)
-            filepath = SpecialFile.README_FILE.get_filepath(root)
+            filepath = SpecialFile.README_FILE.get_filepath(root=root, symbolic=True)
 
             level = find_level(root, startpath)
             link_root = os.path.dirname(root)
@@ -214,7 +213,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
                     filestr += create_link(subfilepath, root=link_root)
 
             if bool(filestr):
-                if not filepath:
+                if not os.path.exists(filepath):
                     oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
                     if clearify:
                         try:
@@ -244,13 +243,13 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
             generate_markdown_files_for_subitems(root, clearify=clearify)
         else:
             if clearify and level > level_limit:
-                readme_path = SpecialFile.README_FILE.get_filepath(root)
+                readme_path = SpecialFile.README_FILE.get_filepath(root=root, symbolic=True)
                 if os.path.exists(readme_path):
                     os.remove(readme_path)
             continue
 
         if bool(filestr):
-            filepath = SpecialFile.README_FILE.get_filepath(root)
+            filepath = SpecialFile.README_FILE.get_filepath(root=root, symbolic=True)
             fileheader = os.path.basename(root)
             insert_file(filepath, filestr, index=index, force=True,
                         fileheader=fileheader, new_index=new_index)

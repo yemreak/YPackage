@@ -5,7 +5,13 @@
 
 ### 🌌 Değişikler
 
+* ⭐ Versiyon yapısı özelleştirilir hale getirildi. [Yunus Emre]
+
 * ✨ Versiyon yenilendi. [Yunus Emre]
+
+### 🗽 Düzeltmeler
+
+* 🧹 Gereksizler kaldırıldı. [Yunus Emre]
 
 ### 📡 Diğerler
 

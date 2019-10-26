@@ -12,7 +12,10 @@ class SpecialFile(Enum):
     CONTRIBUTİNG_FILE = "CONTRIBUTING.md"
     LICANSE_FILE = "Licanse.md"
 
-    def get_filepath(self, root=os.getcwd()) -> str:
+    def get_filepath(self, root=os.getcwd(), symbolic=False) -> str:
+        if symbolic:
+            return os.path.join(root, self.value)
+
         for path in os.listdir(root):
             if os.path.isfile(path) and os.path.basename(path) == self.value:
                 return os.path.join(root, self.value)
