@@ -40,14 +40,6 @@ def print_files(startpath):
             print('{}{}'.format(subindent, f))
 
 
-def write_file(filepath, string, debug=False):
-    with open(filepath, "w", encoding="utf-8") as file:
-        file.write(string)
-
-        if debug:
-            print(f"File changed: {file.name}")
-
-
 def insert_file(filepath, string, index, new_index=None, debug=False):
     def get_index():
         return new_index if new_index else index

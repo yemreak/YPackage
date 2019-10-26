@@ -121,7 +121,6 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
                 lines = append_sublinks(lines, root, level + 1, dirs_only=True)
         else:
             level = find_level(root, startpath)
-            # BUG: Dosya ve dizin aynı isimde olunca dizine link veriyor
             if level_limit == -1 or level <= level_limit:
                 lines = append_rootlink(lines, root, level)
                 lines = append_sublinks(lines, root, level + 1)

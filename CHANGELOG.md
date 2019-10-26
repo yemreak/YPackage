@@ -3,6 +3,10 @@
 
 ## ✨ Güncel
 
+### 🌌 Değişikler
+
+* ✨ Versiyon yenilendi. [Yunus Emre]
+
 ### 📡 Diğerler
 
 * 🚀 Kodlarda güzelleştirildi. [Yunus Emre]

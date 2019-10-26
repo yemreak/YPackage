@@ -172,14 +172,12 @@ def generate_dirlink(root: str, startpath: str = os.getcwd(), ilvl=0, isize=2) -
     """
     dirlink = ""
 
-    _, files = listdir_grouped(root)
-    for fpath in files:
-        readme_path = SpecialFile.README_FILE.get_filepath(root)
-        if readme_path:
-            header = read_first_header(readme_path)
-            dirlink = create_link(
-                readme_path, header=header, root=startpath, isize=isize, ilvl=ilvl
-            )
+    readme_path = SpecialFile.README_FILE.get_filepath(root)
+    if readme_path:
+        header = read_first_header(readme_path)
+        dirlink = create_link(
+            readme_path, header=header, root=startpath, isize=isize, ilvl=ilvl
+        )
 
     if not bool(dirlink):
         dirlink = create_link(root, root=startpath, isize=isize, ilvl=ilvl)
