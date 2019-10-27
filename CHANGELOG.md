@@ -3,6 +3,13 @@
 
 ## ✨ Güncel
 
+### 🗽 Düzeltmeler
+
+* 🧹 Gereksizler kaldırıldı. [Yunus Emre]
+
+
+## 1.5.2 (2019-10-26)
+
 ### 🌌 Değişikler
 
 * ⭐ Versiyon yapısı özelleştirilir hale getirildi. [Yunus Emre]

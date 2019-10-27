@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 DYNAMIC_VERSION = False
-VERSION = "1.5.2"
+VERSION = "1.6.0"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -51,6 +51,14 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
+    entry_points={
+        # Komut isteminden çalıştırma
+        # örndeğin: ypackage
+        # Kullanım: 'ypackge = ypackage.ypackage:main
+        'console_scripts': [
+            'ygitbookintegration = ypackage.integrate:main',
+        ]
+    }
 )
 
 if DYNAMIC_VERSION:
