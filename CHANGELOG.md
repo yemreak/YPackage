@@ -3,6 +3,10 @@
 
 ## ✨ Güncel
 
+### 🌌 Değişikler
+
+* 🚙 YGitBookIntegration buraya aktarıldı. [Yunus Emre]
+
 ### 🗽 Düzeltmeler
 
 * 🧹 Gereksizler kaldırıldı. [Yunus Emre]
