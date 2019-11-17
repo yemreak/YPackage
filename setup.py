@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 DYNAMIC_VERSION = False
-VERSION = "1.6.0"
+VERSION = "2.0.0"
 
 if DYNAMIC_VERSION:
     version = ""

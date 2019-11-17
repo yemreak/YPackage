@@ -1,5 +1,9 @@
 import os
-from ypackage.filesystem import find_level, listdir_grouped
+from ypackage.filesystem import (
+    find_level,
+    listdir_grouped,
+    readFileWithURL
+)
 from ypackage.markdown import (
     make_linkstr,
     create_header,
@@ -11,7 +15,16 @@ from ypackage.markdown import (
     generate_dirlink,
     SpecialFile
 )
+from .github import (
+    get_github_raw_link,
+    generate_raw_url_from_repo_url
+)
 
+DESCRIPTIPON_TEMPLATE = """---
+description: {}
+---
+
+"""
 
 SUMMARY_FILE = "SUMMARY.md"
 SUMMARY_FILE_HEADER = "# Summary"
@@ -20,31 +33,15 @@ CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
 
 
+def make_description(string: str) -> str:
+    return DESCRIPTIPON_TEMPLATE.format(string)
+
+
 def get_specialfile_header(specialfile: SpecialFile) -> str:
     if specialfile == SpecialFile.CHANGELOG_FILE:
         return CHANGELOG_HEADER
     elif specialfile == SpecialFile.CONTRIBUTİNG_FILE:
         return CONTRIBUTING_HEADER
-
-
-def get_github_raw_link(filepath: str):
-    def get_github_url():
-        return r"https://github.com"
-
-    def get_github_userprofile_url(username):
-        return get_github_url() + "/" + username
-
-    def get_github_repo_url():
-        return get_github_userprofile_url(GITHUB_USERNAME) + "/" + os.path.basename(os.getcwd())
-
-    def get_raw_master_url() -> str:
-        return get_github_repo_url() + "/raw/master"
-
-    filepath = os.path.relpath(
-        filepath, start=os.getcwd())
-    filepath = encodedpath(
-        filepath)
-    return get_raw_master_url() + "/" + filepath
 
 
 def make_file_link(filepath: str, root: str = None, direct_link: bool = False) -> str:
@@ -71,7 +68,7 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
     def append_specialfiles(lines: list, *specialfiles: SpecialFile) -> list:
         for specialfile in specialfiles:
             specialfile_path = specialfile.get_filepath(startpath)
-            if specialfile:
+            if specialfile_path:
                 specialfile_link = generate_filelink(
                     specialfile_path,
                     header=get_specialfile_header(specialfile),
@@ -253,3 +250,12 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
             fileheader = os.path.basename(root)
             insert_file(filepath, filestr, index=index, force=True,
                         fileheader=fileheader, new_index=new_index)
+
+
+def get_summary_url_from_repo_url(repo_url):
+    return generate_raw_url_from_repo_url(repo_url) + "/" + SUMMARY_FILE
+
+
+def read_summary_from_url(repo_url):
+    raw_url = get_summary_url_from_repo_url(repo_url)
+    return readFileWithURL(raw_url)

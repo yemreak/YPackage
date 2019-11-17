@@ -1,8 +1,16 @@
 import os
+import re
 from enum import Enum
 from urllib.parse import quote
 
-from .filesystem import insert_file as fs_insert_file
+from .filesystem import (
+    insert_file as fs_insert_file
+)
+from .common import (
+    generate_substrings as c_generate_substrings
+)
+
+LINK_REGEX = r"\[([^\[]+)\]\((.*)\)"
 
 
 class SpecialFile(Enum):
@@ -136,6 +144,70 @@ def read_first_header(filepath):
     return header
 
 
+def read_first_link(string: str) -> dict:
+    """İlk link verisini döndürür
+
+    Arguments:
+        string {str} -- Link aranacak metin dosyası
+
+    Returns:
+        dict -- Link verisi
+
+    Examples:
+        >>> result[0] = "[name](url)"
+        >>> result[1] = "name"
+        >>> result[2] = "url"
+    """
+    return re.search(f"{LINK_REGEX}|$", string)
+
+
+def remove_title(string: str) -> str:
+    lines = string.split("\n")
+    for line in lines:
+        if line.count("#") == 1:
+            lines.remove(line)
+            break
+        # 1'den fazla gelirse title yok demektir
+        elif line.count("#") >= 1:
+            break
+
+    return "\n".join(lines)
+
+
+def find_link(line: str) -> dict:
+    """Varsa link verisini döndürür
+
+    Arguments:
+        string {str} -- Bağlantı aranacak metin dosyası
+
+    Returns:
+        dict -- Bulunan bağlantılar
+
+    Examples:
+        >>> result[0] = "[name](url)"
+        >>> result[1] = "name"
+        >>> result[2] = "url"
+    """
+    return re.search(LINK_REGEX, line)
+
+
+def findall_links(string: str) -> dict:
+    """Tüm linkleri döndürür
+
+    Arguments:
+        string {str} -- Bağlantı aranacak metin dosyası
+
+    Returns:
+        dict -- Bulunan bağlantılar
+
+    Examples:
+        >>> result[0] = ('name', 'url')
+        >>> result[0][1] = "name"
+        >>> result[0][1] = "url"
+    """
+    return re.findall(LINK_REGEX, string)
+
+
 def generate_filelink(fpath: str, startpath: str = os.getcwd(), header: str = None, ilvl=0, isize=2) -> str:
     """Dosya için markdown linki oluşturur
 
@@ -209,3 +281,8 @@ def create_markdown_file(filepath, header=None):
 
     with open(filepath, "w", encoding="utf-8") as file:
         file.write(create_header(header,  1))
+
+
+def generate_substrings(content, index):
+    index = make_comment(index)
+    return c_generate_substrings(content, index)

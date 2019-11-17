@@ -1,5 +1,6 @@
 import os
 import json
+from urllib.request import urlopen
 
 
 def find_level(root: str, startpath: str) -> int:
@@ -38,6 +39,22 @@ def print_files(startpath):
         subindent = ' ' * 4 * (level + 1)
         for f in files:
             print('{}{}'.format(subindent, f))
+
+
+def read_part_of_file(filepath, string, index, new_index=None, debug=False) -> str:
+    filestr = ""
+    if os.path.exists(filepath):
+        with open(filepath, "r", encoding="utf-8") as file:
+            read = False
+            for line in file:
+                if index in line.replace(" ", ""):
+                    read = not read
+                    continue
+
+                if read:
+                    filestr += line
+
+    return filestr
 
 
 def insert_file(filepath, string, index, new_index=None, debug=False):
@@ -100,3 +117,7 @@ def listdir_grouped(root: str, privates=[], include_hidden=False) -> tuple:
                 path) else files.append(path)
 
     return dirs, files
+
+
+def readFileWithURL(rawUrl, encoding="utf-8"):
+    return urlopen(rawUrl).read().decode(encoding)

@@ -9,16 +9,21 @@ Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>`
 - 📦 [PYPI](https://pypi.org/project/ypackage/)
 - 🐙 [Github](https://github.com/yedhrab/YPackage)
 
-| Modül        | Açıklama                 |
-| ------------ | ------------------------ |
-| `common`     | Sık kullanılan metotlar  |
-| `filesystem` | Dosya işlemleri          |
-| `gitbook`    | GitBook için scriptlerim |
-| `markdown`   | Markdown scriptlerim     |
+| Modül        | Açıklama                                 |
+| ------------ | ---------------------------------------- |
+| `common`     | 🌟 Sık kullandığum metotlar              |
+| `filesystem` | 📂 Dosya işlemleri                       |
+| `gitbook`    | 📖 GitBook için scriptlerim              |
+| `github`     | 🐙 GitHub işlemleri                      |
+| `integrate`  | 💫 Entegrasyon işlemleri                 |
+| `markdown`   | 📑 Markdown scriptlerim                  |
+| `markdown`   | 💎 Regex scriptlerim (yapılm aşamasında) |
+
 
 ## ✨ Yeni Özellikler
 
 - YGitBookIntegration için cli komutu eklendi (`ygitbookintegration`)
+- Kullanım detayları için `ygitbookintegration -h` yazın
 
 > 📜 Detaylı yenilikler için [CHANAGELOG](https://github.com/yedhrab/YPackage/blob/master/CHANGELOG.md) alanına bakın.
 
