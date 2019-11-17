@@ -3,49 +3,64 @@
 
 ## ✨ Güncel
 
-### 🌌 Değişikler
+### ✨ Yenilikler
+
+* ✨ Changelog yapısı güzelleştirildi. [Yunus Emre]
+
+* 🚀 Yeni version 2.0.0. [Yunus Emre]
+
+  - 🍱 Submodule yapısı eklendi
+  - 💫 Artık alt sayfaların linkleri otomatik yenilenmekte
+  - ✨ Verimlilik üzerine geliştirmeler yapıldı
+  - 👨‍💼 Kategorizelendirme yenilendi
+  - 🧹 Gereksiz ve verimsiz yapılar kaldırıldı
+
+* 🚮 Test scripti eklendi. [Yunus Emre]
+
+* 👨‍🔬 Test yapılandırması eklendi. [Yunus Emre]
+
+### 👨‍🔧 Düzeltmeler
+
+* 👨‍🔧 Ufak düzetlmeler yapıldı. [Yunus Emre]
+
+### 📡 Diğerler
+
+* 🧪 Test aşaması için ilk adımlar atıldı. [Yunus Emre]
+
+
+## 1.6.0 (2019-10-27)
+
+### 💫 Değişikler
 
 * 🚙 YGitBookIntegration buraya aktarıldı. [Yunus Emre]
-
-### 🗽 Düzeltmeler
 
 * 🧹 Gereksizler kaldırıldı. [Yunus Emre]
 
 
 ## 1.5.2 (2019-10-26)
 
-### 🌌 Değişikler
-
-* ⭐ Versiyon yapısı özelleştirilir hale getirildi. [Yunus Emre]
+### ✨ Yenilikler
 
 * ✨ Versiyon yenilendi. [Yunus Emre]
 
-### 🗽 Düzeltmeler
+* 🚀 Kodlarda güzelleştirildi. [Yunus Emre]
+
+### 💫 Değişikler
+
+* ⭐ Versiyon yapısı özelleştirilir hale getirildi. [Yunus Emre]
+
+* 🧹 Gereksizler kaldırıldı. [Yunus Emre]
+
+### 👨‍🔧 Düzeltmeler
 
 * 🐞 Hata düzeltmesi. [Yunus Emre]
 
   Dosyanın olmaması durumunda linklerin isteğe bağlı döndürülmesi sağlandı
 
-* 🧹 Gereksizler kaldırıldı. [Yunus Emre]
-
-### 📡 Diğerler
-
-* 🚀 Kodlarda güzelleştirildi. [Yunus Emre]
-
 
 ## 1.4 (2019-10-25)
 
-### 🚀 Yenilikler
-
-* 🤝 Contributing desteği eklendi. [Yunus Emre]
-
-* Json okuma ve hızlı dosya okuma yazma işlemleri eklendi. [Yunus Emre]
-
-### 🗽 Düzeltmeler
-
-* 🐞 Versiyon yapısı düzeltildi. [Yunus Emre]
-
-### 📡 Diğerler
+### ✨ Yenilikler
 
 * ✨ Yeni versiyon yayınlandı. [Yunus Emre]
 
@@ -54,19 +69,27 @@
   - 🧹 Eski yapıdakiler kaldırıldı
   - 💫 Eski'den yeniye otomatik düzeltme yapılmakta
 
+* 🤝 Contributing desteği eklendi. [Yunus Emre]
+
 * ✨ [Yunus Emre]
+
+* Json okuma ve hızlı dosya okuma yazma işlemleri eklendi. [Yunus Emre]
+
+### 👨‍🔧 Düzeltmeler
+
+* 🐞 Versiyon yapısı düzeltildi. [Yunus Emre]
 
 
 ## 1.2 (2019-10-17)
 
-### 🌌 Değişikler
+### ✨ Yenilikler
 
 * ✨ Açıklama dosyası yenilendi. [Yunus Emre]
 
 
 ## 1.1 (2019-10-17)
 
-### 🚀 Yenilikler
+### ✨ Yenilikler
 
 * ✨ Yapıda güzelleştirme yapıldı, dizin öncelikli sıralama eklendi. [Yunus Emre]
 
@@ -74,17 +97,11 @@
 
 * ➕ Verilen listedeki tüm elemanları çarpan fonksiyon eklendi. [Yunus Emre]
 
-* GitBook için direkt indirme linki oluşturm özelliği eklendi. [Yunus Emre]
-
-### 🌌 Değişikler
-
-* Versiyon yenilendi. [Yunus Emre]
-
-* Update setup.py. [Yunus Emre]
-
 * ✨ Dosya linkleri formatı seçmeli hale getirildi. [Yunus Emre]
 
   Artık github veya normal link şeklinde yapılandırabilirsiniz
+
+* GitBook için direkt indirme linki oluşturm özelliği eklendi. [Yunus Emre]
 
 * 🚀 Artık dosyalar GitHub'tan bağımsız 🚀 [Yunus Emre]
 
@@ -93,7 +110,13 @@
 
 * ✨ Versiyon güncelleme yapısı yenilendi. [Yunus Emre]
 
-### 🗽 Düzeltmeler
+### 💫 Değişikler
+
+* Versiyon yenilendi. [Yunus Emre]
+
+* Update setup.py. [Yunus Emre]
+
+### 👨‍🔧 Düzeltmeler
 
 * 🐞 Link sorunları düzeltildi. [Yunus Emre]
 
@@ -111,21 +134,21 @@
 
 ## 0.3 (2019-09-27)
 
-### 🚀 Yenilikler
+### ✨ Yenilikler
 
 * GitBook eklendi. [Yunus Emre]
 
 
 ## 0.2.2 (2019-09-27)
 
-### 🗽 Düzeltmeler
+### 👨‍🔧 Düzeltmeler
 
 * Hatalar giderildi. [Yunus Emre]
 
 
 ## 0.2.1 (2019-09-27)
 
-### 🌌 Değişikler
+### 💫 Değişikler
 
 * Update setup.py. [Yunus Emre]
 
@@ -134,21 +157,21 @@
 
 ## 0.2 (2019-09-27)
 
-### 🚀 Yenilikler
-
-* Create regex.py. [Yunus Emre]
-
-### 🌌 Değişikler
-
-* Versiyon etiketi yenilendi. [Yunus Emre]
+### ✨ Yenilikler
 
 * 🚀 Markdown ve filestyem metodları yenilendi. [Yunus Emre]
 
-* Update setup.py. [Yunus Emre]
+* Create regex.py. [Yunus Emre]
+
+### 💫 Değişikler
+
+* Versiyon etiketi yenilendi. [Yunus Emre]
 
 * Update setup.py. [Yunus Emre]
 
-### 🗽 Düzeltmeler
+* Update setup.py. [Yunus Emre]
+
+### 👨‍🔧 Düzeltmeler
 
 * Delete gitbook.py. [Yunus Emre]
 
