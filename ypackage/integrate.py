@@ -9,6 +9,7 @@ from . import common
 from . import markdown
 
 SUBMODULE_FILE = ".ysubmodules"
+INTEGRATION_FILE = ".ygitbookintegration"
 
 # def execute_integrate(path: str, option: str):
 #     COMMANDS = f"""
@@ -74,10 +75,21 @@ def fixUrls(content, root):
     return "\n".join(fixedlines)
 
 
-def updateSubSummaries(startpath, index: str = "Index"):
+def read_config(startpath: str, filepath: str) -> dict:
     config = configparser.ConfigParser(inline_comment_prefixes="#")
-    config.read(os.path.join(startpath, SUBMODULE_FILE), encoding="utf-8")
+    config.read(os.path.join(startpath, filepath), encoding="utf-8")
+    return config
 
+
+def integrate(config: dict) -> None:
+    for name in config:
+        if name == "DEFAULT":
+            continue
+
+        section = config[name]
+
+
+def updateSubSummaries(config: dict, startpath, index: str = "Index"):
     for name in config:
         if name == "DEFAULT":
             continue
@@ -191,6 +203,14 @@ def main():
 
     for path in PATHS:
         if os.path.isdir(path):
+            // TODO: Her ikisinde sadece gerekli olanları al
+            // TODO: Her özellikleri aynı dosya altında tut
+            // TODO: submodule, integration gibi başlıklar altında ayır
+            submodule_config = read_config(path, SUBMODULE_FILE)
+            integration_config = read_config(path, INTEGRATION_FILE)
+
+            if integration_config:
+                GENERATE = integration_config['DEFAULT']
             if GENERATE:
                 gitbook.generate_readmes(
                     path, privates=PRIVATES, index=INDEX_STR,
@@ -207,7 +227,7 @@ def main():
                     path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR)
 
             if UPDATE:
-                updateSubSummaries(path, INDEX_STR)
+                updateSubSummaries(submodule_config, path, INDEX_STR)
 
         elif DEBUG:
             print(f"Hatalı yol: {path}")

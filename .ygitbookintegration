@@ -1,0 +1,2 @@
+[integration "pre"]
+	args = "-g -ll 2"
