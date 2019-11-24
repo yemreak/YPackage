@@ -203,14 +203,14 @@ def main():
 
     for path in PATHS:
         if os.path.isdir(path):
-            // TODO: Her ikisinde sadece gerekli olanları al
-            // TODO: Her özellikleri aynı dosya altında tut
-            // TODO: submodule, integration gibi başlıklar altında ayır
-            submodule_config = read_config(path, SUBMODULE_FILE)
-            integration_config = read_config(path, INTEGRATION_FILE)
+            # TODO: Her ikisinde sadece gerekli olanları al
+            # TODO: Her özellikleri aynı dosya altında tut
+            # TODO: submodule, integration gibi başlıklar altında ayır
 
-            if integration_config:
-                GENERATE = integration_config['DEFAULT']
+            # integration_config = read_config(path, INTEGRATION_FILE)
+            # if integration_config:
+            #     GENERATE = integration_config['DEFAULT']
+
             if GENERATE:
                 gitbook.generate_readmes(
                     path, privates=PRIVATES, index=INDEX_STR,
@@ -224,9 +224,11 @@ def main():
                 )
                 gitbook.create_summary_file(path)
                 gitbook.insert_summary_file(
-                    path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR)
+                    path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR
+                )
 
             if UPDATE:
+                submodule_config = read_config(path, SUBMODULE_FILE)
                 updateSubSummaries(submodule_config, path, INDEX_STR)
 
         elif DEBUG:

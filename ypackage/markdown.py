@@ -17,7 +17,7 @@ class SpecialFile(Enum):
     README_FILE = "README.md"
     CHANGELOG_FILE = "CHANGELOG.md"
     CODE_OF_CONTACT = "CODE_OF_CONDUCT.md"
-    CONTRIBUTİNG_FILE = "CONTRIBUTING.md"
+    CONTRIBUTING_FILE = "CONTRIBUTING.md"
     LICANSE_FILE = "Licanse.md"
 
     def get_filepath(self, root=os.getcwd(), symbolic=False) -> str:
@@ -25,6 +25,7 @@ class SpecialFile(Enum):
             return os.path.join(root, self.value)
 
         for path in os.listdir(root):
+            path = os.path.join(root, path)
             if os.path.isfile(path) and os.path.basename(path) == self.value:
                 return os.path.join(root, self.value)
 
@@ -62,19 +63,6 @@ def barename(path: str) -> str:
     pathname = os.path.basename(pathname)
 
     return pathname
-
-
-def relativepath(path: str, root=os.getcwd()) -> str:
-    """ Statik yol verisini dinamik yol verisine dönüştürme
-
-    Args:
-        pathname (str): Yol ismi
-
-    Returns:
-        str: Dönüştürülen metin
-    """
-
-    return path.replace(root, '.')
 
 
 def encodedpath(path: str) -> str:
@@ -117,7 +105,7 @@ def create_link(path: str, header: str = None, root: str = os.getcwd(), ilvl=0, 
     """
 
     pathname = barename(path) if not header else header
-    path = relativepath(path, root=root)
+    path = os.path.relpath(path, root)
     path = encodedpath(path)
 
     indent = create_indent(ilvl, size=isize)

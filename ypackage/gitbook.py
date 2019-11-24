@@ -1,10 +1,10 @@
 import os
-from ypackage.filesystem import (
+from .filesystem import (
     find_level,
     listdir_grouped,
     readFileWithURL
 )
-from ypackage.markdown import (
+from .markdown import (
     make_linkstr,
     create_header,
     insert_file,
@@ -15,6 +15,7 @@ from ypackage.markdown import (
     generate_dirlink,
     SpecialFile
 )
+
 from .github import (
     get_github_raw_link,
     generate_raw_url_from_repo_url
@@ -40,7 +41,7 @@ def make_description(string: str) -> str:
 def get_specialfile_header(specialfile: SpecialFile) -> str:
     if specialfile == SpecialFile.CHANGELOG_FILE:
         return CHANGELOG_HEADER
-    elif specialfile == SpecialFile.CONTRIBUTİNG_FILE:
+    elif specialfile == SpecialFile.CONTRIBUTING_FILE:
         return CONTRIBUTING_HEADER
 
 
@@ -110,7 +111,7 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
             lines = append_specialfiles(
                 lines,
                 SpecialFile.CHANGELOG_FILE,
-                SpecialFile.CONTRIBUTİNG_FILE
+                SpecialFile.CONTRIBUTING_FILE
             )
 
             level = find_level(root, startpath)
@@ -221,7 +222,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
                             print(f"`{oldfile}` aktarılamadı. {e}")
 
                 insert_file(filepath, filestr, index=index, force=True,
-                            fileheader=SpecialFile.README_FILE.value, new_index=new_index)
+                            fileheader=os.path.basename(root), new_index=new_index)
 
     filestr = ""
     for root, dirs, files in os.walk(startpath):

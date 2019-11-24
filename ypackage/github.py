@@ -1,5 +1,5 @@
 from urllib import parse
-from pydriller import RepositoryMining
+# from pydriller import RepositoryMining
 from datetime import datetime
 import os
 from .markdown import (
@@ -10,7 +10,7 @@ from .filesystem import (
 )
 
 # diff-528720652ae91788d21a1334d1696e75
-https: // github.com/YEmreAk/IstanbulUniversity-CE/commit/cd3459443690ac13d45f845842e407aa386aa018?short_path = 5287206
+# https://github.com/YEmreAk/IstanbulUniversity-CE/commit/cd3459443690ac13d45f845842e407aa386aa018?short_path = 5287206
 DIFF_TEMPLATE = "https://github.com/{}}/{}}/commit/{}?diff=split"
 
 
@@ -49,7 +49,7 @@ def generate_raw_url_from_repo_url(repo_url) -> str:
     return create_rawurl(username, reponame)
 
 
-def log_git_commits(since, to):
+""" def log_git_commits(since, to):
     with open("changes.md", "w+", encoding="utf-8") as file:
         file.write("# ✨ Değişiklikler")
         file.write("\n\n")
@@ -91,4 +91,4 @@ def create_changelog(username, repo, since: datetime = None, to: datetime = None
             title = msg.split("\n")[0]
 
             file.write(
-                f"- [{title} ~ {str(time)}]({DIFF_TEMPLATE.format(username, repo, hash_value)})\n")
+                f"- [{title} ~ {str(time)}]({DIFF_TEMPLATE.format(username, repo, hash_value)})\n") """
