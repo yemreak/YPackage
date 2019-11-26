@@ -5,7 +5,20 @@
 
 ### ✨ Yenilikler
 
+* 🚀 Yeni versiyon 2.2. [Yunus Emre]
+
+  - 📑 `-s` komutu ile son komut argümanları saklama özelliği eklendi
+  - ✨ Kodda verimlilik sağlandı
+
+* ✨ Yenilikler yenilendi. [Yunus Emre]
+
 * 📑 Ufak düzeltme eklendi. [Yunus Emre]
+
+### 💫 Değişikler
+
+* 🧪 Test yapısı yenilendi. [Yunus Emre]
+
+* 🧹 Eski yapı temizlendi. [Yunus Emre]
 
 
 ## 2.1.0 (2019-11-26)
