@@ -5,6 +5,38 @@
 
 ### ✨ Yenilikler
 
+* 📑 Ufak düzeltme eklendi. [Yunus Emre]
+
+
+## 2.1.0 (2019-11-26)
+
+### ✨ Yenilikler
+
+* 🚀 Yeni version 2.1.0. [Yunus Emre]
+
+  - 📑 Yapılandırma dosyasının adı yenilendi
+  - 🍱 Integration yapısı eklendi
+  - 💒 Tüm yapılar tek dosya altında toplandı
+  - ✍ Detaylı açıklamalar eklendi
+  - ✨ Optimizasyon çalışması yapıldı
+  - 🐞 Hata düzeltmesi
+  - 🧪 Test yapılandırması yenilendi
+
+### 💫 Değişikler
+
+* 👨🏿‍🔬 Test yapılandırması yenilendi. [Yunus Emre]
+
+### 👨‍🔧 Düzeltmeler
+
+* 👨🏿‍🔧 Hatalı alanlar düzeltildi. [Yunus Emre]
+
+* 🚧 YGitbookIngegration yapısı için çalışmalar. [Yunus Emre]
+
+
+## 2.0.0 (2019-11-17)
+
+### ✨ Yenilikler
+
 * ✨ Changelog yapısı güzelleştirildi. [Yunus Emre]
 
 * 🚀 Yeni version 2.0.0. [Yunus Emre]
