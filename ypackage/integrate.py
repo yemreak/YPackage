@@ -10,6 +10,8 @@ from . import common
 from . import markdown
 
 INTEGRATION_FILE = ".ygitbookintegration"
+INTEGRATION_MODULE = "integration"
+SUBMODULE_MODULE = "submodule"
 
 # def execute_integrate(path: str, option: str):
 #     COMMANDS = f"""
@@ -95,7 +97,7 @@ def integrate(config: dict) -> None:
 
 def updateSubSummaries(config: dict, startpath, index: str = "Index"):
     for name in config.sections():
-        if name.split()[0] == "submodule":
+        if name.split()[0] == SUBMODULE_MODULE:
             section = config[name]
             path = os.path.join(startpath, section['path'])
             url = section['url']
@@ -169,6 +171,13 @@ def main():
         help="Bilgilendirici metinleri gösterme"
     )
     parser.add_argument(
+        "--store",
+        "-s",
+        action="store_true",
+        dest="store",
+        help="Son komutu hızlı kullanım için yapılandırma dosyasında saklar"
+    )
+    parser.add_argument(
         '--index',
         '-ix',
         dest="indexStr",
@@ -203,7 +212,8 @@ def main():
     args = parser.parse_args()
     PATHS = args.paths
 
-    override = len(sys.argv) > (len(PATHS) + 1)
+    new_args_start_index = (len(PATHS) + 1)
+    override = len(sys.argv) > new_args_start_index
 
     for path in PATHS:
         if os.path.isdir(path):
@@ -212,7 +222,7 @@ def main():
             if not override:
                 new_args = ""
                 for section in config.sections():
-                    if section.split()[0] == "integration":
+                    if section.split()[0] == INTEGRATION_MODULE:
                         new_args = config[section]["args"].replace("\"", "")
                         break
 
@@ -225,7 +235,27 @@ def main():
                         f"    `{INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok")
                     continue
 
-            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, DEBUG, UPDATE, RECREATE, GENERATE = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.debug, args.update, args.recreate, args.generate
+            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, DEBUG, UPDATE, RECREATE, GENERATE, STORE = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.debug, args.update, args.recreate, args.generate, args.store
+
+            if STORE:
+                last_args = sys.argv[new_args_start_index:]
+                if "-s" in last_args:
+                    last_args.remove("-s")
+                last_args = " ".join(last_args)
+
+                ifpath = os.path.join(path, INTEGRATION_FILE)
+                if not os.path.exists(ifpath):
+                    with open(ifpath, "w", encoding="utf-8") as file:
+                        file.write(f'[{INTEGRATION_MODULE} "auto"]\n')
+                        file.write(f'\targs = {last_args}')
+                else:
+                    for name in config.sections():
+                        if name.split()[0] == INTEGRATION_MODULE:
+                            section = config[name]
+                            section["args"] = last_args
+
+                    with open(ifpath, "w", encoding="utf-8") as configfile:
+                        config.write(configfile)
 
             if GENERATE:
                 gitbook.generate_readmes(
