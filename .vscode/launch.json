@@ -13,7 +13,8 @@
                 "../IstanbulUniversity-CE",
                 "-rg",
                 "-ll",
-                "2"
+                "2",
+                "-s"
             ]
         },
         {
