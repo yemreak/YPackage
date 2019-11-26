@@ -51,7 +51,7 @@ def make_file_link(filepath: str, root: str = None, direct_link: bool = False) -
             filepath)
 
     if direct_link:
-        return make_linkstr(os.path.basename(filepath), get_github_raw_link(filepath))
+        return make_linkstr(os.path.basename(filepath), get_github_raw_link(GITHUB_USERNAME, filepath))
     else:
         return create_link(filepath, root=root)
 

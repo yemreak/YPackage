@@ -1,6 +1,7 @@
 import argparse
 import os
 import configparser
+import sys
 import urllib.request
 
 from . import gitbook
@@ -8,7 +9,6 @@ from . import filesystem
 from . import common
 from . import markdown
 
-SUBMODULE_FILE = ".ysubmodules"
 INTEGRATION_FILE = ".ygitbookintegration"
 
 # def execute_integrate(path: str, option: str):
@@ -76,8 +76,12 @@ def fixUrls(content, root):
 
 
 def read_config(startpath: str, filepath: str) -> dict:
-    config = configparser.ConfigParser(inline_comment_prefixes="#")
-    config.read(os.path.join(startpath, filepath), encoding="utf-8")
+    try:
+        config = configparser.ConfigParser(inline_comment_prefixes="#")
+        config.read(os.path.join(startpath, filepath), encoding="utf-8")
+    except:
+        return None
+
     return config
 
 
@@ -90,30 +94,28 @@ def integrate(config: dict) -> None:
 
 
 def updateSubSummaries(config: dict, startpath, index: str = "Index"):
-    for name in config:
-        if name == "DEFAULT":
-            continue
+    for name in config.sections():
+        if name.split()[0] == "submodule":
+            section = config[name]
+            path = os.path.join(startpath, section['path'])
+            url = section['url']
+            root = section['root']
 
-        section = config[name]
-        path = os.path.join(startpath, section['path'])
-        url = section['url']
-        root = section['root']
+            description = None
+            if "description" in section:
+                description = section['description']
 
-        description = None
-        if "description" in section:
-            description = section['description']
+            content = gitbook.read_summary_from_url(url)
 
-        content = gitbook.read_summary_from_url(url)
+            substrings = markdown.generate_substrings(content, index)
+            if substrings:
+                content = substrings[0]
 
-        substrings = markdown.generate_substrings(content, index)
-        if substrings:
-            content = substrings[0]
+            content = fixTitle(content)
+            content = fixUrls(content, root)
+            content = add_description(content, description)
 
-        content = fixTitle(content)
-        content = fixUrls(content, root)
-        content = add_description(content, description)
-
-        filesystem.write_file(path, content)
+            filesystem.write_file(path, content)
 
 
 def generate_changelog():
@@ -199,17 +201,31 @@ def main():
     )
 
     args = parser.parse_args()
-    PATHS, PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, DEBUG, UPDATE, RECREATE, GENERATE = args.paths, args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.debug, args.update, args.recreate, args.generate
+    PATHS = args.paths
+
+    override = len(sys.argv) > (len(PATHS) + 1)
 
     for path in PATHS:
         if os.path.isdir(path):
-            # TODO: Her ikisinde sadece gerekli olanları al
-            # TODO: Her özellikleri aynı dosya altında tut
-            # TODO: submodule, integration gibi başlıklar altında ayır
+            config = read_config(path, INTEGRATION_FILE)
 
-            # integration_config = read_config(path, INTEGRATION_FILE)
-            # if integration_config:
-            #     GENERATE = integration_config['DEFAULT']
+            if not override:
+                new_args = ""
+                for section in config.sections():
+                    if section.split()[0] == "integration":
+                        new_args = config[section]["args"].replace("\"", "")
+                        break
+
+                if new_args:
+                    command = [__file__, path] + new_args.split()
+                    args = parser.parse_args(command)
+                else:
+                    print(f"{os.path.basename(path)} için entegrasyon özelliği mevcut değil")
+                    print(
+                        f"    `{INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok")
+                    continue
+
+            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, DEBUG, UPDATE, RECREATE, GENERATE = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.debug, args.update, args.recreate, args.generate
 
             if GENERATE:
                 gitbook.generate_readmes(
@@ -228,8 +244,7 @@ def main():
                 )
 
             if UPDATE:
-                submodule_config = read_config(path, SUBMODULE_FILE)
-                updateSubSummaries(submodule_config, path, INDEX_STR)
+                updateSubSummaries(config, path, INDEX_STR)
 
         elif DEBUG:
             print(f"Hatalı yol: {path}")

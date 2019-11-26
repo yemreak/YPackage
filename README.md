@@ -1,13 +1,48 @@
 # 📦 YPackage
 
-Kişisel python paketlerim 📦
-
-## 🗽 Açıklama
-
-Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>` şeklinde erişilir.
+Kişisel python modüllerim
 
 - 📦 [PYPI](https://pypi.org/project/ypackage/)
 - 🐙 [Github](https://github.com/yedhrab/YPackage)
+
+## 💫 Entegrasyon Scripti
+
+- Github - GitBook entegrasyonu için `ygitbookintegration` komutu kullanılır
+- Kullanım detayları için `ygitbookintegration -h` yazın
+
+> Komut olarak sadece yol verilirse, dizindeki yapılandırma dosyasına (`.ygitbookintegration`) göre çalışır
+
+### 👨‍🔧 Entegrasyon Yapılandırması
+
+Entegrasyon yapılandırması `.ygitbookintegration` dosyası içerisindeki yapı ile sağlanır
+
+| Modül                         | Açıklama                                                  |
+| ----------------------------- | --------------------------------------------------------- |
+| `[integration "Kişisel not"]` | Entegrasyonu verilen argümanlara göre çalıştırır          |
+| `[submodule "kişisel not"]`   | Verilen GitBook sitesinin içeriklerine bağlantı oluşturur |
+
+### 📑 Yapılandırma Dosyası Örneği
+
+```ini
+# ygitbookintegration'ı verilern argümanlara göre çalıştırır
+# Detaylar: ygitbookintegration . -u olarak komutu çalıştırır
+[integration "pre"]
+	args = "-u"
+
+# Verilen bilgiler doğrultusunda sitenin içeriklerini bağlantı oluşturur
+# Detaylar: GitHub üzerinden url'deki SUMMARY'i içeriğini root'a göre düzenleyip, path'e yazar
+[submodule "code/python.md"]
+	description = 🐍 Python notlarım
+	path = code/python.md
+	url = https://github.com/YEmreAk/YPython
+	root = https://python.yemreak.com
+```
+
+> 📜 Detaylı yenilikler için [CHANAGELOG](https://github.com/yedhrab/YPackage/blob/master/CHANGELOG.md) alanına bakın.
+
+## 👨‍💻 Geliştirici Notları
+
+Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>` şeklinde erişilir.
 
 | Modül        | Açıklama                                 |
 | ------------ | ---------------------------------------- |
@@ -18,14 +53,6 @@ Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>`
 | `integrate`  | 💫 Entegrasyon işlemleri                 |
 | `markdown`   | 📑 Markdown scriptlerim                  |
 | `markdown`   | 💎 Regex scriptlerim (yapılm aşamasında) |
-
-
-## ✨ Yeni Özellikler
-
-- YGitBookIntegration için cli komutu eklendi (`ygitbookintegration`)
-- Kullanım detayları için `ygitbookintegration -h` yazın
-
-> 📜 Detaylı yenilikler için [CHANAGELOG](https://github.com/yedhrab/YPackage/blob/master/CHANGELOG.md) alanına bakın.
 
 ## 💖 Destek ve İletişim
 

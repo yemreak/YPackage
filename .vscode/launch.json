@@ -15,6 +15,23 @@
                 "-ll",
                 "2"
             ]
+        },
+        {
+            "name": "Integrat More",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../IstanbulUniversity-CE",
+                "../YWiki",
+            ]
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
         }
     ]
 }
