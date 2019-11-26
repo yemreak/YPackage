@@ -5,6 +5,8 @@ Kişisel python modüllerim
 - 📦 [PYPI](https://pypi.org/project/ypackage/)
 - 🐙 [Github](https://github.com/yedhrab/YPackage)
 
+> ✨ Yenilikler için [CHANAGELOG](https://github.com/yedhrab/YPackage/blob/master/CHANGELOG.md) alanına bakın.
+
 ## 💫 Entegrasyon Scripti
 
 - Github - GitBook entegrasyonu için `ygitbookintegration` komutu kullanılır
@@ -37,8 +39,6 @@ Entegrasyon yapılandırması `.ygitbookintegration` dosyası içerisindeki yap�
 	url = https://github.com/YEmreAk/YPython
 	root = https://python.yemreak.com
 ```
-
-> 📜 Detaylı yenilikler için [CHANAGELOG](https://github.com/yedhrab/YPackage/blob/master/CHANGELOG.md) alanına bakın.
 
 ## 👨‍💻 Geliştirici Notları
 
