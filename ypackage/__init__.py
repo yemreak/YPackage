@@ -5,3 +5,4 @@ from . import regex
 from . import gitbook
 from . import integrate
 from . import github
+from . import gdrive

@@ -43,6 +43,34 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "GDrive - Base",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.gdrive",
+            "args": [
+                "https://drive.google.com/open?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
+            ]
+        },
+        {
+            "name": "GDrive - Reverse",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.gdrive",
+            "args": [
+                "https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
+                "-r"
+            ]
+        },
+        {
+            "name": "GDrive - ID",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.gdrive",
+            "args": [
+                "https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
+            ]
         }
     ]
 }

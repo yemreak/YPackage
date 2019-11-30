@@ -5,20 +5,29 @@
 
 ### ✨ Yenilikler
 
+* 👨‍🔬 Store komutu için test ayarı eklendi. [Yunus Emre]
+
+* ✨ Yenilikler belirtildi. [Yunus Emre]
+
 * 🚀 Yeni versiyon 2.2. [Yunus Emre]
 
   - 📑 `-s` komutu ile son komut argümanları saklama özelliği eklendi
   - ✨ Kodda verimlilik sağlandı
-
-* ✨ Yenilikler yenilendi. [Yunus Emre]
-
-* 📑 Ufak düzeltme eklendi. [Yunus Emre]
 
 ### 💫 Değişikler
 
 * 🧪 Test yapısı yenilendi. [Yunus Emre]
 
 * 🧹 Eski yapı temizlendi. [Yunus Emre]
+
+
+## 2.2.0 (2019-11-26)
+
+### ✨ Yenilikler
+
+* ✨ Yenilikler yenilendi. [Yunus Emre]
+
+* 📑 Ufak düzeltme eklendi. [Yunus Emre]
 
 
 ## 2.1.0 (2019-11-26)

@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 DYNAMIC_VERSION = False
-VERSION = "2.2.0"
+VERSION = "2.3.0"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -54,9 +54,10 @@ setup(
     entry_points={
         # Komut isteminden çalıştırma
         # örndeğin: ypackage
-        # Kullanım: 'ypackge = ypackage.ypackage:main
+        # Kullanım: 'ypacakge = ypackage.ypackage:main
         'console_scripts': [
             'ygitbookintegration = ypackage.integrate:main',
+            "ydrive = ypackage.gdrive:main"
         ]
     }
 )

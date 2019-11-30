@@ -7,6 +7,12 @@ Kişisel python modüllerim
 
 > ✨ Yenilikler için [CHANAGELOG](https://github.com/yedhrab/YPackage/blob/master/CHANGELOG.md) alanına bakın.
 
+## 🔗 Google Drive Link Dönüştürücü
+
+- Google Drive bağlantılarını dönüştürmek için `ydrive` komutu kullanılır
+- Özizleme bağlantıları direkt indirme bağlantılarına çevirir
+- Kullanım detayları için `ydrive -h` yazın
+
 ## 💫 Entegrasyon Scripti
 
 - Github - GitBook entegrasyonu için `ygitbookintegration` komutu kullanılır
@@ -48,11 +54,12 @@ Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>`
 | ------------ | ---------------------------------------- |
 | `common`     | 🌟 Sık kullandığum metotlar              |
 | `filesystem` | 📂 Dosya işlemleri                       |
+| `gdrive`     | 🔗 Google drive link dönüştürücü         |
 | `gitbook`    | 📖 GitBook için scriptlerim              |
 | `github`     | 🐙 GitHub işlemleri                      |
 | `integrate`  | 💫 Entegrasyon işlemleri                 |
 | `markdown`   | 📑 Markdown scriptlerim                  |
-| `markdown`   | 💎 Regex scriptlerim (yapılm aşamasında) |
+| `regex`      | 💎 Regex scriptlerim (yapılm aşamasında) |
 
 ## 💖 Destek ve İletişim
 
