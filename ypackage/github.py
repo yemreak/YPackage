@@ -53,6 +53,9 @@ def push_to_github(startpath: str, paths: list, commit: str):
     if len(paths) > 0:
         cur_dir = os.getcwd()
         os.chdir(startpath)
+        print(f"----------------------------------------")
+        print(f"{startpath} için push işlemi:")
+        print(f"----------------------------------------")
         command = " &&".join([f"git add {os.path.relpath(path)}" for path in paths])
         command += " &&" + f'git commit -m "{commit}"'
         command += " &&" + f"git push -u origin master"
