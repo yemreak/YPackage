@@ -7,8 +7,6 @@
 
 * ✨ Versiyon yenilendi. [Yunus Emre]
 
-* ✨ Versiyon yenilendi. [Yunus Emre]
-
 ### 💫 Değişikler
 
 * 👨‍🔬 Test yapılandırması güncellendi. [Yunus Emre]
@@ -18,6 +16,15 @@
 * 🐞 Push işlemindeki sorun giderildi. [Yunus Emre]
 
 * 🐞 Store komutundaki argüman kaybı giderildi. [Yunus Emre]
+
+
+## 2.4.1 (2019-11-30)
+
+### ✨ Yenilikler
+
+* ✨ Versiyon yenilendi. [Yunus Emre]
+
+### 👨‍🔧 Düzeltmeler
 
 * 🐞 Hata giderildi. [Yunus Emre]
 
