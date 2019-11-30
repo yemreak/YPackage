@@ -5,16 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Integrate",
+            "name": "Integrate - Base",
             "type": "python",
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../IstanbulUniversity-CE",
-                "-rg",
-                "-ll",
-                "2",
-                "-s"
+                "../YWiki",
+                "-us"
             ]
         },
         {
@@ -38,13 +35,12 @@
             ]
         },
         {
-            "name": "Test Store",
+            "name": "Integrate - Store",
             "type": "python",
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../YWelcome",
-                "-us"
+                "../YWiki"
             ]
         },
         {
