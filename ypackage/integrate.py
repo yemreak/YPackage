@@ -89,7 +89,7 @@ def read_config(startpath: str, filepath: str) -> dict:
     return config
 
 
-def updateSubSummaries(config: dict, startpath, index: str = "Index", push=False):
+def updateSubSummaries(config: dict, startpath: str, index: str = "Index", push=False):
     paths = []
     for name in config.sections():
         if name.split()[0] == SUBMODULE_MODULE:
@@ -117,7 +117,7 @@ def updateSubSummaries(config: dict, startpath, index: str = "Index", push=False
             paths.append(path)
 
     if push:
-        github.push_to_github(paths, COMMIT_UPDATE_SUBMODULES)
+        github.push_to_github(startpath, paths, COMMIT_UPDATE_SUBMODULES)
 
 
 def generate_changelog():
@@ -235,8 +235,8 @@ def main():
                         break
 
                 if new_args:
-                    command = [__file__, path] + new_args.split()
-                    args = parser.parse_args(command)
+                    sys.argv = [__file__, path] + new_args.split()
+                    args = parser.parse_args()
                 else:
                     print(f"{os.path.basename(path)} için entegrasyon özelliği mevcut değil")
                     print(
