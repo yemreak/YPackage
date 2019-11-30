@@ -25,6 +25,15 @@
             ]
         },
         {
+            "name": "Integrate - Dir",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../*",
+            ]
+        },
+        {
             "name": "Integrate - Push",
             "type": "python",
             "request": "launch",
