@@ -49,12 +49,12 @@ def generate_raw_url_from_repo_url(repo_url) -> str:
     return create_rawurl(username, reponame)
 
 
-def push_to_github(files: list, commit: str):
-    if len(files) > 0:
+def push_to_github(paths: list, commit: str):
+    if len(paths) > 0:
         cur_dir = os.getcwd()
-        os.chdir(os.path.dirname(files[0]))
+        os.chdir(os.path.dirname(paths[0]))
 
-        command = " &&".join([f"git add {os.path.basename(f)}" for f in files])
+        command = " &&".join([f"git add {path}" for path in paths])
         command += " &&" + f'git commit -m "{commit}"'
         command += " &&" + f"git push -u origin master"
 
