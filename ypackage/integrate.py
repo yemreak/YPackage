@@ -239,8 +239,6 @@ def main():
 
             if STORE:
                 last_args = sys.argv[new_args_start_index:]
-                if "-s" in last_args:
-                    last_args.remove("-s")
                 last_args = " ".join(last_args)
 
                 ifpath = os.path.join(path, INTEGRATION_FILE)
