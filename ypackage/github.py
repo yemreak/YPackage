@@ -49,6 +49,19 @@ def generate_raw_url_from_repo_url(repo_url) -> str:
     return create_rawurl(username, reponame)
 
 
+def push_to_github(files: list, commit: str):
+    if len(files) > 0:
+        cur_dir = os.getcwd()
+        os.chdir(os.path.dirname(files[0]))
+
+        command = " &&".join([f"git add {os.path.basename(f)}" for f in files])
+        command += " &&" + f'git commit -m "{commit}"'
+        command += " &&" + f"git push -u origin master"
+
+        os.system(command)
+        os.chdir(cur_dir)
+
+
 """ def log_git_commits(since, to):
     with open("changes.md", "w+", encoding="utf-8") as file:
         file.write("# ✨ Değişiklikler")

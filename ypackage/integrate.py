@@ -8,10 +8,12 @@ from . import gitbook
 from . import filesystem
 from . import common
 from . import markdown
+from . import github
 
 INTEGRATION_FILE = ".ygitbookintegration"
 INTEGRATION_MODULE = "integration"
 SUBMODULE_MODULE = "submodule"
+COMMIT_UPDATE_SUBMODULES = "✨ Alt sayfalar güncellendi"
 
 # def execute_integrate(path: str, option: str):
 #     COMMANDS = f"""
@@ -87,7 +89,8 @@ def read_config(startpath: str, filepath: str) -> dict:
     return config
 
 
-def updateSubSummaries(config: dict, startpath, index: str = "Index"):
+def updateSubSummaries(config: dict, startpath, index: str = "Index", push=False):
+    paths = []
     for name in config.sections():
         if name.split()[0] == SUBMODULE_MODULE:
             section = config[name]
@@ -110,6 +113,11 @@ def updateSubSummaries(config: dict, startpath, index: str = "Index"):
             content = add_description(content, description)
 
             filesystem.write_file(path, content)
+
+            paths.append(path)
+
+    if push:
+        github.push_to_github(paths, COMMIT_UPDATE_SUBMODULES)
 
 
 def generate_changelog():
@@ -170,6 +178,14 @@ def main():
         help="Son komutu hızlı kullanım için yapılandırma dosyasında saklar"
     )
     parser.add_argument(
+        "--push",
+        "-p",
+        action="store_true",
+        dest="push",
+        help="İşlem sonrası GitHub'a otomatik pushlar"
+    )
+    # WARN: Kullanışsız parametreler
+    parser.add_argument(
         '--index',
         '-ix',
         dest="indexStr",
@@ -180,7 +196,7 @@ def main():
     # BUG: Bu yapı çalışmaz, nargs olması lazım
     parser.add_argument(
         '--privates',
-        "-p",
+        "-pp",
         dest="privates",
         default=["res", "__pycache__"],
         help='List of folder names that you dont want to add',
@@ -227,7 +243,7 @@ def main():
                         f"    `{INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok")
                     continue
 
-            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, DEBUG, UPDATE, RECREATE, GENERATE, STORE = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.debug, args.update, args.recreate, args.generate, args.store
+            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, DEBUG, UPDATE, RECREATE, GENERATE, STORE, PUSH = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.debug, args.update, args.recreate, args.generate, args.store, args.push
 
             if STORE:
                 last_args = sys.argv[new_args_start_index:]
@@ -264,7 +280,7 @@ def main():
                 )
 
             if UPDATE:
-                updateSubSummaries(config, path, INDEX_STR)
+                updateSubSummaries(config, path, INDEX_STR, push=PUSH)
 
         elif DEBUG:
             print(f"Hatalı yol: {path}")

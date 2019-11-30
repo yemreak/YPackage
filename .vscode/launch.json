@@ -18,13 +18,23 @@
             ]
         },
         {
-            "name": "Integrat More",
+            "name": "Integrate - More",
             "type": "python",
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
                 "../IstanbulUniversity-CE",
                 "../YWiki",
+            ]
+        },
+        {
+            "name": "Integrate - Push",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../YWelcome",
+                "-usp",
             ]
         },
         {
