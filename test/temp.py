@@ -14,15 +14,11 @@ def getContent(path) -> str:
     return content
 
 
-SUBMODULE_FILE = ".ysubmodules"
+SUBMODULE_FILE = ".ygitbookintegration"
 
 config = configparser.ConfigParser(inline_comment_prefixes="#")
 config.read(SUBMODULE_FILE)
 
-for section in config:
-    if section == "DEFAULT":
-        continue
-
-    path = config[section]['path']
-    url = config[section]['url']
-    getContent(url)
+for section in config.sections():
+    if section.split()[0] == "integration":
+        args = config[section]["args"]
