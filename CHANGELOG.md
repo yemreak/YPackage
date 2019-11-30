@@ -5,6 +5,21 @@
 
 ### ✨ Yenilikler
 
+* ✨ Versiyon yenilendi. [Yunus Emre]
+
+### 👨‍🔧 Düzeltmeler
+
+* 🐞 Hata giderildi. [Yunus Emre]
+
+  Push sırasında dizin içindeki dosyalarda meydana gelen hatalar giderildi
+
+* 👨‍💻 Gereksiz satır kaldırıldı. [Yunus Emre]
+
+
+## 2.4.0 (2019-11-30)
+
+### ✨ Yenilikler
+
 * 📑 Güncellemeler belirtildi. [Yunus Emre]
 
 * 🏹 GitHub'a otomatik pushlama özelliği eklendi. [Yunus Emre]
