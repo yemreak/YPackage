@@ -5,6 +5,8 @@
 
 ### ✨ Yenilikler
 
+* 👨‍💻 Yeni versiyon eklendi. [Yunus Emre]
+
 * 🚀 Artık pattern ` \* ` desteklemekte. [Yunus Emre]
 
 * 📑 Push işlemi için log eklendi. [Yunus Emre]
