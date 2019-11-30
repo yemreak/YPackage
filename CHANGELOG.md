@@ -5,6 +5,21 @@
 
 ### ✨ Yenilikler
 
+* 🚀 Artık pattern ` \* ` desteklemekte. [Yunus Emre]
+
+* 📑 Push işlemi için log eklendi. [Yunus Emre]
+
+* ✨ [Yunus Emre]
+
+### 💫 Değişikler
+
+* 🧪 Test scriptleri yenilendi. [Yunus Emre]
+
+
+## 2.4.2 (2019-11-30)
+
+### ✨ Yenilikler
+
 * ✨ Versiyon yenilendi. [Yunus Emre]
 
 ### 💫 Değişikler
