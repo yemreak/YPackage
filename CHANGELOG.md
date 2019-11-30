@@ -5,6 +5,25 @@
 
 ### ✨ Yenilikler
 
+* 📑 Güncellemeler belirtildi. [Yunus Emre]
+
+* 🏹 GitHub'a otomatik pushlama özelliği eklendi. [Yunus Emre]
+
+  Artık `-p` komutu ile güncellenen modüller github'a aktarılmakta
+
+### 💫 Değişikler
+
+* 👨‍💻 Geliştirici scriptleri yenilendi. [Yunus Emre]
+
+* 🧹 Gereksiz metot kaldırıldı. [Yunus Emre]
+
+
+## 2.3.0 (2019-11-30)
+
+### ✨ Yenilikler
+
+* 🚀 Google drive link dönüştürücü eklendi. [Yunus Emre]
+
 * 👨‍🔬 Store komutu için test ayarı eklendi. [Yunus Emre]
 
 * ✨ Yenilikler belirtildi. [Yunus Emre]
@@ -15,6 +34,8 @@
   - ✨ Kodda verimlilik sağlandı
 
 ### 💫 Değişikler
+
+* 🧰 Yardımcı scriptler yenilendi. [Yunus Emre]
 
 * 🧪 Test yapısı yenilendi. [Yunus Emre]
 
