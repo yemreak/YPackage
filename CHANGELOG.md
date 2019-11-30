@@ -7,7 +7,17 @@
 
 * ✨ Versiyon yenilendi. [Yunus Emre]
 
+* ✨ Versiyon yenilendi. [Yunus Emre]
+
+### 💫 Değişikler
+
+* 👨‍🔬 Test yapılandırması güncellendi. [Yunus Emre]
+
 ### 👨‍🔧 Düzeltmeler
+
+* 🐞 Push işlemindeki sorun giderildi. [Yunus Emre]
+
+* 🐞 Store komutundaki argüman kaybı giderildi. [Yunus Emre]
 
 * 🐞 Hata giderildi. [Yunus Emre]
 
