@@ -87,14 +87,6 @@ def read_config(startpath: str, filepath: str) -> dict:
     return config
 
 
-def integrate(config: dict) -> None:
-    for name in config:
-        if name == "DEFAULT":
-            continue
-
-        section = config[name]
-
-
 def updateSubSummaries(config: dict, startpath, index: str = "Index"):
     for name in config.sections():
         if name.split()[0] == SUBMODULE_MODULE:
