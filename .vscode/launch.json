@@ -28,6 +28,16 @@
             ]
         },
         {
+            "name": "Test Store",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../YWelcome",
+                "-us"
+            ]
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
