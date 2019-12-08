@@ -61,3 +61,10 @@ def prod(numbers: list) -> int:
     for number in numbers:
         result *= number
     return result
+
+
+def sort(string: str) -> str:
+    lines = string.split("\n")
+    lines.sort()
+    result = "\n".join(lines)
+    return result
