@@ -16,8 +16,23 @@ Kişisel python modüllerim
 ## 🔍 Google Arama Motoru
 
 - 📋 Google üzerinden verilen metne göre çıkan sonuçlarını dosyaya raporlar
-- ✨ İsteğe bağlı **html durum kodlarına* sahip bağlantıları raporlar
+- ✨ İsterseniz, belirli **html durum kodlarına** sahip olan bağlantıları raporlar
 - 🆘 Kullanım detayları için `ygooglesearch -h` yazın
+
+### 📜 URL Dosyası
+
+- 📃 Url dosyası her url bir satırda olacak şekilde tanımlıdır
+- 🔍 Url dosyanız [Remove outdated content](https://www.google.com/webmasters/tools/removals) alanındaki urller olmalıdır
+
+> 🔌 [Table Capture](https://chrome.google.com/webstore/detail/table-capture/iebpjdmgckacbodjpijphcplhebcmeop) eklentisi ile urlleri alabilirsiniz
+
+```txt
+https://ai.yemreak.com/x-arastirmalarim
+https://python.yemreak.com/9-ipython
+https://python.yemreak.com/1-giris
+https://wiki.yemreak.com/web/notlar
+https://windows.yemreak.com/giris/dizinler
+```
 
 ## 💫 Entegrasyon Scripti
 
