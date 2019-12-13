@@ -9,14 +9,20 @@ Kişisel python modüllerim
 
 ## 🔗 Google Drive Link Dönüştürücü
 
-- Google Drive bağlantılarını dönüştürmek için `ydrive` komutu kullanılır
-- Özizleme bağlantıları direkt indirme bağlantılarına çevirir
-- Kullanım detayları için `ydrive -h` yazın
+- 🔄 Google Drive bağlantılarını dönüştürmek için `ydrive` komutu kullanılır
+- 👁️ Ön izleme bağlantılarını direkt indirme bağlantılarına çevirir
+- 🆘 Kullanım detayları için `ygoogledrive -h` yazın
+
+## 🔍 Google Arama Motoru
+
+- 📋 Google üzerinden verilen metne göre çıkan sonuçlarını dosyaya raporlar
+- ✨ İsteğe bağlı **html durum kodlarına* sahip bağlantıları raporlar
+- 🆘 Kullanım detayları için `ygooglesearch -h` yazın
 
 ## 💫 Entegrasyon Scripti
 
-- Github - GitBook entegrasyonu için `ygitbookintegration` komutu kullanılır
-- Kullanım detayları için `ygitbookintegration -h` yazın
+- 🔄 Github - GitBook entegrasyonu için `ygitbookintegration` komutu kullanılır
+- 🆘 Kullanım detayları için `ygitbookintegration -h` yazın
 
 > Komut olarak sadece yol verilirse, dizindeki yapılandırma dosyasına (`.ygitbookintegration`) göre çalışır
 
