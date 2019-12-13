@@ -86,6 +86,17 @@
             "args": [
                 "https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
             ]
+        },
+        {
+            "name": "GSearch",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.gsearch",
+            "args": [
+                "site:yemreak.com",
+                "-sc",
+                "404"
+            ]
         }
     ]
 }

@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 DYNAMIC_VERSION = False
-VERSION = "2.5.0"
+VERSION = "2.6.0"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -36,7 +36,8 @@ setup(
     # Keywords that define your package best
     keywords=['ypackage', 'yedhrab', 'yemreak'],
     install_requires=[            # I get to this in a second
-
+        "google",
+        "requests"
     ],
     classifiers=[
         # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
@@ -57,7 +58,8 @@ setup(
         # Kullanım: 'ypacakge = ypackage.ypackage:main
         'console_scripts': [
             'ygitbookintegration = ypackage.integrate:main',
-            "ydrive = ypackage.gdrive:main"
+            "ygoogledrive = ypackage.gdrive:main",
+            "ygooglesearch = ypackage.gsearch:main"
         ]
     }
 )
