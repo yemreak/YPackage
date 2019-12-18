@@ -76,9 +76,10 @@ def main():
 
     for query in QUERIES:
         filename = re.sub(r"[^\w ]", "_", query) + ".txt" if not OUTPUT else OUTPUT
+        condition = f"{STATUS_CODE}" if STATUS_CODE else "herhangi bir"
+        excluded_file = f"{EXCLUDE} dosyasında olmayan" if EXCLUDE else "tüm"
 
-        condition = f"{STATUS_CODE} durumuna sahip olan" if STATUS_CODE else "tüm"
-        print(f"`{query}` için `{filename}` dosyasına `{condition}` bağlantılar raporlanıyor.")
+        print(f"`{query}` sorgusu için `{filename}` dosyasına `{condition}` http durumuna sahip olan `{excluded_file}` bağlantılar raporlanıyor.")
 
         log_url_by_status(query, filename, status_code=STATUS_CODE, exclude=EXCLUDE)
 
