@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 DYNAMIC_VERSION = False
-VERSION = "2.6.1"
+VERSION = "2.6.2"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -24,7 +24,7 @@ setup(
     # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     license='MIT',
     # Give a short description about your library
-    description='Sık kullanılan python işlemleri için hazır paket',
+    description="Yunus Emre Ak ~ YEmreAk (@yedhrab)'ın google drive direkt link oluşturma, gitbook entegrasyonu, google arama motoru sonuçlarını filtreleme ile ilgili çalışmaları ",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Yunus Emre Ak',                   # Type in your name
