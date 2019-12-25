@@ -49,7 +49,7 @@
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../YWiki"
+                "../IstanbulUniversity-CE"
             ]
         },
         {

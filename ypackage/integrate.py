@@ -31,54 +31,6 @@ def convert_url_form(filestr: str, url: str):
     return filestr.replace("./", url + "/").replace("README.md", "").replace(".md", "")
 
 
-def add_description(content: str, description: str) -> str:
-    if description:
-        return gitbook.make_description(description) + content
-    else:
-        return content
-
-
-def fixTitle(content: str) -> str:
-    title = f"# {markdown.read_first_link(content)[1]}"
-    title_changed = False
-
-    lines = content.split("\n")
-
-    for i in range(len(lines)):
-        count = lines[i].count("#")
-        if count == 1:
-            lines[i] = title
-            title_changed = True
-            break
-        elif count >= 1:
-            lines[0] = title
-            title_changed = True
-            break
-
-    if not title_changed:
-        lines[0] = title
-        title_changed = True
-
-    return "\n".join(lines)
-
-
-def fixUrls(content, root):
-    fixedlines = []
-    lines = content.split("\n")
-    for line in lines:
-        link = markdown.find_link(line)
-        if link:
-            path: str = link[2]
-            if "http" not in path:
-                fixedpath = path.replace(".md", "").replace("README", "")
-                fixedpath = root + "/" + fixedpath
-                line = line.replace(path, fixedpath)
-
-        fixedlines.append(line)
-
-    return "\n".join(fixedlines)
-
-
 def read_config(startpath: str, filepath: str) -> dict:
     try:
         config = configparser.ConfigParser(inline_comment_prefixes="#")
@@ -89,11 +41,68 @@ def read_config(startpath: str, filepath: str) -> dict:
     return config
 
 
-def updateSubSummaries(config: dict, startpath: str, index: str = "Index", push=False):
+def updateSubSummaries(config: dict, startpath: str, index: str, push=False) -> None:
+    """Alt modülleri günceller
+
+    Arguments:
+        config {dict} -- Yapılandırma dosyası verileri
+        startpath {str} -- Yapılandırma dosyasının dizini
+
+    Keyword Arguments:
+        index {str} -- Limit (default: {"Index"})
+        push {bool} -- Otomatik olarak git push işlemi yapma (default: {False})
+    """
+
+    def add_description(content: str, description: str) -> str:
+        if description:
+            return gitbook.make_description(description) + content
+        else:
+            return content
+
+    def fixTitle(content: str) -> str:
+        title = f"# {markdown.read_first_link(content)[1]}"
+        title_changed = False
+
+        lines = content.split("\n")
+
+        for i in range(len(lines)):
+            count = lines[i].count("#")
+            if count == 1:
+                lines[i] = title
+                title_changed = True
+                break
+            elif count >= 1:
+                lines[0] = title
+                title_changed = True
+                break
+
+        if not title_changed:
+            lines[0] = title
+            title_changed = True
+
+        return "\n".join(lines)
+
+    def fixUrls(content, root):
+        fixedlines = []
+        lines = content.split("\n")
+        for line in lines:
+            link = markdown.find_link(line)
+            if link:
+                path: str = link[2]
+                if "http" not in path:
+                    fixedpath = path.replace(".md", "").replace("README", "")
+                    fixedpath = root + "/" + fixedpath
+                    line = line.replace(path, fixedpath)
+
+            fixedlines.append(line)
+
+        return "\n".join(fixedlines)
+
     paths = []
     for name in config.sections():
         if name.split()[0] == SUBMODULE_MODULE:
             section = config[name]
+
             path = os.path.join(startpath, section['path'])
             url = section['url']
             root = section['root']
@@ -101,6 +110,10 @@ def updateSubSummaries(config: dict, startpath: str, index: str = "Index", push=
             description = None
             if "description" in section:
                 description = section['description']
+
+            until = None
+            if "until" in section:
+                until = section['until']
 
             content = gitbook.read_summary_from_url(url)
 
@@ -111,6 +124,9 @@ def updateSubSummaries(config: dict, startpath: str, index: str = "Index", push=
             content = fixTitle(content)
             content = fixUrls(content, root)
             content = add_description(content, description)
+
+            if len(until) > 0:
+                content = content[:content.find(until)]
 
             filesystem.write_file(path, content)
 
@@ -189,7 +205,7 @@ def parse_args():
             '--index',
             '-ix',
             dest="indexStr",
-            default="Index",
+            default="YPackage.YGitbookIntegration-tarafından-otomatik-oluşturulmuştur",
             help='Generated string will be inserted between given indexes',
             type=str,
         )
