@@ -7,7 +7,7 @@ import time
 
 def get_status_code(url) -> str:
     try:
-        status_code = str(requests.head(url).status_code)
+        status_code = str(requests.head(url, allow_redirects=True).status_code)
     except:
         status_code = "404+"
     return status_code
@@ -29,12 +29,13 @@ def log_url_by_status(query: str, fpath: str, status_code: str = None, exclude: 
     urls = googlesearch.search(query, pause=5.0)
     for url in urls:
         if url not in removal:
-            scode = get_status_code(url)
             if not status_code:
-                result = f"{url},{scode}"
+                result = f"{url}"
                 write_file(result, file)
-            elif scode == status_code:
-                write_file(url, file)
+            else:
+                scode = get_status_code(url)
+                if status_code in scode:
+                    write_file(url, file)
 
     file.close()
 

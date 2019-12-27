@@ -88,23 +88,21 @@
             ]
         },
         {
-            "name": "GSearch",
+            "name": "GSearch - Simple",
             "type": "python",
             "request": "launch",
             "module": "ypackage.gsearch",
             "args": [
                 "site:yemreak.com",
-                "-sc",
-                "404"
             ]
         },
         {
-            "name": "GSearch - More",
+            "name": "GSearch - Status Code",
             "type": "python",
             "request": "launch",
             "module": "ypackage.gsearch",
             "args": [
-                "site:iuce.yemreak.com",
+                "site:www.yemreak.com",
                 "-sc",
                 "404"
             ]
@@ -115,9 +113,7 @@
             "request": "launch",
             "module": "ypackage.gsearch",
             "args": [
-                "site:iuce.yemreak.com",
-                "-sc",
-                "404",
+                "site:wiki.yemreak.com",
                 "-ex",
                 "knowed_url.txt"
             ]
