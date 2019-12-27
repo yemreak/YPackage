@@ -39,7 +39,7 @@
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../YWelcome",
+                "../YWiki",
                 "-usp",
             ]
         },

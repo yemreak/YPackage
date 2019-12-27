@@ -125,7 +125,8 @@ def updateSubSummaries(config: dict, startpath: str, index: str, push=False) -> 
             content = fixUrls(content, root)
             content = add_description(content, description)
 
-            if len(until) > 0:
+            if until:
+                until = "## " + until
                 content = content[:content.find(until)]
 
             filesystem.write_file(path, content)
