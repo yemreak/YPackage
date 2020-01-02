@@ -5,6 +5,8 @@
 
 ### ✨ Yenilikler
 
+* 📋 Commit raporu (changelog) basma eklendi. [Yunus Emre]
+
 * 🎇 windows 10 scriptleri eklendi. [Yunus Emre]
 
 * 👮‍♂️ SUMMARY'den çekilen metni kısıtlama eklendi. [Yunus Emre]
