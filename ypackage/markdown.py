@@ -88,6 +88,10 @@ def make_linkstr(header, link):
     return f"- [{header}]({link})\n"
 
 
+def is_url(path):
+    return "http" in path
+
+
 def create_link(path: str, header: str = None, root: str = os.getcwd(), ilvl=0, isize=2) -> str:
     """Verilen yola uygun kodlanmış markdown linki oluşturma
 
@@ -105,8 +109,10 @@ def create_link(path: str, header: str = None, root: str = os.getcwd(), ilvl=0, 
     """
 
     pathname = barename(path) if not header else header
-    path = os.path.relpath(path, root)
-    path = encodedpath(path)
+
+    if not is_url(path):
+        path = os.path.relpath(path, root)
+        path = encodedpath(path)
 
     indent = create_indent(ilvl, size=isize)
     linkstr = make_linkstr(pathname, path)

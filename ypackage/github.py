@@ -3,7 +3,8 @@ from urllib import parse
 from datetime import datetime
 import os
 from .markdown import (
-    encodedpath
+    encodedpath,
+    create_link
 )
 from .filesystem import (
     readFileWithURL
@@ -11,7 +12,7 @@ from .filesystem import (
 
 # diff-528720652ae91788d21a1334d1696e75
 # https://github.com/YEmreAk/IstanbulUniversity-CE/commit/cd3459443690ac13d45f845842e407aa386aa018?short_path = 5287206
-DIFF_TEMPLATE = "https://github.com/{}}/{}}/commit/{}?diff=split"
+DIFF_TEMPLATE = "{}/commit/{}?diff=split"
 
 
 def get_github_url():
@@ -64,7 +65,7 @@ def push_to_github(startpath: str, paths: list, commit: str):
         os.chdir(cur_dir)
 
 
-""" def log_git_commits(since, to):
+def log_git_commits(since, to):
     with open("changes.md", "w+", encoding="utf-8") as file:
         file.write("# ✨ Değişiklikler")
         file.write("\n\n")
@@ -87,23 +88,25 @@ def push_to_github(startpath: str, paths: list, commit: str):
         file.write("\n\n")
 
 
-def create_changelog(username, repo, since: datetime = None, to: datetime = None):
+def create_changelog(path, repo_url, since: datetime = None, to: datetime = None):
     import os
     from datetime import datetime
     from pydriller import RepositoryMining
     from urllib import parse
 
-    with open(f"../{repo}/CHANGELOG.md", "w+", encoding="utf-8") as file:
+    with open(f"{path}/CHANGELOG.md", "w+", encoding="utf-8") as file:
         file.write("# ✨ Değişiklikler")
         file.write("\n\n")
         file.write("## 📋 Tüm Değişiklikler")
         file.write("\n\n")
 
-        for commit in RepositoryMining(f'../{repo}', reversed_order=True).traverse_commits():
+        for commit in RepositoryMining(path, reversed_order=True).traverse_commits():
             hash_value = commit.hash
             time = commit.author_date.strftime("%d/%m/%Y - %H:%M:%S")
             msg = commit.msg
             title = msg.split("\n")[0]
 
-            file.write(
-                f"- [{title} ~ {str(time)}]({DIFF_TEMPLATE.format(username, repo, hash_value)})\n") """
+            url = DIFF_TEMPLATE.format(repo_url, hash_value)
+            header = f"{title} ~ {str(time)}"
+            link = create_link(url, header=header)
+            file.write(link)

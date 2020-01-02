@@ -173,6 +173,12 @@ def parse_args():
             help="Markdown dışı dosyalar için README'ye bağlantılar oluşturma"
         )
         parser.add_argument(
+            "--changelog",
+            "-c",
+            dest="changelog",
+            help="Değişikliklerin raporlandığı CHANGELOG.mg dosyasını verilen URL'e göre oluşturur"
+        )
+        parser.add_argument(
             '--level-limit',
             '-ll',
             dest="level_limit",
@@ -273,7 +279,7 @@ def integrate(paths, safe=False):
                     continue
 
             args = parse_args()
-            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push
+            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH, CHANGELOG = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push, args.changelog
 
             if STORE:
                 last_args = sys.argv[new_args_start_index:]
@@ -311,6 +317,9 @@ def integrate(paths, safe=False):
 
             if UPDATE:
                 updateSubSummaries(config, path, INDEX_STR, push=PUSH)
+
+            if CHANGELOG:
+                github.create_changelog(path, CHANGELOG)
 
         else:
             print(f"Hatalı yol: {path}")

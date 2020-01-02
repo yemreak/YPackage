@@ -53,6 +53,20 @@
             ]
         },
         {
+            "name": "Integrate - Changelog",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../IstanbulUniversity-CE",
+                "-rg",
+                "-ll",
+                "2",
+                "-c",
+                "https://github.com/YEmreAk/IstanbulUniversity-CE"
+            ]
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
