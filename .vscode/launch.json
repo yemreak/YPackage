@@ -10,8 +10,7 @@
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../YWiki",
-                "-us"
+                "../IstanbulUniversity-CE",
             ]
         },
         {

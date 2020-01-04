@@ -60,27 +60,6 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
     # TODO: Buranın markdown'a aktarılması lazım
     # RES: Decalator kavramının araştırılması lazım olabilir
 
-    def append_firstline(lines: list) -> list:
-        headpath = SpecialFile.README_FILE.get_filepath(root=startpath)
-        header_link = generate_filelink(headpath, startpath=startpath)
-        lines.append(header_link)
-        return lines
-
-    def append_specialfiles(lines: list, *specialfiles: SpecialFile) -> list:
-        for specialfile in specialfiles:
-            specialfile_path = specialfile.get_filepath(startpath)
-            if specialfile_path:
-                specialfile_link = generate_filelink(
-                    specialfile_path,
-                    header=get_specialfile_header(specialfile),
-                    startpath=startpath,
-                    ilvl=find_level(root, startpath) + 1,
-                    isize=2
-                )
-                lines.append(specialfile_link)
-
-        return lines
-
     def append_rootlink(lines: list, root: str, level: int) -> str:
         dirlink = generate_dirlink(root, startpath=startpath, ilvl=level, isize=2)
         lines.append(dirlink)
@@ -107,13 +86,6 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
         nonlocal startpath
         if startpath is None:
             startpath = os.path.normpath(root)
-            lines = append_firstline(lines)
-            lines = append_specialfiles(
-                lines,
-                SpecialFile.CHANGELOG_FILE,
-                SpecialFile.CONTRIBUTING_FILE
-            )
-
             level = find_level(root, startpath)
             if level_limit == -1 or level <= level_limit:
                 lines = append_sublinks(lines, root, level + 1, dirs_only=True)
@@ -139,6 +111,40 @@ def create_summary_file(workdir: str):
 
 
 def generate_summary_filestr(workdir, level_limit: int = -1, privates=[], footer_path=None):
+
+    def append_header(filestr):
+
+        def append_firstline(lines: list) -> list:
+            headpath = SpecialFile.README_FILE.get_filepath(root=workdir)
+            header_link = generate_filelink(headpath, startpath=workdir)
+            lines.append(header_link)
+            return lines
+
+        def append_specialfiles(lines: list, *specialfiles: SpecialFile) -> list:
+            for specialfile in specialfiles:
+                specialfile_path = specialfile.get_filepath(workdir)
+                if specialfile_path:
+                    specialfile_link = generate_filelink(
+                        specialfile_path,
+                        header=get_specialfile_header(specialfile),
+                        startpath=workdir,
+                        ilvl=find_level(workdir, workdir) + 1,
+                        isize=2
+                    )
+                    lines.append(specialfile_link)
+
+            return lines
+
+        lines = append_firstline([])
+        lines = append_specialfiles(
+            lines,
+            SpecialFile.CHANGELOG_FILE,
+            SpecialFile.CONTRIBUTING_FILE
+        )
+
+        filestr += "".join(lines)
+        return filestr
+
     def append_markdown_links(filestr: str):
         lines = generate_fs_link([], workdir, level_limit=level_limit, privates=privates)
         filestr += "".join(lines)
@@ -151,7 +157,7 @@ def generate_summary_filestr(workdir, level_limit: int = -1, privates=[], footer
                     file.read()
         return filestr
 
-    filestr = ""
+    filestr = append_header("")
     filestr = append_markdown_links(filestr)
     filestr = append_footer(filestr)
 
