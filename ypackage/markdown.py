@@ -89,7 +89,7 @@ def make_linkstr(header, link):
 
 
 def is_url(path):
-    return "http" in path
+    return "https://" in path or "http://" in path
 
 
 def create_link(path: str, header: str = None, root: str = os.getcwd(), ilvl=0, isize=2) -> str:
@@ -178,6 +178,7 @@ def find_link(line: str) -> dict:
         dict -- Bulunan bağlantılar
 
     Examples:
+        >>> result = find_link("- [name](url)")
         >>> result[0] = "[name](url)"
         >>> result[1] = "name"
         >>> result[2] = "url"
@@ -280,3 +281,15 @@ def create_markdown_file(filepath, header=None):
 def generate_substrings(content, index):
     index = make_comment(index)
     return c_generate_substrings(content, index)
+
+
+def check_links(fpath):
+    with open(fpath, "r", encoding="utf-8") as f:
+        for line in f:
+            found = find_link(line)
+            if found:
+                path = found[2]
+                if not is_url(path):
+                    result = os.path.exists(path)
+                    if not result:
+                        print(path)
