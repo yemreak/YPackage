@@ -14,6 +14,26 @@
             ]
         },
         {
+            "name": "Integrate - Recreate",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../IstanbulUniversity-CE",
+                "-r"
+            ]
+        },
+        {
+            "name": "Integrate - Generate",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../IstanbulUniversity-CE",
+                "-g"
+            ]
+        },
+        {
             "name": "Integrate - More",
             "type": "python",
             "request": "launch",
@@ -52,17 +72,25 @@
             ]
         },
         {
-            "name": "Integrate - Changelog",
+            "name": "Integrate - Changelog Push",
             "type": "python",
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
                 "../IstanbulUniversity-CE",
-                "-rg",
+                "-cp",
+            ]
+        },
+        {
+            "name": "Integrate - All",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../IstanbulUniversity-CE",
+                "-rgcp",
                 "-ll",
-                "2",
-                "-c",
-                "https://github.com/YEmreAk/IstanbulUniversity-CE"
+                "2"
             ]
         },
         {

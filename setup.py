@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 DYNAMIC_VERSION = False
-VERSION = "2.6.3.0"
+VERSION = "2.6.3.1"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -37,7 +37,8 @@ setup(
     keywords=['ypackage', 'yedhrab', 'yemreak'],
     install_requires=[            # I get to this in a second
         "google",
-        "requests"
+        "requests",
+        "pydriller"
     ],
     classifiers=[
         # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package

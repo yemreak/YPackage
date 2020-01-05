@@ -1,14 +1,9 @@
 import argparse
-import os
 import configparser
+import os
 import sys
-import urllib.request
 
-from . import gitbook
-from . import filesystem
-from . import common
-from . import markdown
-from . import github
+from . import filesystem, gitbook, github, markdown
 
 INTEGRATION_FILE = ".ygitbookintegration"
 INTEGRATION_MODULE = "integration"
@@ -35,7 +30,8 @@ def read_config(startpath: str, filepath: str) -> dict:
     try:
         config = configparser.ConfigParser(inline_comment_prefixes="#")
         config.read(os.path.join(startpath, filepath), encoding="utf-8")
-    except:
+    except Exception as e:
+        print(e)
         return None
 
     return config
@@ -175,6 +171,7 @@ def parse_args():
         parser.add_argument(
             "--changelog",
             "-c",
+            action="store_true",
             dest="changelog",
             help="Değişikliklerin raporlandığı CHANGELOG.mg dosyasını verilen URL'e göre oluşturur"
         )
@@ -318,8 +315,9 @@ def integrate(paths, safe=False):
             if UPDATE:
                 updateSubSummaries(config, path, INDEX_STR, push=PUSH)
 
+            # TIP: Committe iken yapmaktadır (push'a gerek yok)
             if CHANGELOG:
-                github.create_changelog(path, CHANGELOG)
+                gitbook.create_changelog(path, push=PUSH)
 
         else:
             print(f"Hatalı yol: {path}")

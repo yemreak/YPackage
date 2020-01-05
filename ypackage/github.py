@@ -1,14 +1,8 @@
-from urllib import parse
+import os
 # from pydriller import RepositoryMining
 from datetime import datetime
-import os
-from .markdown import (
-    encodedpath,
-    create_link
-)
-from .filesystem import (
-    readFileWithURL
-)
+
+from .markdown import create_link, encodedpath
 
 # diff-528720652ae91788d21a1334d1696e75
 # https://github.com/YEmreAk/IstanbulUniversity-CE/commit/cd3459443690ac13d45f845842e407aa386aa018?short_path = 5287206
@@ -65,48 +59,42 @@ def push_to_github(startpath: str, paths: list, commit: str):
         os.chdir(cur_dir)
 
 
-def log_git_commits(since, to):
-    with open("changes.md", "w+", encoding="utf-8") as file:
-        file.write("# ✨ Değişiklikler")
-        file.write("\n\n")
+def get_remote_url(path):
+    from subprocess import Popen, PIPE
 
-        for commit in RepositoryMining('../IstanbulUniversity-CE', since=since, to=to, reversed_order=True).traverse_commits():
-            time = commit.author_date.strftime("%d/%m/%Y - %H:%M:%S")
-            msg = commit.msg
-            changes = []
-            for modification in commit.modifications:
-                path = modification.new_path
-                if path:
-                    path = os.path.join(".", path)
-                    path = parse.quote(path)
-                    changes.append(path)
+    cur_dir = os.getcwd()
+    os.chdir(path)
 
-        file.write("## " + str(time))
-        file.write("\n\n")
-        for change in changes:
-            file.write(f"- [{msg}]({path})\n")
-        file.write("\n\n")
+    remote_url = ""
+    with Popen(r'git config --get remote.origin.url', stdout=PIPE, stderr=PIPE) as p:
+        output, errors = p.communicate()
+        remote_url = output.decode('utf-8').splitlines()[0].replace(".git", "")
+
+    os.chdir(cur_dir)
+
+    return remote_url
 
 
-def create_changelog(path, repo_url, since: datetime = None, to: datetime = None):
-    import os
-    from datetime import datetime
+def list_commit_links(path, ignore_commits=[], since: datetime = None, to: datetime = None):
     from pydriller import RepositoryMining
-    from urllib import parse
 
-    with open(f"{path}/CHANGELOG.md", "w+", encoding="utf-8") as file:
-        file.write("# ✨ Değişiklikler")
-        file.write("\n\n")
-        file.write("## 📋 Tüm Değişiklikler")
-        file.write("\n\n")
+    links = []
+    for commit in RepositoryMining(path, reversed_order=True).traverse_commits():
+        title = commit.msg.split("\n")[0]
 
-        for commit in RepositoryMining(path, reversed_order=True).traverse_commits():
+        ignore = False
+        for ignore_commit in ignore_commits:
+            if ignore_commit in title:
+                ignore = True
+                continue
+
+        if not ignore:
             hash_value = commit.hash
             time = commit.author_date.strftime("%d/%m/%Y - %H:%M:%S")
-            msg = commit.msg
-            title = msg.split("\n")[0]
 
-            url = DIFF_TEMPLATE.format(repo_url, hash_value)
+            url = DIFF_TEMPLATE.format(get_remote_url(path), hash_value)
             header = f"{title} ~ {str(time)}"
             link = create_link(url, header=header)
-            file.write(link)
+            links.append(link)
+
+    return links

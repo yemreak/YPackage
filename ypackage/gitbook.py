@@ -1,26 +1,12 @@
 import os
-from .filesystem import (
-    find_level,
-    listdir_grouped,
-    readFileWithURL
-)
-from .markdown import (
-    make_linkstr,
-    create_header,
-    insert_file,
-    create_markdown_file,
-    encodedpath,
-    create_link,
-    generate_filelink,
-    generate_dirlink,
-    SpecialFile,
-    check_links
-)
+from datetime import datetime
 
-from .github import (
-    get_github_raw_link,
-    generate_raw_url_from_repo_url
-)
+from .filesystem import find_level, listdir_grouped, readFileWithURL
+from .github import (generate_raw_url_from_repo_url, get_github_raw_link,
+                     list_commit_links, push_to_github)
+from .markdown import (SpecialFile, check_links, create_header, create_link,
+                       create_markdown_file, generate_dirlink,
+                       generate_filelink, insert_file, make_linkstr)
 
 DESCRIPTIPON_TEMPLATE = """---
 description: {}
@@ -33,6 +19,8 @@ SUMMARY_FILE_HEADER = "# Summary"
 CHANGELOG_HEADER = u"👀 Neler değişti"
 CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
+
+IGNORE_COMMIT = "💫 GitBook engegrasyonu yapıldı"
 
 
 def make_description(string: str) -> str:
@@ -176,7 +164,7 @@ def generate_summary(workdir, level_limit: int = -1, privates=[], footer_path=No
     insert_summary_file(workdir, filestr, index=index, new_index=new_index)
 
 
-def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index", header="📂 Harici Dosyalar", new_index=None, clearify=False, direct_link: bool = False):
+def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index", header=None, new_index=None, clearify=False, direct_link: bool = False):
     # DEV: Ders notlarını README'ye ekleme direkt olarak dizin dosya oluştur
     def clear_private_dirs() -> list:
         return [d for d in dirs if not d.startswith('.') and d not in privates]
@@ -186,11 +174,11 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         filestr = ""
         links = []
         for f in files:
-            if not ".md" in f:
+            if ".md" not in f:
                 links.append(make_file_link(os.path.join(".", f), direct_link=direct_link))
 
         if bool(links):
-            filestr = create_header(header, 2)
+            filestr = create_header(header, 2) if header else ""
             filestr += "".join(links)
 
         return filestr
@@ -198,26 +186,32 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
     def generate_markdown_files_for_subitems(startpath, clearify=False) -> str:
         # DEV: Aynı dizindekiler aynı dosya altına yazılacak
         for root, dirs, files in os.walk(startpath):
+            # Sıralama her OS için farklı olabiliyor
+            dirs.sort()
+            files.sort()
+
             if root == startpath:
                 continue
-
-            filestr = ""
-            filepath = SpecialFile.README_FILE.get_filepath(root=root, symbolic=True)
 
             level = find_level(root, startpath)
             link_root = os.path.dirname(root)
             for _ in range(level - 1):
                 link_root = os.path.dirname(link_root)
 
+            links = []
             for f in files:
                 subfilepath = os.path.join(root, f)
-                if not ".md" in f:
-                    filestr += make_file_link(subfilepath, root=root, direct_link=direct_link)
+                if ".md" not in f:
+                    links.append(make_file_link(subfilepath, root=root, direct_link=direct_link))
                 elif f != SpecialFile.README_FILE.value:
                     # DEV: Markdown dosyaları README'nin altına eklensin
-                    filestr += create_link(subfilepath, root=link_root)
+                    links.append(create_link(subfilepath, root=link_root))
 
-            if bool(filestr):
+            if bool(links):
+                filestr = create_header(header, 2) if header else ""
+                filestr += "".join(links)
+
+                filepath = SpecialFile.README_FILE.get_filepath(root=root, symbolic=True)
                 if not os.path.exists(filepath):
                     oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
                     if clearify:
@@ -233,8 +227,15 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
 
     filestr = ""
     for root, dirs, files in os.walk(startpath):
+        # Sıralama her OS için farklı olabiliyor
+        dirs.sort()
+        files.sort()
+
         # Remove private directories
         dirs[:] = clear_private_dirs()
+
+        dirs.sort()
+        files.sort()
 
         # Skip startpath
         if root == startpath:
@@ -272,3 +273,29 @@ def read_summary_from_url(repo_url):
 def check_summary(path):
     spath = os.path.join(path, SUMMARY_FILE)
     check_links(spath)
+
+
+def create_changelog(path, since: datetime = None, to: datetime = None, push=False):
+
+    cpath = f"{path}/CHANGELOG.md"
+
+    oldfilestr = ""
+    with open(cpath, "r", encoding="utf-8") as file:
+        oldfilestr = file.read()
+
+    filestr = ""
+
+    filestr = "# ✨ Değişiklikler"
+    filestr += "\n\n"
+    filestr += "## 📋 Tüm Değişiklikler"
+    filestr += "\n\n"
+
+    links = list_commit_links(path, ignore_commits=[IGNORE_COMMIT], since=since, to=to)
+    filestr += "".join(links)
+
+    if oldfilestr != filestr:
+        with open(cpath, "w+", encoding="utf-8") as file:
+            file.write(filestr)
+
+        if push:
+            push_to_github(path, [cpath], IGNORE_COMMIT)
