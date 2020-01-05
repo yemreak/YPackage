@@ -66,7 +66,7 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
 
         if not dirs_only:
             for fpath in files:
-                if ".md" in fpath and not SpecialFile.README_FILE.value in fpath:
+                if ".md" in fpath and SpecialFile.README_FILE.value not in fpath:
                     lines = append_filelink(lines, fpath, level)
 
         return lines
