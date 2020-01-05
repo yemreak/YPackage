@@ -13,7 +13,8 @@ from .markdown import (
     create_link,
     generate_filelink,
     generate_dirlink,
-    SpecialFile
+    SpecialFile,
+    check_links
 )
 
 from .github import (
@@ -196,7 +197,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
 
     def generate_markdown_files_for_subitems(startpath, clearify=False) -> str:
         # DEV: Aynı dizindekiler aynı dosya altına yazılacak
-        for root, _, files in os.walk(startpath):
+        for root, dirs, files in os.walk(startpath):
             if root == startpath:
                 continue
 
@@ -266,3 +267,8 @@ def get_summary_url_from_repo_url(repo_url):
 def read_summary_from_url(repo_url):
     raw_url = get_summary_url_from_repo_url(repo_url)
     return readFileWithURL(raw_url)
+
+
+def check_summary(path):
+    spath = os.path.join(path, SUMMARY_FILE)
+    check_links(spath)
