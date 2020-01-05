@@ -82,8 +82,11 @@ def list_commit_links(path, repo_url=None, ignore_commits=[], since: datetime = 
         repo_url = get_remote_url(path)
 
     links = []
+    links.append("|📅 Tarih|🔀 Commit|🐥 Sahibi|\n")
+    links.append("|-|-|-|\n")
     for commit in RepositoryMining(path, reversed_order=True).traverse_commits():
         title = commit.msg.split("\n")[0]
+        author = commit.author.name
 
         ignore = False
         for ignore_commit in ignore_commits:
@@ -95,8 +98,8 @@ def list_commit_links(path, repo_url=None, ignore_commits=[], since: datetime = 
             hash_value = commit.hash
             time = commit.author_date.strftime("%d/%m/%Y - %H:%M:%S")
             url = DIFF_TEMPLATE.format(repo_url, hash_value)
-            header = f"{title} ~ {str(time)}"
-            link = create_link(url, header=header)
+            link = create_link(url, header=title).replace("- ", "").replace("\n", "")
+            link = f"|{str(time)}|{link}|{author}|\n"
             links.append(link)
 
     return links
