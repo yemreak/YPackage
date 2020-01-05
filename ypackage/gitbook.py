@@ -20,8 +20,6 @@ CHANGELOG_HEADER = u"👀 Neler değişti"
 CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
 
-IGNORE_COMMIT = "💫 GitBook engegrasyonu yapıldı"
-
 
 def make_description(string: str) -> str:
     return DESCRIPTIPON_TEMPLATE.format(string)
@@ -275,7 +273,9 @@ def check_summary(path):
     check_links(spath)
 
 
-def create_changelog(path, repo_url=None, since: datetime = None, to: datetime = None, push=False):
+def create_changelog(path, ignore_commits=[], repo_url=None, since: datetime = None, to: datetime = None, push=False, commit_msg=None):
+    if not commit_msg:
+        commit_msg = "💫 YGitBookIntegration"
 
     cpath = f"{path}/CHANGELOG.md"
 
@@ -290,8 +290,8 @@ def create_changelog(path, repo_url=None, since: datetime = None, to: datetime =
     filestr += "## 📋 Tüm Değişiklikler"
     filestr += "\n\n"
 
-    links = list_commit_links(path, repo_url=repo_url, ignore_commits=[
-                              IGNORE_COMMIT], since=since, to=to)
+    links = list_commit_links(path, repo_url=repo_url,
+                              ignore_commits=ignore_commits + [commit_msg], since=since, to=to)
     filestr += "".join(links)
 
     if oldfilestr != filestr:
@@ -299,4 +299,4 @@ def create_changelog(path, repo_url=None, since: datetime = None, to: datetime =
             file.write(filestr)
 
         if push:
-            push_to_github(path, [cpath], IGNORE_COMMIT)
+            push_to_github(path, [cpath], commit_msg)
