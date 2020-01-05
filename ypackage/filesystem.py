@@ -1,3 +1,4 @@
+import re
 import os
 import json
 from urllib.request import urlopen
@@ -121,3 +122,32 @@ def listdir_grouped(root: str, privates=[], include_hidden=False) -> tuple:
 
 def readFileWithURL(rawUrl, encoding="utf-8"):
     return urlopen(rawUrl).read().decode(encoding)
+
+
+def replace(regex, to, path, silent=False):
+    result = regex.search(path)
+    if result:
+        for i in range(result.lastindex + 1):
+            to = to.replace(f"${i}", result[i])
+
+        dst = regex.sub(to, path)
+        os.rename(path, dst)
+
+        if not silent:
+            print(path, dst)
+
+
+def replace_folders(workdir: str, pattern, to, ignore_case=True, silent=False):
+    p = re.compile(pattern, re.IGNORECASE if ignore_case else None)
+    for root, dirs, _ in os.walk(workdir):
+        for d in dirs:
+            path = os.path.join(root, d)
+            replace(p, to, path, silent=silent)
+
+
+def replace_files(workdir: str, pattern, to, ignore_case=True, silent=False):
+    p = re.compile(pattern, re.IGNORECASE if ignore_case else None)
+    for root, _, files in os.walk(workdir):
+        for f in files:
+            path = os.path.join(root, f)
+            replace(p, to, path, silent=silent)
