@@ -275,7 +275,7 @@ def check_summary(path):
     check_links(spath)
 
 
-def create_changelog(path, since: datetime = None, to: datetime = None, push=False):
+def create_changelog(path, repo_url=None, since: datetime = None, to: datetime = None, push=False):
 
     cpath = f"{path}/CHANGELOG.md"
 
@@ -290,7 +290,8 @@ def create_changelog(path, since: datetime = None, to: datetime = None, push=Fal
     filestr += "## 📋 Tüm Değişiklikler"
     filestr += "\n\n"
 
-    links = list_commit_links(path, ignore_commits=[IGNORE_COMMIT], since=since, to=to)
+    links = list_commit_links(path, repo_url=repo_url, ignore_commits=[
+                              IGNORE_COMMIT], since=since, to=to)
     filestr += "".join(links)
 
     if oldfilestr != filestr:

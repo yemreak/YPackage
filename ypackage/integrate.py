@@ -204,6 +204,12 @@ def parse_args():
             dest="push",
             help="İşlem sonrası GitHub'a otomatik pushlar"
         )
+        parser.add_argument(
+            "--repo-url",
+            "-ru",
+            dest="repo_url",
+            help="Projenin git repo urli"
+        )
         # WARN: Kullanışsız parametreler
         parser.add_argument(
             '--index',
@@ -276,7 +282,7 @@ def integrate(paths, safe=False):
                     continue
 
             args = parse_args()
-            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH, CHANGELOG = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push, args.changelog
+            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH, CHANGELOG, REPO_URL = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push, args.changelog, args.repo_url
 
             if STORE:
                 last_args = sys.argv[new_args_start_index:]
@@ -315,9 +321,9 @@ def integrate(paths, safe=False):
             if UPDATE:
                 updateSubSummaries(config, path, INDEX_STR, push=PUSH)
 
-            # TIP: Committe iken yapmaktadır (push'a gerek yok)
+            # TIP: Committe iken yapmaktadır (önceden push edilmesine gerek yok)
             if CHANGELOG:
-                gitbook.create_changelog(path, push=PUSH)
+                gitbook.create_changelog(path, repo_url=REPO_URL, push=PUSH)
 
         else:
             print(f"Hatalı yol: {path}")

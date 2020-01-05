@@ -75,8 +75,11 @@ def get_remote_url(path):
     return remote_url
 
 
-def list_commit_links(path, ignore_commits=[], since: datetime = None, to: datetime = None):
+def list_commit_links(path, repo_url=None, ignore_commits=[], since: datetime = None, to: datetime = None):
     from pydriller import RepositoryMining
+
+    if not repo_url:
+        repo_url = get_remote_url(path)
 
     links = []
     for commit in RepositoryMining(path, reversed_order=True).traverse_commits():
@@ -91,8 +94,7 @@ def list_commit_links(path, ignore_commits=[], since: datetime = None, to: datet
         if not ignore:
             hash_value = commit.hash
             time = commit.author_date.strftime("%d/%m/%Y - %H:%M:%S")
-
-            url = DIFF_TEMPLATE.format(get_remote_url(path), hash_value)
+            url = DIFF_TEMPLATE.format(repo_url, hash_value)
             header = f"{title} ~ {str(time)}"
             link = create_link(url, header=header)
             links.append(link)

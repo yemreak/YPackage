@@ -82,6 +82,20 @@
             ]
         },
         {
+            "name": "Integrate - Complate",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../IstanbulUniversity-CE",
+                "-rgc",
+                "-ll",
+                "2",
+                "-ru",
+                "https://github.com/YEmreAk/IstanbulUniversity-CE"
+            ]
+        },
+        {
             "name": "Integrate - All",
             "type": "python",
             "request": "launch",
@@ -90,7 +104,9 @@
                 "../IstanbulUniversity-CE",
                 "-rgcp",
                 "-ll",
-                "2"
+                "2",
+                "-ru",
+                "https://github.com/YEmreAk/IstanbulUniversity-CE"
             ]
         },
         {
