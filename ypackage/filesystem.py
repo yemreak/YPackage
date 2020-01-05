@@ -1,6 +1,6 @@
-import re
-import os
 import json
+import os
+import re
 from urllib.request import urlopen
 
 
@@ -30,16 +30,6 @@ def read_file(filepath: str, debug=False) -> str:
 
 def read_json(filepath, debug=False) -> dict:
     return json.loads(read_file(filepath, debug=debug))
-
-
-def print_files(startpath):
-    for root, _, files in os.walk(startpath):
-        level = find_level(root, startpath)
-        indent = ' ' * 4 * (level)
-        print('{}{}/'.format(indent, os.path.basename(root)))
-        subindent = ' ' * 4 * (level + 1)
-        for f in files:
-            print('{}{}'.format(subindent, f))
 
 
 def read_part_of_file(filepath, string, index, new_index=None, debug=False) -> str:
@@ -117,6 +107,7 @@ def listdir_grouped(root: str, privates=[], include_hidden=False) -> tuple:
             dirs.append(path) if os.path.isdir(
                 path) else files.append(path)
 
+    dirs, files = sorted(dirs), sorted(files)
     return dirs, files
 
 
@@ -124,7 +115,22 @@ def readFileWithURL(rawUrl, encoding="utf-8"):
     return urlopen(rawUrl).read().decode(encoding)
 
 
-def replace(regex, to, path, silent=False):
+def repeat_for_subdirectories(startpath, func):
+
+    for root, dirs, files in os.walk(startpath):
+        # Sıralama her OS için farklı olabiliyor
+        dirs.sort()
+        files.sort()
+
+        lvl = find_level(root, startpath)
+        func(root, lvl, "dir")
+
+        for f in files:
+            fpath = os.path.join(root, f)
+            func(fpath, lvl, "file")
+
+
+def rename(regex, to, path, silent=False):
     result = regex.search(path)
     if result:
         for i in range(result.lastindex + 1):
@@ -137,17 +143,22 @@ def replace(regex, to, path, silent=False):
             print(path, dst)
 
 
-def replace_folders(workdir: str, pattern, to, ignore_case=True, silent=False):
+def rename_folders(startpath: str, pattern, to, ignore_case=True, silent=False):
     p = re.compile(pattern, re.IGNORECASE if ignore_case else None)
-    for root, dirs, _ in os.walk(workdir):
-        for d in dirs:
-            path = os.path.join(root, d)
-            replace(p, to, path, silent=silent)
+    for root, dirs, _ in os.walk(startpath):
+        # Sıralama her OS için farklı olabiliyor
+        dirs.sort()
+
+        rename(p, to, root, silent=silent)
 
 
-def replace_files(workdir: str, pattern, to, ignore_case=True, silent=False):
+def rename_files(startpath: str, pattern, to, ignore_case=True, silent=False):
     p = re.compile(pattern, re.IGNORECASE if ignore_case else None)
-    for root, _, files in os.walk(workdir):
+    for root, dirs, files in os.walk(startpath):
+        # Sıralama her OS için farklı olabiliyor
+        dirs.sort()
+        files.sort()
+
         for f in files:
             path = os.path.join(root, f)
-            replace(p, to, path, silent=silent)
+            rename(p, to, path, silent=silent)
