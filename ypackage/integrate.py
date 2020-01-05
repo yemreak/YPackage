@@ -1,7 +1,9 @@
-import argparse
+﻿import argparse
 import configparser
 import os
 import sys
+import shlex
+
 
 from . import filesystem, gitbook, github, markdown
 
@@ -208,7 +210,22 @@ def parse_args():
             "--repo-url",
             "-ru",
             dest="repo_url",
-            help="Projenin git repo urli"
+            help="Projenin git repo urli",
+            type=str
+        )
+        parser.add_argument(
+            "--commit-msg",
+            "-cm",
+            dest="commit_msg",
+            help="Otomatik pushlama içim commit başlığı (emoji desteklemez)",
+            type=str
+        )
+        parser.add_argument(
+            "--ignore-commits",
+            "-ic",
+            nargs="+",
+            metavar='ignore_commits',
+            help="Değişiklik raporuna dahil edilmeyecek commit başlıkları (emoji desteklemez)"
         )
         # WARN: Kullanışsız parametreler
         parser.add_argument(
@@ -269,11 +286,11 @@ def integrate(paths, safe=False):
                 new_args = ""
                 for section in config.sections():
                     if section.split()[0] == INTEGRATION_MODULE:
-                        new_args = config[section]["args"].replace("\"", "")
+                        new_args = config[section]["args"]
                         break
 
                 if new_args:
-                    sys.argv = [__file__, path] + new_args.split()
+                    sys.argv = [__file__, path] + shlex.split(new_args)
                     new_args_start_index = 2  # len(paths) + 1
                 else:
                     print(f"{os.path.basename(path)} için entegrasyon özelliği mevcut değil")
@@ -282,7 +299,7 @@ def integrate(paths, safe=False):
                     continue
 
             args = parse_args()
-            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH, CHANGELOG, REPO_URL = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push, args.changelog, args.repo_url
+            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH, CHANGELOG, REPO_URL, IGNORE_COMMITS, COMMIT_MSG = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push, args.changelog, args.repo_url, args.ignore_commits, args.commit_msg
 
             if STORE:
                 last_args = sys.argv[new_args_start_index:]
@@ -323,7 +340,8 @@ def integrate(paths, safe=False):
 
             # TIP: Committe iken yapmaktadır (önceden push edilmesine gerek yok)
             if CHANGELOG:
-                gitbook.create_changelog(path, repo_url=REPO_URL, push=PUSH)
+                gitbook.create_changelog(path, repo_url=REPO_URL, push=PUSH,
+                                         ignore_commits=IGNORE_COMMITS, commit_msg=COMMIT_MSG)
 
         else:
             print(f"Hatalı yol: {path}")
