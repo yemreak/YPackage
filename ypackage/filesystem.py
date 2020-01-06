@@ -135,7 +135,7 @@ def insert_file(filepath: Path, string: str, index: str, debug=False) -> None:
         filestr = generate_filestr()
         write_file(filepath, filestr, debug=debug)
 
-    return write_insertion
+    return write_insertion()
 
 
 def listdir_grouped(root: Path, privates=[], include_hidden=False) -> Tuple[List, List]:
@@ -187,6 +187,8 @@ def repeat_for_subdirectories(startpath: Path, func: callable) -> None:
         # Sıralama her OS için farklı olabiliyor
         dirs.sort()
         files.sort()
+
+        root = Path(root)
 
         lvl = find_level(root, startpath)
         func(root, lvl, "dir")
