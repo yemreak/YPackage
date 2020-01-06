@@ -1,14 +1,11 @@
 import os
 import re
 from enum import Enum
+from pathlib import Path
 from urllib.parse import quote
 
-from .filesystem import (
-    insert_file as fs_insert_file
-)
-from .common import (
-    generate_substrings as c_generate_substrings
-)
+from .common import generate_substrings as c_generate_substrings
+from .filesystem import insert_file as fs_insert_file
 
 LINK_REGEX = r"\[([^\[]+)\]\((.*)\)"
 
@@ -20,14 +17,13 @@ class SpecialFile(Enum):
     CONTRIBUTING_FILE = "CONTRIBUTING.md"
     LICANSE_FILE = "Licanse.md"
 
-    def get_filepath(self, root=os.getcwd(), symbolic=False) -> str:
-        if symbolic:
-            return os.path.join(root, self.value)
+    def get_filepath(self, root: Path = Path.cwd(), force=False) -> Path:
+        if force:
+            return root / self.value
 
-        for path in os.listdir(root):
-            path = os.path.join(root, path)
-            if os.path.isfile(path) and os.path.basename(path) == self.value:
-                return os.path.join(root, self.value)
+        for path in root.iterdir():
+            if path.is_file() and path.name == self.value:
+                return root / self.value
 
 # DEV: Figure out index string in markdown file
 
@@ -88,11 +84,11 @@ def make_linkstr(header, link):
     return f"- [{header}]({link})\n"
 
 
-def is_url(path):
-    return "https://" in path or "http://" in path
+def is_url(link: str) -> bool:
+    return "https://" in link or "http://" in link
 
 
-def create_link(path: str, header: str = None, root: str = os.getcwd(), ilvl=0, isize=2) -> str:
+def create_link(path: Path, header: str = None, root: Path = Path.cwd(), ilvl=0, isize=2) -> str:
     """Verilen yola uygun kodlanmış markdown linki oluşturma
 
     Arguments:
@@ -108,14 +104,15 @@ def create_link(path: str, header: str = None, root: str = os.getcwd(), ilvl=0, 
         str -- Girintili markdown bağlatısı
     """
 
-    pathname = barename(path) if not header else header
+    if not header:
+        header = path.name
 
-    if not is_url(path):
-        path = os.path.relpath(path, root)
-        path = encodedpath(path)
+    if not is_url(str(path)):
+        path = path.relative_to(root)
+        path = encodedpath(str(path))
 
     indent = create_indent(ilvl, size=isize)
-    linkstr = make_linkstr(pathname, path)
+    linkstr = make_linkstr(header, path)
 
     return '{}{}'.format(indent, linkstr)
 
@@ -124,9 +121,9 @@ def create_header(name: str, headerlvl: int) -> str:
     return "#" * headerlvl + f" {name}\n\n"
 
 
-def read_first_header(filepath):
+def read_first_header(filepath: Path):
     header = ""
-    with open(filepath, "r", encoding="utf-8") as file:
+    with filepath.open("r", encoding="utf-8") as file:
         for line in file:
             if line.startswith("#"):
                 header = line.strip().replace("# ", "")
@@ -203,7 +200,7 @@ def findall_links(string: str) -> dict:
     return re.findall(LINK_REGEX, string)
 
 
-def generate_filelink(fpath: str, startpath: str = os.getcwd(), header: str = None, ilvl=0, isize=2) -> str:
+def generate_filelink(fpath: Path, startpath: str = os.getcwd(), header: str = None, ilvl=0, isize=2) -> str:
     """Dosya için markdown linki oluşturur
 
     Arguments:
@@ -224,12 +221,12 @@ def generate_filelink(fpath: str, startpath: str = os.getcwd(), header: str = No
     return create_link(fpath, header=header, root=startpath, isize=isize, ilvl=ilvl)
 
 
-def generate_dirlink(root: str, startpath: str = os.getcwd(), ilvl=0, isize=2) -> str:
+def generate_dirlink(root: Path, startpath: str = os.getcwd(), ilvl=0, isize=2) -> str:
     """Dizin için markdown linki oluşturur
     README.md varsa ona bağlantı verir
 
     Arguments:
-        path {str} -- Yol
+        path {Path} -- Yol
 
     Keyword Arguments:
         header {str} -- Link başlığı (default: {None})
@@ -258,8 +255,11 @@ def make_comment(string):
     return f"<!--{string}-->"
 
 
-def insert_file(filepath, string, index, force=False, fileheader=None, new_index=None):
-    if force and not os.path.exists(filepath):
+def insert_file(
+        filepath: Path, string, index, force=False, fileheader=None, new_index=None,
+        debug=False
+):
+    if force and not filepath.exists():
         create_markdown_file(filepath, header=fileheader)
 
     index = make_comment(index)
@@ -267,14 +267,14 @@ def insert_file(filepath, string, index, force=False, fileheader=None, new_index
     if bool(new_index):
         new_index = make_comment(new_index)
 
-    fs_insert_file(filepath, string, index, new_index)
+    fs_insert_file(filepath, string, index, new_index, debug=debug)
 
 
-def create_markdown_file(filepath, header=None):
+def create_markdown_file(filepath: Path, header=None):
     if not bool(header):
-        header = os.path.basename(filepath)
+        header = filepath.name
 
-    with open(filepath, "w", encoding="utf-8") as file:
+    with filepath.open("w", encoding="utf-8") as file:
         file.write(create_header(header,  1))
 
 
