@@ -1,8 +1,9 @@
 ﻿import argparse
 import configparser
-import os
 import sys
 import shlex
+from pathlib import Path
+from glob import glob
 
 
 from . import filesystem, gitbook, github, markdown
@@ -28,10 +29,10 @@ def convert_url_form(filestr: str, url: str):
     return filestr.replace("./", url + "/").replace("README.md", "").replace(".md", "")
 
 
-def read_config(startpath: str, filepath: str) -> dict:
+def read_config(cpath: Path) -> dict:
     try:
         config = configparser.ConfigParser(inline_comment_prefixes="#")
-        config.read(os.path.join(startpath, filepath), encoding="utf-8")
+        config.read(cpath, encoding="utf-8")
     except Exception as e:
         print(e)
         return None
@@ -39,7 +40,7 @@ def read_config(startpath: str, filepath: str) -> dict:
     return config
 
 
-def updateSubSummaries(config: dict, startpath: str, index: str, push=False) -> None:
+def updateSubSummaries(config: dict, workdir: Path, index: str, push=False) -> None:
     """Alt modülleri günceller
 
     Arguments:
@@ -101,7 +102,7 @@ def updateSubSummaries(config: dict, startpath: str, index: str, push=False) -> 
         if name.split()[0] == SUBMODULE_MODULE:
             section = config[name]
 
-            path = os.path.join(startpath, section['path'])
+            path = workdir / section['path']
             url = section['url']
             root = section['root']
 
@@ -132,7 +133,7 @@ def updateSubSummaries(config: dict, startpath: str, index: str, push=False) -> 
             paths.append(path)
 
     if push:
-        github.push_to_github(startpath, paths, COMMIT_UPDATE_SUBMODULES)
+        github.push_to_github(workdir, paths, COMMIT_UPDATE_SUBMODULES)
 
 
 def parse_args():
@@ -263,88 +264,83 @@ def parse_args():
         return parser.parse_args()
 
 
-def integrate(paths, safe=False):
-    new_args_start_index = (len(paths) + 1)
-    override = len(sys.argv) > new_args_start_index
+def integrate(pathstr_list, safe=False):
+    for pathstr in pathstr_list:
+        paths = [Path(p) for p in glob(pathstr)]
 
-    for path in paths:
-        if not safe and path[-2:] == "/*":
-            dirname = path[:-2]
+        new_args_start_index = (len(paths) + 1)
+        override = len(sys.argv) > new_args_start_index
 
-            new_paths = []
-            for path in os.listdir(dirname):
-                new_path = os.path.join(dirname, path)
-                if os.path.isdir(new_path):
-                    new_paths.append(new_path)
+        for path in paths:
+            if path.is_dir():
+                config = read_config(path / INTEGRATION_FILE)
 
-            integrate(new_paths, safe=True)
+                if not override:
+                    new_args = ""
+                    for section in config.sections():
+                        if section.split()[0] == INTEGRATION_MODULE:
+                            new_args = config[section]["args"]
+                            break
 
-        elif os.path.isdir(path):
-            config = read_config(path, INTEGRATION_FILE)
+                    if new_args:
+                        sys.argv = [__file__, str(path)] + shlex.split(new_args)
+                        new_args_start_index = 2  # len(paths) + 1
+                    else:
+                        print(f"{os.path.basename(path)} için entegrasyon özelliği mevcut değil")
+                        print(
+                            f"    `{INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok")
+                        continue
 
-            if not override:
-                new_args = ""
-                for section in config.sections():
-                    if section.split()[0] == INTEGRATION_MODULE:
-                        new_args = config[section]["args"]
-                        break
+                args = parse_args()
+                PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH, CHANGELOG, REPO_URL, IGNORE_COMMITS, COMMIT_MSG, DEBUG = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push, args.changelog, args.repo_url, args.ignore_commits, args.commit_msg, args.debug
 
-                if new_args:
-                    sys.argv = [__file__, path] + shlex.split(new_args)
-                    new_args_start_index = 2  # len(paths) + 1
-                else:
-                    print(f"{os.path.basename(path)} için entegrasyon özelliği mevcut değil")
-                    print(
-                        f"    `{INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok")
-                    continue
+                if STORE:
+                    last_args = sys.argv[new_args_start_index:]
+                    last_args = " ".join(last_args)
 
-            args = parse_args()
-            PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH, CHANGELOG, REPO_URL, IGNORE_COMMITS, COMMIT_MSG = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push, args.changelog, args.repo_url, args.ignore_commits, args.commit_msg
+                    ifpath = path / INTEGRATION_FILE
+                    if not ifpath.exists():
+                        with open(ifpath, "w", encoding="utf-8") as file:
+                            file.write(f'[{INTEGRATION_MODULE} "auto"]\n')
+                            file.write(f'\targs = {last_args}')
+                    else:
+                        for name in config.sections():
+                            if name.split()[0] == INTEGRATION_MODULE:
+                                section = config[name]
+                                section["args"] = last_args
 
-            if STORE:
-                last_args = sys.argv[new_args_start_index:]
-                last_args = " ".join(last_args)
+                        with open(ifpath, "w", encoding="utf-8") as configfile:
+                            config.write(configfile)
 
-                ifpath = os.path.join(path, INTEGRATION_FILE)
-                if not os.path.exists(ifpath):
-                    with open(ifpath, "w", encoding="utf-8") as file:
-                        file.write(f'[{INTEGRATION_MODULE} "auto"]\n')
-                        file.write(f'\targs = {last_args}')
-                else:
-                    for name in config.sections():
-                        if name.split()[0] == INTEGRATION_MODULE:
-                            section = config[name]
-                            section["args"] = last_args
+                if GENERATE:
+                    gitbook.generate_readmes(
+                        path, privates=PRIVATES, index=INDEX_STR,
+                        new_index=NEW_INDEX_STR, level_limit=LEVEL_LIMIT, debug=DEBUG
+                    )
 
-                    with open(ifpath, "w", encoding="utf-8") as configfile:
-                        config.write(configfile)
+                if RECREATE:
+                    filestr = gitbook.generate_summary_filestr(
+                        path, level_limit=LEVEL_LIMIT, privates=PRIVATES,
+                        footer_path=FOOTER_PATH
+                    )
 
-            if GENERATE:
-                gitbook.generate_readmes(
-                    path, privates=PRIVATES, index=INDEX_STR,
-                    new_index=NEW_INDEX_STR, level_limit=LEVEL_LIMIT
-                )
+                    gitbook.create_summary_file(path, debug=DEBUG)
+                    gitbook.insert_summary_file(
+                        path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR, debug=DEBUG
+                    )
 
-            if RECREATE:
-                filestr = gitbook.generate_summary_filestr(
-                    path, level_limit=LEVEL_LIMIT, privates=PRIVATES,
-                    footer_path=FOOTER_PATH
-                )
-                gitbook.create_summary_file(path)
-                gitbook.insert_summary_file(
-                    path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR
-                )
+                if UPDATE:
+                    updateSubSummaries(config, path, INDEX_STR, push=PUSH, debug=DEBUG)
 
-            if UPDATE:
-                updateSubSummaries(config, path, INDEX_STR, push=PUSH)
+                # TIP: Committe iken yapmaktadır (önceden push edilmesine gerek yok)
+                if CHANGELOG:
+                    gitbook.create_changelog(
+                        path, repo_url=REPO_URL, push=PUSH, debug=DEBUG,
+                        ignore_commits=IGNORE_COMMITS, commit_msg=COMMIT_MSG
+                    )
 
-            # TIP: Committe iken yapmaktadır (önceden push edilmesine gerek yok)
-            if CHANGELOG:
-                gitbook.create_changelog(path, repo_url=REPO_URL, push=PUSH,
-                                         ignore_commits=IGNORE_COMMITS, commit_msg=COMMIT_MSG)
-
-        else:
-            print(f"Hatalı yol: {path}")
+            else:
+                print(f"Hatalı yol: {path}")
 
 
 def generate_changelog():
