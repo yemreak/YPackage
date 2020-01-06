@@ -1,6 +1,8 @@
 import os
 # from pydriller import RepositoryMining
 from datetime import datetime
+from pathlib import Path
+from typing import List
 
 from .markdown import create_link, encodedpath
 
@@ -44,14 +46,14 @@ def generate_raw_url_from_repo_url(repo_url) -> str:
     return create_rawurl(username, reponame)
 
 
-def push_to_github(gpath: str, paths: list, commit: str):
+def push_to_github(gpath: Path, paths: List[Path], commit: str):
     if len(paths) > 0:
         cur_dir = os.getcwd()
         os.chdir(gpath)
         print(f"----------------------------------------")
         print(f"{gpath} için push işlemi:")
         print(f"----------------------------------------")
-        command = " &&".join([f"git add {os.path.relpath(path)}" for path in paths])
+        command = " &&".join([f"git add {path.relative_to(gpath)}" for path in paths])
         command += " &&" + f'git commit -m "{commit}"'
         command += " &&" + f"git push -u origin master"
 
@@ -75,7 +77,7 @@ def get_remote_url(path):
     return remote_url
 
 
-def list_commit_links(path, repo_url=None, ignore_commits=[], since: datetime = None, to: datetime = None):
+def list_commit_links(path: Path, repo_url=None, ignore_commits=[], since: datetime = None, to: datetime = None):
     from pydriller import RepositoryMining
 
     if not repo_url:
@@ -84,7 +86,7 @@ def list_commit_links(path, repo_url=None, ignore_commits=[], since: datetime = 
     links = []
     links.append("|📅 Tarih|🔀 Commit|🐥 Sahibi|\n")
     links.append("|-|-|-|\n")
-    for commit in RepositoryMining(path, reversed_order=True).traverse_commits():
+    for commit in RepositoryMining(str(path), reversed_order=True).traverse_commits():
         title = commit.msg.split("\n")[0]
         author = commit.author.name
 
