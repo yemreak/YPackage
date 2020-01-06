@@ -40,7 +40,7 @@ def read_config(cpath: Path) -> dict:
     return config
 
 
-def updateSubSummaries(config: dict, workdir: Path, index: str, push=False) -> None:
+def updateSubSummaries(config: dict, workdir: Path, index: str, push=False, debug=False) -> None:
     """Alt modülleri günceller
 
     Arguments:
@@ -128,7 +128,7 @@ def updateSubSummaries(config: dict, workdir: Path, index: str, push=False) -> N
                 until = "## " + until
                 content = content[:content.find(until)]
 
-            filesystem.write_file(path, content)
+            filesystem.write_file(path, content, debug=debug)
 
             paths.append(path)
 

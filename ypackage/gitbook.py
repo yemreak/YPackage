@@ -286,8 +286,10 @@ def check_summary(path):
     check_links(spath)
 
 
-def create_changelog(path: Path, ignore_commits=[], repo_url=None, since: datetime = None,
-                     to: datetime = None, push=False, commit_msg=None):
+def create_changelog(
+        path: Path, ignore_commits=[], repo_url=None, since: datetime = None,
+        to: datetime = None, push=False, commit_msg=None, debug=False
+):
     if not commit_msg:
         commit_msg = "💫 YGitBookIntegration"
 
@@ -309,8 +311,7 @@ def create_changelog(path: Path, ignore_commits=[], repo_url=None, since: dateti
     filestr += "".join(links)
 
     if oldfilestr != filestr:
-        with cpath.open("w", encoding="utf-8") as file:
-            file.write(filestr)
+        write_file(cpath, filestr, debug=debug)
 
         if push:
             push_to_github(path, [cpath], commit_msg)
