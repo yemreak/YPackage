@@ -133,7 +133,9 @@ def insert_file(filepath: Path, string: str, index: str, new_index: str, debug=F
 
     def write_insertion() -> None:
         filestr = generate_filestr()
-        write_file(filepath, filestr, debug=debug)
+
+        if filestr != read_file(filepath):
+            write_file(filepath, filestr, debug=debug)
 
     return write_insertion()
 
