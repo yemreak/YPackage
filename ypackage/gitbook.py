@@ -1,7 +1,8 @@
 import os
 from datetime import datetime
+from pathlib import Path
 
-from .filesystem import find_level, listdir_grouped, readFileWithURL
+from .filesystem import find_level, listdir_grouped, read_file_by_url, write_file
 from .github import (generate_raw_url_from_repo_url, get_github_raw_link,
                      list_commit_links, push_to_github)
 from .markdown import (SpecialFile, check_links, create_header, create_link,
@@ -17,6 +18,8 @@ description: >-
 
 SUMMARY_FILE = "SUMMARY.md"
 SUMMARY_FILE_HEADER = "# Summary"
+
+CHANGELOG_FILE = "CHANGELOG.md"
 CHANGELOG_HEADER = u"👀 Neler değişti"
 CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
@@ -33,39 +36,38 @@ def get_specialfile_header(specialfile: SpecialFile) -> str:
         return CONTRIBUTING_HEADER
 
 
-def make_file_link(filepath: str, root: str = None, direct_link: bool = False) -> str:
+def make_file_link(filepath: Path, root: Path = None, direct_link: bool = False) -> str:
     if root is None:
-        root = os.path.dirname(
-            filepath)
+        root = filepath.parent
 
     if direct_link:
-        return make_linkstr(os.path.basename(filepath), get_github_raw_link(GITHUB_USERNAME, filepath))
+        return make_linkstr(filepath.name, get_github_raw_link(GITHUB_USERNAME, filepath))
     else:
         return create_link(filepath, root=root)
 
 
-def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit: int = -1, privates=[]) -> list:
+def generate_fs_link(lines: list, root: Path, startpath: Path = None, level_limit: int = -1, privates=[]) -> list:
     # TODO: Buranın markdown'a aktarılması lazım
     # RES: Decalator kavramının araştırılması lazım olabilir
 
-    def append_rootlink(lines: list, root: str, level: int) -> str:
+    def append_rootlink(lines: list, root: Path, level: int) -> str:
         dirlink = generate_dirlink(root, startpath=startpath, ilvl=level, isize=2)
         lines.append(dirlink)
         return lines
 
-    def append_filelink(lines: list, fpath: str, level: int):
+    def append_filelink(lines: list, fpath: Path, level: int):
         filelink = generate_filelink(fpath, startpath=startpath, ilvl=level, isize=2)
         lines.append(filelink)
         return lines
 
-    def append_sublinks(lines: list, root: str, level: int, dirs_only=False):
+    def append_sublinks(lines: list, root: Path, level: int, dirs_only=False):
         dirs, files = listdir_grouped(root, privates=privates)
         for dpath in dirs:
             lines = generate_fs_link(lines, dpath, startpath=startpath, privates=privates)
 
         if not dirs_only:
             for fpath in files:
-                if ".md" in fpath and SpecialFile.README_FILE.value not in fpath:
+                if ".md" in fpath.name and SpecialFile.README_FILE.value not in fpath.name:
                     lines = append_filelink(lines, fpath, level)
 
         return lines
@@ -73,7 +75,7 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
     def append_links(lines: list):
         nonlocal startpath
         if startpath is None:
-            startpath = os.path.normpath(root)
+            startpath = root
             level = find_level(root, startpath)
             if level_limit == -1 or level <= level_limit:
                 lines = append_sublinks(lines, root, level + 1, dirs_only=True)
@@ -87,18 +89,19 @@ def generate_fs_link(lines: list, root: str, startpath: str = None, level_limit:
     return append_links(lines)
 
 
-def get_summary_path(workdir: str):
-    return os.path.join(workdir, SUMMARY_FILE)
+def get_summary_path(workdir: Path) -> Path:
+    return workdir / SUMMARY_FILE
 
 
-def create_summary_file(workdir: str):
+def create_summary_file(workdir: Path, debug=False):
     filepath = get_summary_path(workdir)
-    if not os.path.exists(filepath):
-        with open(filepath, "w", encoding="utf-8") as file:
-            file.write(SUMMARY_FILE_HEADER + "\n\n")
+    if not filepath.exists():
+        write_file(filepath, SUMMARY_FILE_HEADER + "\n\n", debug=debug)
 
 
-def generate_summary_filestr(workdir, level_limit: int = -1, privates=[], footer_path=None):
+def generate_summary_filestr(
+    workdir: Path, level_limit: int = -1, privates=[], footer_path=None
+):
 
     def append_header(filestr):
 
@@ -152,18 +155,27 @@ def generate_summary_filestr(workdir, level_limit: int = -1, privates=[], footer
     return filestr
 
 
-def insert_summary_file(workdir: str, filestr: str, index: str = "Index", new_index: str = None):
+def insert_summary_file(
+        workdir: Path, filestr: str, index: str = "Index", new_index: str = None,
+        debug=False
+):
     FILEPATH = get_summary_path(workdir)
-    insert_file(FILEPATH, filestr, index=index, new_index=new_index)
+    insert_file(FILEPATH, filestr, index=index, new_index=new_index, debug=debug)
 
 
-def generate_summary(workdir, level_limit: int = -1, privates=[], footer_path=None, index: str = "Index", new_index: str = None):
+def generate_summary(
+    workdir, level_limit: int = -1, privates=[], footer_path=None,
+    index: str = "Index", new_index: str = None
+):
     filestr = generate_summary_filestr(
         workdir, level_limit=level_limit, privates=privates, footer_path=footer_path)
     insert_summary_file(workdir, filestr, index=index, new_index=new_index)
 
 
-def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index", header=None, new_index=None, clearify=False, direct_link: bool = False):
+def generate_readmes(
+    startpath: Path, level_limit: int = -1, privates=[], index="Index", header=None,
+    new_index=None, clearify=False, debug=False, direct_link: bool = False
+):
     # DEV: Ders notlarını README'ye ekleme direkt olarak dizin dosya oluştur
     def clear_private_dirs() -> list:
         return [d for d in dirs if not d.startswith('.') and d not in privates]
@@ -174,7 +186,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         links = []
         for f in files:
             if ".md" not in f:
-                links.append(make_file_link(os.path.join(".", f), direct_link=direct_link))
+                links.append(make_file_link(startpath / f, direct_link=direct_link))
 
         if bool(links):
             filestr = create_header(header, 2) if header else ""
@@ -182,24 +194,25 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
 
         return filestr
 
-    def generate_markdown_files_for_subitems(startpath, clearify=False) -> str:
+    def generate_markdown_files_for_subitems(startpath: Path, clearify=False, debug=debug) -> str:
         # DEV: Aynı dizindekiler aynı dosya altına yazılacak
         for root, dirs, files in os.walk(startpath):
             # Sıralama her OS için farklı olabiliyor
             dirs.sort()
             files.sort()
 
+            root = Path(root)
             if root == startpath:
                 continue
 
             level = find_level(root, startpath)
-            link_root = os.path.dirname(root)
+            link_root = root.parent
             for _ in range(level - 1):
-                link_root = os.path.dirname(link_root)
+                link_root = link_root.parent
 
             links = []
             for f in files:
-                subfilepath = os.path.join(root, f)
+                subfilepath = root / f
                 if ".md" not in f:
                     links.append(make_file_link(subfilepath, root=root, direct_link=direct_link))
                 elif f != SpecialFile.README_FILE.value:
@@ -210,7 +223,7 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
                 filestr = create_header(header, 2) if header else ""
                 filestr += "".join(links)
 
-                filepath = SpecialFile.README_FILE.get_filepath(root=root, symbolic=True)
+                filepath = SpecialFile.README_FILE.get_filepath(root=Path(root), force=True)
                 if not os.path.exists(filepath):
                     oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
                     if clearify:
@@ -222,19 +235,18 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
                             print(f"`{oldfile}` aktarılamadı. {e}")
 
                 insert_file(filepath, filestr, index=index, force=True,
-                            fileheader=os.path.basename(root), new_index=new_index)
+                            fileheader=os.path.basename(root), new_index=new_index, debug=debug)
 
     filestr = ""
     for root, dirs, files in os.walk(startpath):
+        # Remove private directories
+        dirs[:] = clear_private_dirs()
+
         # Sıralama her OS için farklı olabiliyor
         dirs.sort()
         files.sort()
 
-        # Remove private directories
-        dirs[:] = clear_private_dirs()
-
-        dirs.sort()
-        files.sort()
+        root = Path(root)
 
         # Skip startpath
         if root == startpath:
@@ -245,19 +257,19 @@ def generate_readmes(startpath, level_limit: int = -1, privates=[], index="Index
         if level_limit == -1 or level < level_limit:
             filestr = generate_links_for_nonmarkdowns(files)
         elif level == level_limit:  # 1
-            generate_markdown_files_for_subitems(root, clearify=clearify)
+            generate_markdown_files_for_subitems(root, clearify=clearify, debug=debug)
         else:
             if clearify and level > level_limit:
-                readme_path = SpecialFile.README_FILE.get_filepath(root=root, symbolic=True)
+                readme_path = SpecialFile.README_FILE.get_filepath(root=root, force=True)
                 if os.path.exists(readme_path):
                     os.remove(readme_path)
             continue
 
         if bool(filestr):
-            filepath = SpecialFile.README_FILE.get_filepath(root=root, symbolic=True)
+            filepath = SpecialFile.README_FILE.get_filepath(root=root, force=True)
             fileheader = os.path.basename(root)
             insert_file(filepath, filestr, index=index, force=True,
-                        fileheader=fileheader, new_index=new_index)
+                        fileheader=fileheader, new_index=new_index, debug=debug)
 
 
 def get_summary_url_from_repo_url(repo_url):
@@ -266,7 +278,7 @@ def get_summary_url_from_repo_url(repo_url):
 
 def read_summary_from_url(repo_url):
     raw_url = get_summary_url_from_repo_url(repo_url)
-    return readFileWithURL(raw_url)
+    return read_file_by_url(raw_url)
 
 
 def check_summary(path):
@@ -274,14 +286,15 @@ def check_summary(path):
     check_links(spath)
 
 
-def create_changelog(path, ignore_commits=[], repo_url=None, since: datetime = None, to: datetime = None, push=False, commit_msg=None):
+def create_changelog(path: Path, ignore_commits=[], repo_url=None, since: datetime = None,
+                     to: datetime = None, push=False, commit_msg=None):
     if not commit_msg:
         commit_msg = "💫 YGitBookIntegration"
 
-    cpath = f"{path}/CHANGELOG.md"
+    cpath = path / CHANGELOG_FILE
 
     oldfilestr = ""
-    with open(cpath, "r", encoding="utf-8") as file:
+    with cpath.open("r", encoding="utf-8") as file:
         oldfilestr = file.read()
 
     filestr = ""
@@ -296,7 +309,7 @@ def create_changelog(path, ignore_commits=[], repo_url=None, since: datetime = N
     filestr += "".join(links)
 
     if oldfilestr != filestr:
-        with open(cpath, "w+", encoding="utf-8") as file:
+        with cpath.open("w", encoding="utf-8") as file:
             file.write(filestr)
 
         if push:
