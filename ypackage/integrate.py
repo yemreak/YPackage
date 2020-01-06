@@ -259,7 +259,7 @@ def initialize_parser():
     return parser
 
 
-def integrate():
+def main():
     parser = initialize_parser()
 
     args = parser.parse_args()
@@ -334,4 +334,4 @@ def integrate():
 
 
 if __name__ == "__main__":
-    integrate()
+    main()
