@@ -1,10 +1,9 @@
 ﻿import argparse
 import configparser
-import sys
 import shlex
-from pathlib import Path
+import sys
 from glob import glob
-
+from pathlib import Path
 
 from . import filesystem, gitbook, github, markdown
 
@@ -88,7 +87,7 @@ def updateSubSummaries(config: dict, workdir: Path, index: str, push=False, debu
             link = markdown.find_link(line)
             if link:
                 path: str = link[2]
-                if "http" not in path:
+                if not markdown.is_url(path):
                     fixedpath = path.replace(".md", "").replace("README", "")
                     fixedpath = root + "/" + fixedpath
                     line = line.replace(path, fixedpath)
@@ -264,53 +263,41 @@ def parse_args():
         return parser.parse_args()
 
 
-def integrate(pathstr_list, safe=False):
-    for pathstr in pathstr_list:
+def integrate():
+    args = parse_args()
+    PATHSTR_LIST, MAIN_DEBUG = args.paths, args.debug
+
+    for pathstr in PATHSTR_LIST:
         paths = [Path(p) for p in glob(pathstr)]
-
-        new_args_start_index = (len(paths) + 1)
-        override = len(sys.argv) > new_args_start_index
-
         for path in paths:
             if path.is_dir():
                 config = read_config(path / INTEGRATION_FILE)
 
-                if not override:
-                    new_args = ""
-                    for section in config.sections():
-                        if section.split()[0] == INTEGRATION_MODULE:
-                            new_args = config[section]["args"]
-                            break
+                new_args = ""
+                for section in config.sections():
+                    if section.split()[0] == INTEGRATION_MODULE:
+                        new_args = config[section]["args"]
+                        break
 
-                    if new_args:
-                        sys.argv = [__file__, str(path)] + shlex.split(new_args)
-                        new_args_start_index = 2  # len(paths) + 1
-                    else:
-                        print(f"{os.path.basename(path)} için entegrasyon özelliği mevcut değil")
-                        print(
-                            f"    `{INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok")
-                        continue
+                if new_args:
+                    sys.argv = [__file__, str(path)] + shlex.split(new_args)
+                else:
+                    print(f"{str(path)} için entegrasyon özelliği mevcut değil")
+                    print(
+                        f"    `{INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok")
+                    continue
 
                 args = parse_args()
-                PRIVATES, INDEX_STR, NEW_INDEX_STR, FOOTER_PATH, LEVEL_LIMIT, UPDATE, RECREATE, GENERATE, STORE, PUSH, CHANGELOG, REPO_URL, IGNORE_COMMITS, COMMIT_MSG, DEBUG = args.privates, args.indexStr, args.newIndex, args.footerPath, args.level_limit, args.update, args.recreate, args.generate, args.store, args.push, args.changelog, args.repo_url, args.ignore_commits, args.commit_msg, args.debug
+                GENERATE, RECREATE = args.generate, args.recreate
+                UPDATE, CHANGELOG, REPO_URL = args.update, args.changelog, args.repo_url
+                IGNORE_COMMITS, COMMIT_MSG, PUSH = args.ignore_commits, args.commit_msg, args.push
+                LEVEL_LIMIT, PRIVATES = args.level_limit, args.privates
+                DEBUG = args.debug
+                INDEX_STR, NEW_INDEX_STR = args.indexStr, args.newIndex
+                FOOTER_PATH = args.footerPath
 
-                if STORE:
-                    last_args = sys.argv[new_args_start_index:]
-                    last_args = " ".join(last_args)
-
-                    ifpath = path / INTEGRATION_FILE
-                    if not ifpath.exists():
-                        with open(ifpath, "w", encoding="utf-8") as file:
-                            file.write(f'[{INTEGRATION_MODULE} "auto"]\n')
-                            file.write(f'\targs = {last_args}')
-                    else:
-                        for name in config.sections():
-                            if name.split()[0] == INTEGRATION_MODULE:
-                                section = config[name]
-                                section["args"] = last_args
-
-                        with open(ifpath, "w", encoding="utf-8") as configfile:
-                            config.write(configfile)
+                if MAIN_DEBUG:
+                    print(f"`{str(path)}` için gitbook entegrasyonu çalıştırıldı.")
 
                 if GENERATE:
                     gitbook.generate_readmes(
@@ -339,18 +326,12 @@ def integrate(pathstr_list, safe=False):
                         ignore_commits=IGNORE_COMMITS, commit_msg=COMMIT_MSG
                     )
 
-            else:
+                if MAIN_DEBUG:
+                    print(f"`{str(path)}` için gitbook entegrasyonu tamamlandı.")
+
+            elif MAIN_DEBUG:
                 print(f"Hatalı yol: {path}")
 
 
-def generate_changelog():
-    pass
-
-
-def main():
-    args = parse_args()
-    integrate(args.paths)
-
-
 if __name__ == "__main__":
-    main()
+    integrate()
