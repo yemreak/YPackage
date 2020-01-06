@@ -267,7 +267,7 @@ def insert_file(
     if bool(new_index):
         new_index = make_comment(new_index)
 
-    fs_insert_file(filepath, string, index, new_index, debug=debug)
+    fs_insert_file(filepath, string, index=index, new_index=new_index, debug=debug)
 
 
 def create_markdown_file(filepath: Path, header=None):

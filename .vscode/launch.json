@@ -88,7 +88,7 @@
             "module": "ypackage.integrate",
             "args": [
                 "../IstanbulUniversity-CE",
-                "-rgc",
+                "-rgcd",
                 "-ll",
                 "2",
                 "-ru",

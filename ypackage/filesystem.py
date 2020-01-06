@@ -74,7 +74,7 @@ def read_part_of_file(filepath: Path, index: str, debug=False) -> str:
     return filestr
 
 
-def insert_file(filepath: Path, string: str, index: str, debug=False) -> None:
+def insert_file(filepath: Path, string: str, index: str, new_index: str, debug=False) -> None:
     """Dosyadaki belirlirli indekslerin arasına yazma
 
     Arguments:
@@ -86,7 +86,7 @@ def insert_file(filepath: Path, string: str, index: str, debug=False) -> None:
         debug {bool} -- Çıktıları ekrana basma (default: {False})
     """
     def get_index():
-        return index
+        return index if not new_index else new_index
 
     def generate_insertion():
         insertion = ""
