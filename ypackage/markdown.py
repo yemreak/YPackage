@@ -200,7 +200,10 @@ def findall_links(string: str) -> dict:
     return re.findall(LINK_REGEX, string)
 
 
-def generate_filelink(fpath: Path, startpath: str = os.getcwd(), header: str = None, ilvl=0, isize=2) -> str:
+def generate_filelink(
+        fpath: Path, startpath: str = os.getcwd(),
+        header: str = None, ilvl=0, isize=2
+) -> str:
     """Dosya için markdown linki oluşturur
 
     Arguments:

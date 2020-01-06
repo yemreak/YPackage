@@ -135,136 +135,134 @@ def updateSubSummaries(config: dict, workdir: Path, index: str, push=False, debu
         github.push_to_github(workdir, paths, COMMIT_UPDATE_SUBMODULES)
 
 
-def parse_args():
-    global parser
-    if 'parser' in globals():
-        return parser.parse_args()
-    else:
-        parser = argparse.ArgumentParser(
-            description='Create `README.md` and `SUMMARY.md` file for GitBook synchronization',
-        )
-        parser.add_argument(
-            'paths',
-            nargs="+",
-            metavar='paths',
-            help='Projelerin yolları',
-        )
-        parser.add_argument(
-            "--update",
-            "-u",
-            action="store_true",
-            dest="update",
-            help="Alt modüllerin summary'lerini güncelleme"
-        )
-        parser.add_argument(
-            "--recreate",
-            "-r",
-            action="store_true",
-            dest="recreate",
-            help="Summary dosyasını baştan oluşturur"
-        )
-        parser.add_argument(
-            "--generate",
-            "-g",
-            action="store_true",
-            dest="generate",
-            help="Markdown dışı dosyalar için README'ye bağlantılar oluşturma"
-        )
-        parser.add_argument(
-            "--changelog",
-            "-c",
-            action="store_true",
-            dest="changelog",
-            help="Değişikliklerin raporlandığı CHANGELOG.mg dosyasını verilen URL'e göre oluşturur"
-        )
-        parser.add_argument(
-            '--level-limit',
-            '-ll',
-            dest="level_limit",
-            default=-1,
-            help='Fonksiyonların çalışacağı en yüksek derinlik (0 => ana dizinde çalışır sadece)',
-            type=int,
-        )
-        parser.add_argument(
-            "--debug",
-            "-d",
-            action="store_true",
-            dest="debug",
-            help="Bilgilendirici metinleri gösterme"
-        )
-        parser.add_argument(
-            "--store",
-            "-s",
-            action="store_true",
-            dest="store",
-            help="Son komutu hızlı kullanım için yapılandırma dosyasında saklar"
-        )
-        parser.add_argument(
-            "--push",
-            "-p",
-            action="store_true",
-            dest="push",
-            help="İşlem sonrası GitHub'a otomatik pushlar"
-        )
-        parser.add_argument(
-            "--repo-url",
-            "-ru",
-            dest="repo_url",
-            help="Projenin git repo urli",
-            type=str
-        )
-        parser.add_argument(
-            "--commit-msg",
-            "-cm",
-            dest="commit_msg",
-            help="Otomatik pushlama içim commit başlığı (emoji desteklemez)",
-            type=str
-        )
-        parser.add_argument(
-            "--ignore-commits",
-            "-ic",
-            nargs="+",
-            metavar='ignore_commits',
-            help="Değişiklik raporuna dahil edilmeyecek commit başlıkları (emoji desteklemez)"
-        )
-        # WARN: Kullanışsız parametreler
-        parser.add_argument(
-            '--index',
-            '-ix',
-            dest="indexStr",
-            default="YPackage.YGitbookIntegration-tarafından-otomatik-oluşturulmuştur",
-            help='Generated string will be inserted between given indexes',
-            type=str,
-        )
-        # BUG: Bu yapı çalışmaz, nargs olması lazım
-        parser.add_argument(
-            '--privates',
-            "-pp",
-            dest="privates",
-            default=["res", "__pycache__"],
-            help='List of folder names that you dont want to add',
-            type=list
-        )
-        parser.add_argument(
-            "--footer-path",
-            '-fp',
-            dest="footerPath",
-            help="Append the given file to end of the output. "
-        )
-        parser.add_argument(
-            '--new-index',
-            '-nix',
-            dest="newIndex",
-            default=None,
-            help='Generated string will be inserted between given indexes with changing the indexes',
-            type=str,
-        )
+def initialize_parser():
+    parser = argparse.ArgumentParser(
+        description='Create `README.md` and `SUMMARY.md` file for GitBook synchronization',
+    )
+    parser.add_argument(
+        'paths',
+        nargs="+",
+        metavar='paths',
+        help='Projelerin yolları',
+    )
+    parser.add_argument(
+        "--update",
+        "-u",
+        action="store_true",
+        dest="update",
+        help="Alt modüllerin summary'lerini güncelleme"
+    )
+    parser.add_argument(
+        "--recreate",
+        "-r",
+        action="store_true",
+        dest="recreate",
+        help="Summary dosyasını baştan oluşturur"
+    )
+    parser.add_argument(
+        "--generate",
+        "-g",
+        action="store_true",
+        dest="generate",
+        help="Markdown dışı dosyalar için README'ye bağlantılar oluşturma"
+    )
+    parser.add_argument(
+        "--changelog",
+        "-c",
+        action="store_true",
+        dest="changelog",
+        help="Değişikliklerin raporlandığı CHANGELOG.mg dosyasını verilen URL'e göre oluşturur"
+    )
+    parser.add_argument(
+        '--level-limit',
+        '-ll',
+        dest="level_limit",
+        default=-1,
+        help='Fonksiyonların çalışacağı en yüksek derinlik (0 => ana dizinde çalışır sadece)',
+        type=int,
+    )
+    parser.add_argument(
+        "--debug",
+        "-d",
+        action="store_true",
+        dest="debug",
+        help="Bilgilendirici metinleri gösterme"
+    )
+    parser.add_argument(
+        "--store",
+        "-s",
+        action="store_true",
+        dest="store",
+        help="Son komutu hızlı kullanım için yapılandırma dosyasında saklar"
+    )
+    parser.add_argument(
+        "--push",
+        "-p",
+        action="store_true",
+        dest="push",
+        help="İşlem sonrası GitHub'a otomatik pushlar"
+    )
+    parser.add_argument(
+        "--repo-url",
+        "-ru",
+        dest="repo_url",
+        help="Projenin git repo urli",
+        type=str
+    )
+    parser.add_argument(
+        "--commit-msg",
+        "-cm",
+        dest="commit_msg",
+        help="Otomatik pushlama içim commit başlığı (emoji desteklemez)",
+        type=str
+    )
+    parser.add_argument(
+        "--ignore-commits",
+        "-ic",
+        nargs="+",
+        metavar='ignore_commits',
+        help="Değişiklik raporuna dahil edilmeyecek commit başlıkları (emoji desteklemez)"
+    )
+    # WARN: Kullanışsız parametreler
+    parser.add_argument(
+        '--index',
+        '-ix',
+        dest="indexStr",
+        default="YPackage.YGitbookIntegration-tarafından-otomatik-oluşturulmuştur",
+        help='Generated string will be inserted between given indexes',
+        type=str,
+    )
+    # BUG: Bu yapı çalışmaz, nargs olması lazım
+    parser.add_argument(
+        '--privates',
+        "-pp",
+        dest="privates",
+        default=["res", "__pycache__"],
+        help='List of folder names that you dont want to add',
+        type=list
+    )
+    parser.add_argument(
+        "--footer-path",
+        '-fp',
+        dest="footerPath",
+        help="Append the given file to end of the output. "
+    )
+    parser.add_argument(
+        '--new-index',
+        '-nix',
+        dest="newIndex",
+        default=None,
+        help="Oluşturulan metin verilen yeni indekslerin arasına yazılır",
+        type=str,
+    )
 
-        return parser.parse_args()
+    return parser
 
 
 def integrate():
-    args = parse_args()
+    parser = initialize_parser()
+
+    args = parser.parse_args()
     PATHSTR_LIST, MAIN_DEBUG = args.paths, args.debug
 
     for pathstr in PATHSTR_LIST:
@@ -284,10 +282,12 @@ def integrate():
                 else:
                     print(f"{str(path)} için entegrasyon özelliği mevcut değil")
                     print(
-                        f"    `{INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok")
+                        f"\t`{INTEGRATION_FILE}` dosyası içerisindeki `integration`" +
+                        "alanında args` özelliği yok"
+                    )
                     continue
 
-                args = parse_args()
+                args = parser.parse_args()
                 GENERATE, RECREATE = args.generate, args.recreate
                 UPDATE, CHANGELOG, REPO_URL = args.update, args.changelog, args.repo_url
                 IGNORE_COMMITS, COMMIT_MSG, PUSH = args.ignore_commits, args.commit_msg, args.push

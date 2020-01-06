@@ -6,20 +6,18 @@ from typing import List
 
 from .markdown import create_link, encodedpath
 
-# diff-528720652ae91788d21a1334d1696e75
-# https://github.com/YEmreAk/IstanbulUniversity-CE/commit/cd3459443690ac13d45f845842e407aa386aa018?short_path = 5287206
 DIFF_TEMPLATE = "{}/commit/{}?diff=split"
 
 
-def get_github_url():
+def get_github_url() -> str:
     return r"https://github.com"
 
 
-def get_github_userprofile_url(username):
+def get_github_userprofile_url(username) -> str:
     return get_github_url() + "/" + username
 
 
-def get_github_repo_url(username):
+def get_github_repo_url(username) -> str:
     return get_github_userprofile_url(username) + "/" + os.path.basename(os.getcwd())
 
 
@@ -27,7 +25,7 @@ def get_raw_master_url(username) -> str:
     return get_github_repo_url(username) + "/raw/master"
 
 
-def get_github_raw_link(username, filepath: str):
+def get_github_raw_link(username, filepath: str) -> str:
     filepath = os.path.relpath(filepath, start=os.getcwd())
     filepath = encodedpath(filepath)
     return get_raw_master_url(username) + "/" + filepath
@@ -61,7 +59,7 @@ def push_to_github(gpath: Path, paths: List[Path], commit: str):
         os.chdir(cur_dir)
 
 
-def get_remote_url(path):
+def get_remote_url(path) -> str:
     from subprocess import Popen, PIPE
 
     cur_dir = os.getcwd()
@@ -77,7 +75,10 @@ def get_remote_url(path):
     return remote_url
 
 
-def list_commit_links(path: Path, repo_url=None, ignore_commits=[], since: datetime = None, to: datetime = None):
+def list_commit_links(
+        path: Path, repo_url=None, ignore_commits=[],
+        since: datetime = None, to: datetime = None
+) -> List[str]:
     from pydriller import RepositoryMining
 
     if not repo_url:
