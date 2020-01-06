@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 DYNAMIC_VERSION = False
-VERSION = "2.6.3.3.1"
+VERSION = "2.6.4"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -24,24 +24,26 @@ setup(
     # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     license='MIT',
     # Give a short description about your library
-    description="Yunus Emre Ak ~ YEmreAk (@yedhrab)'ın google drive direkt link oluşturma, gitbook entegrasyonu, google arama motoru sonuçlarını filtreleme ile ilgili çalışmaları ",
+    description="Yunus Emre Ak ~ YEmreAk (@yedhrab)'ın google drive direkt link oluşturma" +
+    "gitbook entegrasyonu, google arama motoru sonuçlarını filtreleme ile ilgili çalışmaları ",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author='Yunus Emre Ak',                   # Type in your name
-    author_email='yedhrab@gmail.com',      # Type in your E-Mail
-    # Provide either the link to your github or to your website
+    author='Yunus Emre Ak',
+    author_email='yedhrab@gmail.com',
     url='https://github.com/yedhrab/YPackage',
-    # I explain this later on
-    download_url=f'https://github.com/yedhrab/YPackage/archive/{version}.tar.gz',
-    # Keywords that define your package best
-    keywords=['ypackage', 'yedhrab', 'yemreak'],
-    install_requires=[            # I get to this in a second
+    # Paketi açıklayan anahtar kelimeler
+    keywords=[
+        'ypackage', 'yedhrab', 'yemreak', 'gitbook', 'github',
+        'google-search', "google", "link", "drive"
+    ],
+    # Kurulacak alt paketler
+    install_requires=[
         "google",
         "requests",
         "pydriller"
     ],
     classifiers=[
-        # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
+        # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable"
         'Development Status :: 5 - Production/Stable',
         # Define that your audience are developers
         'Intended Audience :: Developers',
@@ -52,6 +54,8 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     entry_points={
         # Komut isteminden çalıştırma

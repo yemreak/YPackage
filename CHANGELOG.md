@@ -5,6 +5,45 @@
 
 ### ✨ Yenilikler
 
+* 👨‍🔬 Test scirptleri artırıldı. [Yunus Emre]
+
+* ✨ Kodlarda güzelleştirme yapıldı. [Yunus Emre]
+
+* ✨ Debuglar sadeleştirildi. [Yunus Emre]
+
+  👮‍♂️ Sadece dosya değişikliği duurmunda yazma  eklendi
+
+* ✨ Pathlib yapısına göre geliştirildi. [Yunus Emre]
+
+* ✨ Pathlib yapısı kuruldu. [Yunus Emre]
+
+* ✨ Pathlib yapısı kuruldu. [Yunus Emre]
+
+* ✨ Pathlib yapısı kuruldu. [Yunus Emre]
+
+* ✨ Pathlib modulüne geçildi. [Yunus Emre]
+
+* ✨ Açıklama kalıbı yenilendi. [Yunus Emre]
+
+* ✨ Görmezden gelinen commitler ve commit mesajı eklendi. [Yunus Emre]
+
+* 🔗 Repo linki aktarma eklendi. [Yunus Emre]
+
+  Artık repo linki verilirse otomatil olmak ile uğraşmayacak
+
+* 🚀 Yeni versiyon. [Yunus Emre]
+
+  - 📋 Changelog oluşturma yenilendi
+  - 👨‍🔧 Hata düzeltmeleri
+
+* 👮‍♂️ Summary kontrol metodu eklendi. [Yunus Emre]
+
+* 👮‍♂️ Link kontrolü eklendi. [Yunus Emre]
+
+* 👨‍💼 Toplu dosya adlandırma metotları eklendi. [Yunus Emre]
+
+* 👀 Yenilikler eklendi. [Yunus Emre]
+
 * 📋 Commit raporu (changelog) basma eklendi. [Yunus Emre]
 
 * 🎇 windows 10 scriptleri eklendi. [Yunus Emre]
@@ -29,6 +68,10 @@
 
 ### 💫 Değişikler
 
+* 📊 Raporlama tablo formatına alındı. [Yunus Emre]
+
+* 💫 Yeni versiyon. [Yunus Emre]
+
 * 👨‍🔧 Until yapısı h2'ye göre yapılandırıldı. [Yunus Emre]
 
 * 📝 Açıklama yenilendi. [Yunus Emre]
@@ -45,9 +88,32 @@
 
 ### 👨‍🔧 Düzeltmeler
 
+* 👨‍🔧 Hata düzeltmesi ve temizleme. [Yunus Emre]
+
+  - 🧹 Store yapısı kaldırıldı
+  - 👨‍🔧 URL kontrolü düzeltildi
+
+* 👨‍🔧 Debug yapısındaki sorunlar çözüldü. [Yunus Emre]
+
+* 👨‍🔧 Hata düzeltmeleri. [Yunus Emre]
+
+* 👨‍🔬 [Yunus Emre]
+
+* 👨‍🔧 Argüman ayırma sorunları giderildi. [Yunus Emre]
+
+* 👨‍🔧 Ufak düzeltme. [Yunus Emre]
+
+* 👮‍♂️ Ufak güvenlik önlemleri. [Yunus Emre]
+
+* 👨‍🔧 Ufak düzeltmeler. [Yunus Emre]
+
 * 👨‍🔧 YGoogleSearch status code sorunu giderildi. [Yunus Emre]
 
 * 👨‍🔧 Ufak düzeltmeler. [Yunus Emre]
+
+### 📡 Diğerler
+
+* 🧐 Debug yapısı kuruldu. [Yunus Emre]
 
 
 ## 2.5.0 (2019-11-30)
