@@ -9,7 +9,8 @@ from .markdown import (SpecialFile, check_links, create_header, create_link,
                        generate_filelink, insert_file, make_linkstr)
 
 DESCRIPTIPON_TEMPLATE = """---
-description: {}
+description: >-
+  {}
 ---
 
 """
