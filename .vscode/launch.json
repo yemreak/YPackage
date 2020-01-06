@@ -40,7 +40,27 @@
             "module": "ypackage.integrate",
             "args": [
                 "../IstanbulUniversity-CE",
-                "../YWiki",
+                "../YLib",
+            ]
+        },
+        {
+            "name": "Integrate - More - Debug",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../IstanbulUniversity-CE",
+                "../YLib",
+                "-d"
+            ]
+        },
+        {
+            "name": "Integrate - More - Error",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../*",
             ]
         },
         {
@@ -58,7 +78,7 @@
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../YWiki",
+                "../YLib",
                 "-usp",
             ]
         },
