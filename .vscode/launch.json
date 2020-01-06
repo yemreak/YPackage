@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../IstanbulUniversity-CE",
+                "../YLib",
             ]
         },
         {
