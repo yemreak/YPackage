@@ -2,7 +2,8 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from .filesystem import find_level, listdir_grouped, read_file_by_url, write_file
+from .filesystem import (find_level, listdir_grouped, read_file_by_url,
+                         write_file)
 from .github import (generate_raw_url_from_repo_url, get_github_raw_link,
                      list_commit_links, push_to_github)
 from .markdown import (SpecialFile, check_links, create_header, create_link,
@@ -46,7 +47,9 @@ def make_file_link(filepath: Path, root: Path = None, direct_link: bool = False)
         return create_link(filepath, root=root)
 
 
-def generate_fs_link(lines: list, root: Path, startpath: Path = None, level_limit: int = -1, privates=[]) -> list:
+def generate_fs_link(
+    lines: list, root: Path, startpath: Path = None, level_limit: int = -1, privates=[]
+) -> list:
     # TODO: Buranın markdown'a aktarılması lazım
     # RES: Decalator kavramının araştırılması lazım olabilir
 
