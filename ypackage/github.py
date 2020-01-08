@@ -66,9 +66,13 @@ def get_remote_url(path) -> str:
     os.chdir(path)
 
     remote_url = ""
-    with Popen(r'git config --get remote.origin.url', stdout=PIPE, stderr=PIPE) as p:
-        output, errors = p.communicate()
-        remote_url = output.decode('utf-8').splitlines()[0].replace(".git", "")
+    try:
+        with Popen(r'git config --get remote.origin.url', stdout=PIPE, stderr=PIPE) as p:
+            output, errors = p.communicate()
+            remote_url = output.decode('utf-8').splitlines()[0].replace(".git", "")
+    except Exception as e:
+        print("Repo URL'i tanımlanamadı" + e)
+        exit(-1)
 
     os.chdir(cur_dir)
 
@@ -77,7 +81,7 @@ def get_remote_url(path) -> str:
 
 def list_commit_links(
         path: Path, repo_url=None, ignore_commits=[],
-        since: datetime = None, to: datetime = None
+        since: datetime = None, to: datetime = None, table_form=False
 ) -> List[str]:
     from pydriller import RepositoryMining
 
@@ -85,8 +89,11 @@ def list_commit_links(
         repo_url = get_remote_url(path)
 
     links = []
-    links.append("|📅 Tarih|🔀 Commit|🐥 Sahibi|\n")
-    links.append("|-|-|-|\n")
+
+    if table_form:
+        links.append("|📅 Tarih|🔀 Commit|🐥 Sahibi|")
+        links.append("|-|-|-|")
+
     for commit in RepositoryMining(str(path), reversed_order=True).traverse_commits():
         title = commit.msg.split("\n")[0]
         author = commit.author.name
@@ -101,8 +108,14 @@ def list_commit_links(
             hash_value = commit.hash
             time = commit.author_date.strftime("%d/%m/%Y - %H:%M:%S")
             url = DIFF_TEMPLATE.format(repo_url, hash_value)
+
             link = create_link(url, header=title).replace("- ", "").replace("\n", "")
-            link = f"|{str(time)}|{link}|{author}|\n"
+
+            if table_form:
+                link = f"|{str(time)}|{link}|{author}|"
+            else:
+                link = f"- {str(time)} - {link} ~ {author}"
+
             links.append(link)
 
     return links
