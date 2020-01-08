@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../YLib",
+                "./IstanbulUniversity-CE",
             ]
         },
         {
@@ -83,12 +83,15 @@
             ]
         },
         {
-            "name": "Integrate - Store",
+            "name": "Integrate - Changelog",
             "type": "python",
             "request": "launch",
             "module": "ypackage.integrate",
             "args": [
-                "../IstanbulUniversity-CE"
+                "../IstanbulUniversity-CE",
+                "-c",
+                "-ru",
+                "https://github.com/YEmreAk/IstanbulUniversity-CE"
             ]
         },
         {
@@ -122,6 +125,25 @@
         },
         {
             "name": "Integrate - All",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.integrate",
+            "args": [
+                "../IstanbulUniversity-CE",
+                "-rgc",
+                "-ll",
+                "2",
+                "-ru",
+                "https://github.com/YEmreAk/IstanbulUniversity-CE",
+                "-ic",
+                "💫 GitBook entegrasyonu yapıldı",
+                "Merge branch 'master' of https://github.com/YEmreAk/IstanbulUniversity-CE",
+                "-cm",
+                "💫 GitBook entegrasyonu yapıldı"
+            ]
+        },
+        {
+            "name": "Integrate - All - Push",
             "type": "python",
             "request": "launch",
             "module": "ypackage.integrate",
