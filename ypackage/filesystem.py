@@ -123,8 +123,10 @@ def insert_file(filepath: Path, string: str, index: str, new_index: str, debug=F
 
         # If no insertion happend, create new section
         if not inserted:
-            # BUG: If index is not found in the file while new index used, index string is dublicated
-            # WARN: "\n" olmazsa satırın ucuna eklemekte, bu da indexin olduğu satırın kaybolmasından dolayı verinin silinmesine neden olmakta
+            # BUG: If index is not found in the file while new index used, index string is
+            # BUG: dublicated
+            # WARN: "\n" olmazsa satırın ucuna eklemekte, bu da indexin olduğu satırın
+            # WARN: kaybolmasından dolayı verinin silinmesine neden olmakta
             new_line_count = 2 - filestr[-2:].count("\n")
             filestr += "\n" * new_line_count
             filestr += generate_insertion()
