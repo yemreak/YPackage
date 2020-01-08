@@ -248,7 +248,7 @@
             ]
         },
         {
-            "name": "YFile - File",
+            "name": "YFile - Base",
             "type": "python",
             "request": "launch",
             "module": "ypackage.yfile",
@@ -258,6 +258,19 @@
                 "read",
                 "-t",
                 "mee"
+            ]
+        },
+        {
+            "name": "YFile - Group",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.yfile",
+            "args": [
+                ".",
+                "-p",
+                "(re)(ad)",
+                "-t",
+                "$2$1"
             ]
         },
     ]
