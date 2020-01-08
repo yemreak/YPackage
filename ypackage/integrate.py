@@ -4,6 +4,7 @@ import shlex
 import sys
 from glob import glob
 from pathlib import Path
+from typing import Dict
 
 from . import filesystem, gitbook, github, markdown
 
@@ -39,7 +40,7 @@ def read_config(cpath: Path) -> dict:
     return config
 
 
-def updateSubSummaries(config: dict, workdir: Path, index: str, push=False, debug=False) -> None:
+def updateSubSummaries(config: Dict, workdir: Path, index: str, push=False, debug=False) -> None:
     """Alt modülleri günceller
 
     Arguments:
@@ -221,6 +222,7 @@ def initialize_parser():
         "-ic",
         nargs="+",
         metavar='ignore_commits',
+        default=[],
         help="Değişiklik raporuna dahil edilmeyecek commit başlıkları (emoji desteklemez)"
     )
     # WARN: Kullanışsız parametreler
@@ -259,78 +261,111 @@ def initialize_parser():
     return parser
 
 
+def register_args(parser: argparse.ArgumentParser, register_all=False):
+    args = parser.parse_args()
+
+    if register_all:
+        global PATHSTR_LIST, MAIN_DEBUG
+        PATHSTR_LIST, MAIN_DEBUG = args.paths, args.debug
+
+    global GENERATE, RECREATE
+    GENERATE, RECREATE = args.generate, args.recreate
+
+    global UPDATE, CHANGELOG, REPO_URL
+    UPDATE, CHANGELOG, REPO_URL = args.update, args.changelog, args.repo_url
+
+    global IGNORE_COMMITS, COMMIT_MSG, PUSH
+    IGNORE_COMMITS, COMMIT_MSG, PUSH = args.ignore_commits, args.commit_msg, args.push
+
+    global LEVEL_LIMIT, PRIVATES
+    LEVEL_LIMIT, PRIVATES = args.level_limit, args.privates
+
+    global DEBUG
+    DEBUG = args.debug
+
+    global INDEX_STR, NEW_INDEX_STR
+    INDEX_STR, NEW_INDEX_STR = args.indexStr, args.newIndex
+
+    global FOOTER_PATH
+    FOOTER_PATH = args.footerPath
+
+
+def register_config_args(path: Path) -> Dict:
+    config = read_config(path / INTEGRATION_FILE)
+
+    new_args = ""
+    for section in config.sections():
+        if section.split()[0] == INTEGRATION_MODULE:
+            new_args = config[section]["args"]
+            break
+
+    if new_args:
+        sys.argv = [__file__, str(path)] + shlex.split(new_args)
+    else:
+        print(f"{str(path)} için entegrasyon özelliği mevcut değil")
+        print(
+            f"\t`{INTEGRATION_FILE}` dosyası içerisindeki `integration`" +
+            "alanında args` özelliği yok"
+        )
+        return
+
+    parser = initialize_parser()
+    register_args(parser)
+
+    return config
+
+
+def integrate(path: Path, override=False):
+    if path.is_dir():
+        if not override:
+            config = register_config_args(path)
+
+        if MAIN_DEBUG:
+            print(f"`{str(path)}` için gitbook entegrasyonu çalıştırıldı.")
+
+        if GENERATE:
+            gitbook.generate_readmes(
+                path, privates=PRIVATES, index=INDEX_STR,
+                new_index=NEW_INDEX_STR, level_limit=LEVEL_LIMIT, debug=DEBUG
+            )
+
+        if RECREATE:
+            filestr = gitbook.generate_summary_filestr(
+                path, level_limit=LEVEL_LIMIT, privates=PRIVATES,
+                footer_path=FOOTER_PATH
+            )
+
+            gitbook.create_summary_file(path, debug=DEBUG)
+            gitbook.insert_summary_file(
+                path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR, debug=DEBUG
+            )
+
+        if UPDATE:
+            updateSubSummaries(config, path, INDEX_STR, push=PUSH, debug=DEBUG)
+
+        # TIP: Committe iken yapmaktadır (önceden push edilmesine gerek yok)
+        if CHANGELOG:
+            gitbook.create_changelog(
+                path, repo_url=REPO_URL, push=PUSH, debug=DEBUG,
+                ignore_commits=IGNORE_COMMITS, commit_msg=COMMIT_MSG
+            )
+
+        if MAIN_DEBUG:
+            print(f"`{str(path)}` için gitbook entegrasyonu tamamlandı.")
+
+    elif MAIN_DEBUG:
+        print(f"Hatalı yol: {path}")
+
+
 def main():
     parser = initialize_parser()
+    register_args(parser, register_all=True)
 
-    args = parser.parse_args()
-    PATHSTR_LIST, MAIN_DEBUG = args.paths, args.debug
-
+    override_config = any([GENERATE, RECREATE, UPDATE, CHANGELOG])
     for pathstr in PATHSTR_LIST:
         paths = [Path(p) for p in glob(pathstr)]
         for path in paths:
-            if path.is_dir():
-                config = read_config(path / INTEGRATION_FILE)
-
-                new_args = ""
-                for section in config.sections():
-                    if section.split()[0] == INTEGRATION_MODULE:
-                        new_args = config[section]["args"]
-                        break
-
-                if new_args:
-                    sys.argv = [__file__, str(path)] + shlex.split(new_args)
-                else:
-                    print(f"{str(path)} için entegrasyon özelliği mevcut değil")
-                    print(
-                        f"\t`{INTEGRATION_FILE}` dosyası içerisindeki `integration`" +
-                        "alanında args` özelliği yok"
-                    )
-                    continue
-
-                args = parser.parse_args()
-                GENERATE, RECREATE = args.generate, args.recreate
-                UPDATE, CHANGELOG, REPO_URL = args.update, args.changelog, args.repo_url
-                IGNORE_COMMITS, COMMIT_MSG, PUSH = args.ignore_commits, args.commit_msg, args.push
-                LEVEL_LIMIT, PRIVATES = args.level_limit, args.privates
-                DEBUG = args.debug
-                INDEX_STR, NEW_INDEX_STR = args.indexStr, args.newIndex
-                FOOTER_PATH = args.footerPath
-
-                if MAIN_DEBUG:
-                    print(f"`{str(path)}` için gitbook entegrasyonu çalıştırıldı.")
-
-                if GENERATE:
-                    gitbook.generate_readmes(
-                        path, privates=PRIVATES, index=INDEX_STR,
-                        new_index=NEW_INDEX_STR, level_limit=LEVEL_LIMIT, debug=DEBUG
-                    )
-
-                if RECREATE:
-                    filestr = gitbook.generate_summary_filestr(
-                        path, level_limit=LEVEL_LIMIT, privates=PRIVATES,
-                        footer_path=FOOTER_PATH
-                    )
-
-                    gitbook.create_summary_file(path, debug=DEBUG)
-                    gitbook.insert_summary_file(
-                        path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR, debug=DEBUG
-                    )
-
-                if UPDATE:
-                    updateSubSummaries(config, path, INDEX_STR, push=PUSH, debug=DEBUG)
-
-                # TIP: Committe iken yapmaktadır (önceden push edilmesine gerek yok)
-                if CHANGELOG:
-                    gitbook.create_changelog(
-                        path, repo_url=REPO_URL, push=PUSH, debug=DEBUG,
-                        ignore_commits=IGNORE_COMMITS, commit_msg=COMMIT_MSG
-                    )
-
-                if MAIN_DEBUG:
-                    print(f"`{str(path)}` için gitbook entegrasyonu tamamlandı.")
-
-            elif MAIN_DEBUG:
-                print(f"Hatalı yol: {path}")
+            integrate(path, override=override_config)
 
 
 if __name__ == "__main__":
