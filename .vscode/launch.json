@@ -246,6 +246,19 @@
                 "-o",
                 "wrong_urls.txt"
             ]
-        }
+        },
+        {
+            "name": "YFile - File",
+            "type": "python",
+            "request": "launch",
+            "module": "ypackage.yfile",
+            "args": [
+                "C:\\Users\\Yedhrab\\Desktop",
+                "-p",
+                "pattern",
+                "-t",
+                "to"
+            ]
+        },
     ]
 }

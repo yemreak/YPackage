@@ -2,7 +2,7 @@ from distutils.core import setup
 import setuptools
 
 DYNAMIC_VERSION = False
-VERSION = "2.6.4.1"
+VERSION = "2.6.4.2"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -34,7 +34,7 @@ setup(
     # Paketi açıklayan anahtar kelimeler
     keywords=[
         'ypackage', 'yedhrab', 'yemreak', 'gitbook', 'github',
-        'google-search', "google", "link", "drive"
+        'google-search', "google", "link", "drive", "renamer", "bulk"
     ],
     # Kurulacak alt paketler
     install_requires=[
@@ -64,7 +64,8 @@ setup(
         'console_scripts': [
             'ygitbookintegration = ypackage.integrate:main',
             "ygoogledrive = ypackage.gdrive:main",
-            "ygooglesearch = ypackage.gsearch:main"
+            "ygooglesearch = ypackage.gsearch:main",
+            "yfile = ypackage.yfile:main"
         ]
     }
 )

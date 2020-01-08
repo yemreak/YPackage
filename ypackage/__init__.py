@@ -6,3 +6,4 @@ from . import gitbook
 from . import integrate
 from . import github
 from . import gdrive
+from . import yfile

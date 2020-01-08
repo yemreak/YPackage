@@ -1,10 +1,11 @@
 import json
 import re
+from os import listdir as oslistdir
 from os import rename as osrename
 from os import walk
 from os.path import join as path_join
 from pathlib import Path
-from typing import List, Tuple
+from typing import AnyStr, List, Pattern, Tuple
 from urllib.request import urlopen
 
 
@@ -200,35 +201,46 @@ def repeat_for_subdirectories(startpath: Path, func: callable) -> None:
             func(fpath, lvl, "file")
 
 
-def rename(regex, to, path, silent=False) -> None:
+def rename(regex: Pattern[AnyStr], to: str, path: str, silent=False) -> None:
     result = regex.search(path)
     if result:
         for i in range(result.lastindex + 1):
             to = to.replace(f"${i}", result[i])
 
         dst = regex.sub(to, path)
-        rename(path, dst)
+        osrename(path, dst)
 
         if not silent:
             print(path, dst)
 
 
-def rename_folders(startpath: str, pattern, to, ignore_case=True, silent=False) -> None:
+def rename_folders(
+    startpath: str, pattern: str, to: str,
+    ignore_case=True, recursive=False, silent=False
+):
     p = re.compile(pattern, re.IGNORECASE if ignore_case else None)
-    for root, dirs, _ in walk(startpath):
-        # Sıralama her OS için farklı olabiliyor
-        dirs.sort()
 
-        osrename(p, to, root, silent=silent)
+    if recursive:
+        for root, dirs, _ in walk(startpath):
+            rename(p, to, root, silent=silent)
+    else:
+        for path in oslistdir(startpath):
+            if Path(path).is_dir():
+                rename(p, to, path, silent=silent)
 
 
-def rename_files(startpath: str, pattern, to, ignore_case=True, silent=False) -> None:
+def rename_files(
+    startpath: str, pattern: str, to: str,
+    ignore_case=True, recursive=False, silent=False
+):
     p = re.compile(pattern, re.IGNORECASE if ignore_case else None)
-    for root, dirs, files in walk(startpath):
-        # Sıralama her OS için farklı olabiliyor
-        dirs.sort()
-        files.sort()
 
-        for f in files:
-            path = path_join(root, f)
-            rename(p, to, path, silent=silent)
+    if recursive:
+        for root, dirs, files in walk(startpath):
+            for f in files:
+                path = path_join(root, f)
+                rename(p, to, path, silent=silent)
+    else:
+        for path in oslistdir(startpath):
+            if Path(path).is_file():
+                rename(p, to, path, silent=silent)
