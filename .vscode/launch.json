@@ -253,11 +253,11 @@
             "request": "launch",
             "module": "ypackage.yfile",
             "args": [
-                "C:\\Users\\Yedhrab\\Desktop",
+                ".",
                 "-p",
-                "pattern",
+                "read",
                 "-t",
-                "to"
+                "mee"
             ]
         },
     ]

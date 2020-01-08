@@ -204,8 +204,9 @@ def repeat_for_subdirectories(startpath: Path, func: callable) -> None:
 def rename(regex: Pattern[AnyStr], to: str, path: str, silent=False) -> None:
     result = regex.search(path)
     if result:
-        for i in range(result.lastindex + 1):
-            to = to.replace(f"${i}", result[i])
+        if result.lastindex:
+            for i in range(result.lastindex + 1):
+                to = to.replace(f"${i}", result[i])
 
         dst = regex.sub(to, path)
         osrename(path, dst)
@@ -214,12 +215,20 @@ def rename(regex: Pattern[AnyStr], to: str, path: str, silent=False) -> None:
             print(path, dst)
 
 
+def compile_regex(pattern, ignore_case=False) -> Pattern[AnyStr]:
+    if ignore_case:
+        p = re.compile(pattern, re.IGNORECASE)
+    else:
+        p = re.compile(pattern)
+
+    return p
+
+
 def rename_folders(
     startpath: str, pattern: str, to: str,
     ignore_case=True, recursive=False, silent=False
 ):
-    p = re.compile(pattern, re.IGNORECASE if ignore_case else None)
-
+    p = compile_regex(pattern, ignore_case=ignore_case)
     if recursive:
         for root, dirs, _ in walk(startpath):
             rename(p, to, root, silent=silent)
@@ -233,8 +242,7 @@ def rename_files(
     startpath: str, pattern: str, to: str,
     ignore_case=True, recursive=False, silent=False
 ):
-    p = re.compile(pattern, re.IGNORECASE if ignore_case else None)
-
+    p = compile_regex(pattern, ignore_case=ignore_case)
     if recursive:
         for root, dirs, files in walk(startpath):
             for f in files:

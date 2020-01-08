@@ -82,7 +82,7 @@ def main():
 
     for path in PATHS:
         function = rename_folders if DIR_MODE else rename_files
-        function(path, PATTERN, TO, ignore_case=CASE_SENSITIVE, silent=SILENT)
+        function(path, PATTERN, TO, ignore_case=not CASE_SENSITIVE, silent=SILENT)
 
 
 if __name__ == "__main__":
