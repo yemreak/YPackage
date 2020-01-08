@@ -17,13 +17,8 @@ class SpecialFile(Enum):
     CONTRIBUTING_FILE = "CONTRIBUTING.md"
     LICANSE_FILE = "Licanse.md"
 
-    def get_filepath(self, root: Path = Path.cwd(), force=False) -> Path:
-        if force:
-            return root / self.value
-
-        for path in root.iterdir():
-            if path.is_file() and path.name == self.value:
-                return root / self.value
+    def get_filepath(self, root: Path = Path.cwd()) -> Path:
+        return root / self.value
 
 # DEV: Figure out index string in markdown file
 
@@ -123,14 +118,15 @@ def create_header(name: str, headerlvl: int) -> str:
 
 def read_first_header(filepath: Path):
     header = ""
-    with filepath.open("r", encoding="utf-8") as file:
-        for line in file:
-            if line.startswith("#"):
-                header = line.strip().replace("# ", "")
-                break
+    if filepath.exists():
+        with filepath.open("r", encoding="utf-8") as file:
+            for line in file:
+                if line.startswith("#"):
+                    header = line.strip().replace("# ", "")
+                    break
 
-    if "<!--" in header:
-        header = header[:header.index("<!--")].strip()
+        if "<!--" in header:
+            header = header[:header.index("<!--")].strip()
 
     return header
 

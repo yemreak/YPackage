@@ -226,7 +226,7 @@ def generate_readmes(
                 filestr = create_header(header, 2) if header else ""
                 filestr += "".join(links)
 
-                filepath = SpecialFile.README_FILE.get_filepath(root=Path(root), force=True)
+                filepath = SpecialFile.README_FILE.get_filepath(root=Path(root))
                 if not os.path.exists(filepath):
                     oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
                     if clearify:
@@ -263,13 +263,13 @@ def generate_readmes(
             generate_markdown_files_for_subitems(root, clearify=clearify, debug=debug)
         else:
             if clearify and level > level_limit:
-                readme_path = SpecialFile.README_FILE.get_filepath(root=root, force=True)
+                readme_path = SpecialFile.README_FILE.get_filepath(root=root)
                 if os.path.exists(readme_path):
                     os.remove(readme_path)
             continue
 
         if bool(filestr):
-            filepath = SpecialFile.README_FILE.get_filepath(root=root, force=True)
+            filepath = SpecialFile.README_FILE.get_filepath(root=root)
             fileheader = os.path.basename(root)
             insert_file(filepath, filestr, index=index, force=True,
                         fileheader=fileheader, new_index=new_index, debug=debug)
@@ -298,20 +298,21 @@ def create_changelog(
 
     cpath = path / CHANGELOG_FILE
 
-    oldfilestr = ""
-    with cpath.open("r", encoding="utf-8") as file:
-        oldfilestr = file.read()
-
-    filestr = ""
-
     filestr = "# ✨ Değişiklikler"
     filestr += "\n\n"
     filestr += "## 📋 Tüm Değişiklikler"
     filestr += "\n\n"
 
-    links = list_commit_links(path, repo_url=repo_url,
-                              ignore_commits=ignore_commits + [commit_msg], since=since, to=to)
-    filestr += "".join(links)
+    links = list_commit_links(
+        path, repo_url=repo_url, since=since, to=to,
+        ignore_commits=ignore_commits + [commit_msg]
+    )
+    filestr += "\n".join(links)
+
+    oldfilestr = ""
+    if cpath.exists():
+        with cpath.open("r", encoding="utf-8") as file:
+            oldfilestr = file.read()
 
     if oldfilestr != filestr:
         write_file(cpath, filestr, debug=debug)
