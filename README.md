@@ -45,9 +45,9 @@ https://windows.yemreak.com/giris/dizinler
 
 Entegrasyon yapılandırması `.ygitbookintegration` dosyası içerisindeki yapı ile sağlanır
 
-| Modül                         | Açıklama                                                  |
+| Modül						 | Açıklama												  |
 | ----------------------------- | --------------------------------------------------------- |
-| `[integration "Kişisel not"]` | Entegrasyonu verilen argümanlara göre çalıştırır          |
+| `[integration "Kişisel not"]` | Entegrasyonu verilen argümanlara göre çalıştırır		  |
 | `[submodule "kişisel not"]`   | Verilen GitBook sitesinin içeriklerine bağlantı oluşturur |
 
 ### 📑 Yapılandırma Dosyası Örneği
@@ -71,16 +71,16 @@ Entegrasyon yapılandırması `.ygitbookintegration` dosyası içerisindeki yap�
 
 Temel kullanım `import ypackage` şeklindedir ve modüllere `ypackage.<modül>` şeklinde erişilir.
 
-| Modül        | Açıklama                                 |
+| Modül		| Açıklama								 |
 | ------------ | ---------------------------------------- |
-| `common`     | 🌟 Sık kullandığum metotlar              |
-| `filesystem` | 📂 Dosya işlemleri                       |
-| `gdrive`     | 🔗 Google drive link dönüştürücü         |
-| `gitbook`    | 📖 GitBook için scriptlerim              |
-| `github`     | 🐙 GitHub işlemleri                      |
-| `integrate`  | 💫 Entegrasyon işlemleri                 |
-| `markdown`   | 📑 Markdown scriptlerim                  |
-| `regex`      | 💎 Regex scriptlerim (yapılm aşamasında) |
+| `common`	 | 🌟 Sık kullandığum metotlar			  |
+| `filesystem` | 📂 Dosya işlemleri					   |
+| `gdrive`	 | 🔗 Google drive link dönüştürücü		 |
+| `gitbook`	| 📖 GitBook için scriptlerim			  |
+| `github`	 | 🐙 GitHub işlemleri					  |
+| `integrate`  | 💫 Entegrasyon işlemleri				 |
+| `markdown`   | 📑 Markdown scriptlerim				  |
+| `regex`	  | 💎 Regex scriptlerim (yapılm aşamasında) |
 
 ## 💖 Destek ve İletişim
 

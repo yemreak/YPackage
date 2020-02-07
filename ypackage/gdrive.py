@@ -31,7 +31,7 @@ def get_id(url: str) -> str:
 def main():
     parser = argparse.ArgumentParser(
         description='Google Drive için direkt url oluşturucu',
-    )
+    )yy
     parser.add_argument(
         'urls',
         nargs="+",

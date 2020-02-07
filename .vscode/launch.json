@@ -1,277 +1,277 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Integrate - Base",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "./IstanbulUniversity-CE",
-            ]
-        },
-        {
-            "name": "Integrate - Recreate",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "-r"
-            ]
-        },
-        {
-            "name": "Integrate - Generate",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "-g"
-            ]
-        },
-        {
-            "name": "Integrate - More",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "../YLib",
-            ]
-        },
-        {
-            "name": "Integrate - More - Debug",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "../YLib",
-                "-d"
-            ]
-        },
-        {
-            "name": "Integrate - More - Error",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../*",
-            ]
-        },
-        {
-            "name": "Integrate - Dir",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../*",
-            ]
-        },
-        {
-            "name": "Integrate - Push",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../YLib",
-                "-usp",
-            ]
-        },
-        {
-            "name": "Integrate - Changelog",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "-c",
-                "-ru",
-                "https://github.com/YEmreAk/IstanbulUniversity-CE"
-            ]
-        },
-        {
-            "name": "Integrate - Changelog Push",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "-cp",
-            ]
-        },
-        {
-            "name": "Integrate - Complate",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "-rgcd",
-                "-ll",
-                "2",
-                "-ru",
-                "https://github.com/YEmreAk/IstanbulUniversity-CE",
-                "-ic",
-                "💫 GitBook entegrasyonu yapıldı",
-                "Merge branch 'master' of https://github.com/YEmreAk/IstanbulUniversity-CE",
-                "-cm",
-                "💫 GitBook entegrasyonu yapıldı"
-            ]
-        },
-        {
-            "name": "Integrate - All",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "-rgc",
-                "-ll",
-                "2",
-                "-ru",
-                "https://github.com/YEmreAk/IstanbulUniversity-CE",
-                "-ic",
-                "💫 GitBook entegrasyonu yapıldı",
-                "Merge branch 'master' of https://github.com/YEmreAk/IstanbulUniversity-CE",
-                "-cm",
-                "💫 GitBook entegrasyonu yapıldı"
-            ]
-        },
-        {
-            "name": "Integrate - All - Push",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.integrate",
-            "args": [
-                "../IstanbulUniversity-CE",
-                "-rgcp",
-                "-ll",
-                "2",
-                "-ru",
-                "https://github.com/YEmreAk/IstanbulUniversity-CE",
-                "-ic",
-                "💫 GitBook entegrasyonu yapıldı",
-                "Merge branch 'master' of https://github.com/YEmreAk/IstanbulUniversity-CE",
-                "-cm",
-                "💫 GitBook entegrasyonu yapıldı"
-            ]
-        },
-        {
-            "name": "Python: Current File",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "GDrive - Base",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.gdrive",
-            "args": [
-                "https://drive.google.com/open?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
-            ]
-        },
-        {
-            "name": "GDrive - Reverse",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.gdrive",
-            "args": [
-                "https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
-                "-r"
-            ]
-        },
-        {
-            "name": "GDrive - ID",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.gdrive",
-            "args": [
-                "https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
-            ]
-        },
-        {
-            "name": "GSearch - Simple",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.gsearch",
-            "args": [
-                "site:yemreak.com",
-            ]
-        },
-        {
-            "name": "GSearch - Status Code",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.gsearch",
-            "args": [
-                "site:www.yemreak.com",
-                "-sc",
-                "404"
-            ]
-        },
-        {
-            "name": "GSearch - Exclude",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.gsearch",
-            "args": [
-                "site:wiki.yemreak.com",
-                "-ex",
-                "knowed_url.txt"
-            ]
-        },
-        {
-            "name": "GSearch - Output",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.gsearch",
-            "args": [
-                "site:ai.yemreak.com",
-                "site:windows.yemreak.com",
-                "site:linux.yemreak.com",
-                "site:ds.yemreak.com",
-                "site:java.yemreak.com",
-                "site:web.yemreak.com",
-                "site:android.yemreak.com",
-                "site:iuce.yemreak.com",
-                "-sc",
-                "404",
-                "-o",
-                "wrong_urls.txt"
-            ]
-        },
-        {
-            "name": "YFile - Base",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.yfile",
-            "args": [
-                ".",
-                "-p",
-                "read",
-                "-t",
-                "mee"
-            ]
-        },
-        {
-            "name": "YFile - Group",
-            "type": "python",
-            "request": "launch",
-            "module": "ypackage.yfile",
-            "args": [
-                ".",
-                "-p",
-                "(re)(ad)",
-                "-t",
-                "$2$1"
-            ]
-        },
-    ]
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Integrate - Base",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"./IstanbulUniversity-CE",
+			]
+		},
+		{
+			"name": "Integrate - Recreate",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"-r"
+			]
+		},
+		{
+			"name": "Integrate - Generate",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"-g"
+			]
+		},
+		{
+			"name": "Integrate - More",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"../YLib",
+			]
+		},
+		{
+			"name": "Integrate - More - Debug",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"../YLib",
+				"-d"
+			]
+		},
+		{
+			"name": "Integrate - More - Error",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../*",
+			]
+		},
+		{
+			"name": "Integrate - Dir",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../*",
+			]
+		},
+		{
+			"name": "Integrate - Push",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../YLib",
+				"-usp",
+			]
+		},
+		{
+			"name": "Integrate - Changelog",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"-c",
+				"-ru",
+				"https://github.com/YEmreAk/IstanbulUniversity-CE"
+			]
+		},
+		{
+			"name": "Integrate - Changelog Push",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"-cp",
+			]
+		},
+		{
+			"name": "Integrate - Complate",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"-rgcd",
+				"-ll",
+				"2",
+				"-ru",
+				"https://github.com/YEmreAk/IstanbulUniversity-CE",
+				"-ic",
+				"💫 GitBook entegrasyonu yapıldı",
+				"Merge branch 'master' of https://github.com/YEmreAk/IstanbulUniversity-CE",
+				"-cm",
+				"💫 GitBook entegrasyonu yapıldı"
+			]
+		},
+		{
+			"name": "Integrate - All",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"-rgc",
+				"-ll",
+				"2",
+				"-ru",
+				"https://github.com/YEmreAk/IstanbulUniversity-CE",
+				"-ic",
+				"💫 GitBook entegrasyonu yapıldı",
+				"Merge branch 'master' of https://github.com/YEmreAk/IstanbulUniversity-CE",
+				"-cm",
+				"💫 GitBook entegrasyonu yapıldı"
+			]
+		},
+		{
+			"name": "Integrate - All - Push",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.integrate",
+			"args": [
+				"../IstanbulUniversity-CE",
+				"-rgcp",
+				"-ll",
+				"2",
+				"-ru",
+				"https://github.com/YEmreAk/IstanbulUniversity-CE",
+				"-ic",
+				"💫 GitBook entegrasyonu yapıldı",
+				"Merge branch 'master' of https://github.com/YEmreAk/IstanbulUniversity-CE",
+				"-cm",
+				"💫 GitBook entegrasyonu yapıldı"
+			]
+		},
+		{
+			"name": "Python: Current File",
+			"type": "python",
+			"request": "launch",
+			"program": "${file}",
+			"console": "integratedTerminal"
+		},
+		{
+			"name": "GDrive - Base",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.gdrive",
+			"args": [
+				"https://drive.google.com/open?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
+			]
+		},
+		{
+			"name": "GDrive - Reverse",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.gdrive",
+			"args": [
+				"https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
+				"-r"
+			]
+		},
+		{
+			"name": "GDrive - ID",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.gdrive",
+			"args": [
+				"https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
+			]
+		},
+		{
+			"name": "GSearch - Simple",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.gsearch",
+			"args": [
+				"site:yemreak.com",
+			]
+		},
+		{
+			"name": "GSearch - Status Code",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.gsearch",
+			"args": [
+				"site:www.yemreak.com",
+				"-sc",
+				"404"
+			]
+		},
+		{
+			"name": "GSearch - Exclude",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.gsearch",
+			"args": [
+				"site:wiki.yemreak.com",
+				"-ex",
+				"knowed_url.txt"
+			]
+		},
+		{
+			"name": "GSearch - Output",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.gsearch",
+			"args": [
+				"site:ai.yemreak.com",
+				"site:windows.yemreak.com",
+				"site:linux.yemreak.com",
+				"site:ds.yemreak.com",
+				"site:java.yemreak.com",
+				"site:web.yemreak.com",
+				"site:android.yemreak.com",
+				"site:iuce.yemreak.com",
+				"-sc",
+				"404",
+				"-o",
+				"wrong_urls.txt"
+			]
+		},
+		{
+			"name": "YFile - Base",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.yfile",
+			"args": [
+				".",
+				"-p",
+				"read",
+				"-t",
+				"mee"
+			]
+		},
+		{
+			"name": "YFile - Group",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.yfile",
+			"args": [
+				".",
+				"-p",
+				"(re)(ad)",
+				"-t",
+				"$2$1"
+			]
+		},
+	]
 }
