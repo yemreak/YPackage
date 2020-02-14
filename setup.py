@@ -34,11 +34,11 @@ setup(
     # Paketi açıklayan anahtar kelimeler
         keywords=[
         'ypackage', 'yedhrab', 'yemreak', 'gitbook', 'github',
-                'google-search', "google", "link", "drive", "renamer", "bulk"
+        'google-search', "google", "link", "drive", "renamer", "bulk"
     ],
     # Kurulacak alt paketler
     install_requires=[
-            "google",
+        "google",
         "requests",
         "pydriller"
     ],
