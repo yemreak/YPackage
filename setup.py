@@ -1,8 +1,9 @@
 from distutils.core import setup
 import setuptools
 
+README_PATH = "docs/README.md"
 DYNAMIC_VERSION = False
-VERSION = "2.6.6"
+VERSION = "2.7.0"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -12,7 +13,7 @@ else:
     version = VERSION
 
 long_description = ""
-with open("README.md", "r", encoding="utf-8") as file:
+with open(README_PATH, "r", encoding="utf-8") as file:
     long_description = file.read()
 
 
@@ -62,10 +63,11 @@ setup(
         # örndeğin: ypackage
         # Kullanım: 'ypacakge = ypackage.ypackage:main
         'console_scripts': [
-            'ygitbookintegration = ypackage.integrate:main',
-            "ygoogledrive = ypackage.gdrive:main",
-            "ygooglesearch = ypackage.gsearch:main",
-            "yfile = ypackage.yfile:main"
+            'ygitbookintegration = ypackage.util.integrate_into_gitbook:main',
+            "ygoogledrive = ypackage.util.gdrive:main",
+            "ygooglesearch = ypackage.util.gsearch:main",
+            "yfilerenamer = ypackage.util.file_renamer:main",
+            "ythemecreator = ypackage.util.theme_creator:main"
         ]
     }
 )
