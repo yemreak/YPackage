@@ -273,5 +273,23 @@
 				"$2$1"
 			]
 		},
+		{
+			"name": "YThemeCreator - Base",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.util.theme_creator",
+			"args": [
+				"../DarkCode-Theme/core/settings.json",
+			]
+		},
+		{
+			"name": "YThemeCreator - Error",
+			"type": "python",
+			"request": "launch",
+			"module": "ypackage.util.theme_creator",
+			"args": [
+				"../DarkCode-Theme/core/darkcode.json",
+			]
+		},
 	]
 }
