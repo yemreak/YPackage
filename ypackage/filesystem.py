@@ -48,6 +48,11 @@ def read_json(filepath: Path, debug=False) -> dict:
     return json.loads(read_file(filepath, debug=debug))
 
 
+def write_json(filepath: Path, jsonstr: str, indent=4, eof_line=True):
+    with filepath.open("w", encoding="utf-8") as file:
+        file.write(json.dumps(jsonstr, indent=indent) + "\n" if eof_line else "")
+
+
 def read_part_of_file(filepath: Path, index: str, debug=False) -> str:
     """Doysanın verilen indeksler arasında kalan kısmını okuma
 
