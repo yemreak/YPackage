@@ -1,14 +1,17 @@
+import argparse
+import logging
+import re
+
 import googlesearch
 import requests
-import argparse
-import re
-import time
+
+logger = logging.getLogger(__name__)
 
 
 def get_status_code(url) -> str:
     try:
         status_code = str(requests.head(url, allow_redirects=True).status_code)
-    except:
+    except Exception:
         status_code = "404+"
     return status_code
 
@@ -73,14 +76,18 @@ def main():
     )
 
     args = parser.parse_args()
-    QUERIES, STATUS_CODE, OUTPUT, EXCLUDE = args.queries, args.status_code, args.output, args.exclude
+    QUERIES, STATUS_CODE, EXCLUDE = args.queries, args.status_code, args.exclude
+    OUTPUT = args.output
 
     for query in QUERIES:
         filename = re.sub(r"[^\w ]", "_", query) + ".txt" if not OUTPUT else OUTPUT
         condition = f"{STATUS_CODE}" if STATUS_CODE else "herhangi bir"
         excluded_file = f"{EXCLUDE} dosyasında olmayan" if EXCLUDE else "tüm"
 
-        print(f"`{query}` sorgusu için `{filename}` dosyasına `{condition}` http durumuna sahip olan `{excluded_file}` bağlantılar raporlanıyor.")
+        logger.info(f"""
+        {query} sorgusu için {filename} dosyasına {condition} http durumuna sahip olan 
+        {excluded_file} bağlantılar raporlanıyor.
+        """.strip())
 
         log_url_by_status(query, filename, status_code=STATUS_CODE, exclude=EXCLUDE)
 

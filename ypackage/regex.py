@@ -1,6 +1,3 @@
-import re
-
-
 def words_regex(*words):
     """Kelime arayan regex döndürme
     """

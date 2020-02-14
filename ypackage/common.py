@@ -14,7 +14,8 @@ def list_difference(list1: list, list2: list, safe: bool = True) -> list:
             list2 {list} -- Çıkarılacak liste
 
     Keyword Arguments:
-            safe {bool} -- Çıkarma işlemi sırasında verilerin sırasını korur ve tekrarları kaldırmaz (default: {True})
+            safe {bool} -- Çıkarma işlemi sırasında verilerin sırasını korur ve tekrarları \
+                                kaldırmaz (default: {True})
 
     Returns:
             list -- Sonuç listesi

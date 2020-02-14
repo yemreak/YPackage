@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from os import listdir as oslistdir
 from os import rename as osrename
@@ -7,6 +8,8 @@ from os.path import join as path_join
 from pathlib import Path
 from typing import AnyStr, List, Pattern, Tuple
 from urllib.request import urlopen
+
+logger = logging.getLogger(__name__)
 
 
 def find_level(root: Path, startpath: Path) -> int:
@@ -26,42 +29,34 @@ def find_level(root: Path, startpath: Path) -> int:
     return len(root.relative_to(startpath).parts)
 
 
-def write_file(filepath: Path, string: str, debug=False):
+def write_file(filepath: Path, string: str):
     with filepath.open("w", encoding="utf-8") as file:
         file.write(string)
 
-        if debug:
-            print(f"Değişen dosya: {file.name}")
+        logger.info(f"{filepath} dosyası güncellendi")
 
 
-def read_file(filepath: Path, debug=False) -> str:
-    string = ""
+def read_file(filepath: Path) -> str:
     with filepath.open("r", encoding="utf-8") as file:
-        string = file.read()
-        if debug:
-            print(f"Okunan dosya: {file.name}")
+        return file.read()
 
-    return string
+        logger.info(f"{filepath} dosyası okundu")
 
 
-def read_json(filepath: Path, debug=False) -> dict:
-    return json.loads(read_file(filepath, debug=debug))
+def read_json(filepath: Path) -> dict:
+    return json.loads(read_file(filepath))
 
 
 def write_json(filepath: Path, jsonstr: str, indent=4, eof_line=True):
-    with filepath.open("w", encoding="utf-8") as file:
-        file.write(json.dumps(jsonstr, indent=indent) + "\n" if eof_line else "")
+    write_file(filepath, json.dumps(jsonstr, indent=indent) + "\n" if eof_line else "")
 
 
-def read_part_of_file(filepath: Path, index: str, debug=False) -> str:
+def read_part_of_file(filepath: Path, index: str) -> str:
     """Doysanın verilen indeksler arasında kalan kısmını okuma
 
     Arguments:
             filepath {Path} -- Dosya yolu objesi
             index {str} -- İndeks
-
-    Keyword Arguments:
-            debug {bool} -- Okunan dosyayı ekrana basar (default: {False})
 
     Returns:
             str -- Okunan veri
@@ -77,19 +72,17 @@ def read_part_of_file(filepath: Path, index: str, debug=False) -> str:
             if read:
                 filestr += line
 
+        logger.info(f"{filepath} dosyasının {index} alanı okundu")
     return filestr
 
 
-def insert_file(filepath: Path, string: str, index: str, new_index: str, debug=False) -> None:
+def insert_file(filepath: Path, string: str, index: str, new_index: str) -> None:
     """Dosyadaki belirlirli indekslerin arasına yazma
 
     Arguments:
             filepath {Path} -- Dosya yolu objesi
             string {str} -- Yazılacak metin
             index {str} -- İndeks
-
-    Keyword Arguments:
-            debug {bool} -- Çıktıları ekrana basma (default: {False})
     """
     def get_index():
         return index if not new_index else new_index
@@ -143,7 +136,7 @@ def insert_file(filepath: Path, string: str, index: str, new_index: str, debug=F
         filestr = generate_filestr()
 
         if filestr != read_file(filepath):
-            write_file(filepath, filestr, debug=debug)
+            write_file(filepath, filestr)
 
     return write_insertion()
 
@@ -208,7 +201,7 @@ def repeat_for_subdirectories(startpath: Path, func: callable) -> None:
             func(fpath, lvl, "file")
 
 
-def rename(regex: Pattern[AnyStr], to: str, path: str, silent=False) -> None:
+def rename(regex: Pattern[AnyStr], to: str, path: str) -> None:
     result = regex.search(path)
     if result:
         if result.lastindex:
@@ -218,8 +211,7 @@ def rename(regex: Pattern[AnyStr], to: str, path: str, silent=False) -> None:
         dst = regex.sub(to, path)
         osrename(path, dst)
 
-        if not silent:
-            print(path, dst)
+        logger.info(f"{path} -> {dst} taşındı")
 
 
 def compile_regex(pattern, ignore_case=False) -> Pattern[AnyStr]:
@@ -233,29 +225,29 @@ def compile_regex(pattern, ignore_case=False) -> Pattern[AnyStr]:
 
 def rename_folders(
         startpath: str, pattern: str, to: str,
-        ignore_case=True, recursive=False, silent=False
+        ignore_case=True, recursive=False
 ):
     p = compile_regex(pattern, ignore_case=ignore_case)
     if recursive:
         for root, dirs, _ in walk(startpath):
-            rename(p, to, root, silent=silent)
+            rename(p, to, root)
     else:
         for path in oslistdir(startpath):
             if Path(path).is_dir():
-                rename(p, to, path, silent=silent)
+                rename(p, to, path)
 
 
 def rename_files(
         startpath: str, pattern: str, to: str,
-        ignore_case=True, recursive=False, silent=False
+        ignore_case=True, recursive=False
 ):
     p = compile_regex(pattern, ignore_case=ignore_case)
     if recursive:
         for root, dirs, files in walk(startpath):
             for f in files:
                 path = path_join(root, f)
-                rename(p, to, path, silent=silent)
+                rename(p, to, path)
     else:
         for path in oslistdir(startpath):
             if Path(path).is_file():
-                rename(p, to, path, silent=silent)
+                rename(p, to, path)

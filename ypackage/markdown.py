@@ -255,8 +255,7 @@ def make_comment(string):
 
 
 def insert_file(
-    filepath: Path, string, index, force=False, fileheader=None, new_index=None,
-    debug=False
+    filepath: Path, string, index, force=False, fileheader=None, new_index=None
 ):
     if force and not filepath.exists():
         create_markdown_file(filepath, header=fileheader)
@@ -266,7 +265,7 @@ def insert_file(
     if bool(new_index):
         new_index = make_comment(new_index)
 
-    fs_insert_file(filepath, string, index=index, new_index=new_index, debug=debug)
+    fs_insert_file(filepath, string, index=index, new_index=new_index)
 
 
 def create_markdown_file(filepath: Path, header=None):

@@ -1,3 +1,4 @@
+import logging
 import os
 # from pydriller import RepositoryMining
 from datetime import datetime
@@ -5,6 +6,8 @@ from pathlib import Path
 from typing import List
 
 from .markdown import create_link, encodedpath
+
+logger = logging.getLogger(__name__)
 
 DIFF_TEMPLATE = "{}/commit/{}?diff=split"
 
@@ -48,9 +51,13 @@ def push_to_github(gpath: Path, paths: List[Path], commit: str):
     if len(paths) > 0:
         cur_dir = os.getcwd()
         os.chdir(gpath)
-        print(f"----------------------------------------")
-        print(f"{gpath} için push işlemi:")
-        print(f"----------------------------------------")
+
+        logger.info("""
+        ----------------------------------------
+        f"{gpath} için push işlemi:"
+        ----------------------------------------
+        """.strip())
+
         command = " &&".join([f"git add {path.relative_to(gpath)}" for path in paths])
         command += " &&" + f'git commit -m "{commit}"'
         command += " &&" + f"git push -u origin master"
@@ -71,7 +78,7 @@ def get_remote_url(path) -> str:
             output, errors = p.communicate()
             remote_url = output.decode('utf-8').splitlines()[0].replace(".git", "")
     except Exception as e:
-        print("Repo URL'i tanımlanamadı" + e)
+        logger.error("Repo URL'i tanımlanamadı" + e)
         exit(-1)
 
     os.chdir(cur_dir)

@@ -1,3 +1,4 @@
+import logging
 from argparse import ArgumentParser
 
 from .filesystem import rename_files, rename_folders
@@ -77,12 +78,17 @@ def register_args(parser: ArgumentParser):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+
     parser = initialize_parser()
     register_args(parser)
 
+    if SILENT:
+        logging.basicConfig(level=logging.ERROR)
+
     for path in PATHS:
         function = rename_folders if DIR_MODE else rename_files
-        function(path, PATTERN, TO, ignore_case=not CASE_SENSITIVE, silent=SILENT)
+        function(path, PATTERN, TO, ignore_case=not CASE_SENSITIVE)
 
 
 if __name__ == "__main__":

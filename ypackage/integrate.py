@@ -1,5 +1,6 @@
 ﻿import argparse
 import configparser
+import logging
 import shlex
 import sys
 from glob import glob
@@ -8,21 +9,23 @@ from typing import Dict
 
 from . import filesystem, gitbook, github, markdown
 
+logger = logging.getLogger(__name__)
+
 INTEGRATION_FILE = ".ygitbookintegration"
 INTEGRATION_MODULE = "integration"
 SUBMODULE_MODULE = "submodule"
 COMMIT_UPDATE_SUBMODULES = "✨ Alt sayfalar güncellendi"
 
 # def execute_integrate(path: str, option: str):
-#	 COMMANDS = f"""
-#	 echo "---
-#	 description: Sitede neler olup bittiğinin raporudur.
-#	 ---" > {os.path.join(path, "CHANGELOG.md")}
-#	 ygitchangelog -d >> {os.path.join(path, "CHANGELOG.md")}
-#	 bash github {path}
-#	 """
+#     COMMANDS = f"""
+#     echo "---
+#     description: Sitede neler olup bittiğinin raporudur.
+#     ---" > {os.path.join(path, "CHANGELOG.md")}
+#     ygitchangelog -d >> {os.path.join(path, "CHANGELOG.md")}
+#     bash github {path}
+#     """
 #
-#	 # subprocess.run(f"bash -c '{COMMANDS}'")
+#     # subprocess.run(f"bash -c '{COMMANDS}'")
 
 
 def convert_url_form(filestr: str, url: str):
@@ -34,13 +37,13 @@ def read_config(cpath: Path) -> dict:
         config = configparser.ConfigParser(inline_comment_prefixes="#")
         config.read(cpath, encoding="utf-8")
     except Exception as e:
-        print(e)
+        logger.error(f"Hata oluştu {e}")
         return None
 
     return config
 
 
-def updateSubSummaries(config: Dict, workdir: Path, index: str, push=False, debug=False) -> None:
+def updateSubSummaries(config: Dict, workdir: Path, index: str, push=False) -> None:
     """Alt modülleri günceller
 
     Arguments:
@@ -128,7 +131,7 @@ def updateSubSummaries(config: Dict, workdir: Path, index: str, push=False, debu
                 until = "## " + until
                 content = content[:content.find(until)]
 
-            filesystem.write_file(path, content, debug=debug)
+            filesystem.write_file(path, content)
 
             paths.append(path)
 
@@ -265,8 +268,8 @@ def register_args(parser: argparse.ArgumentParser, register_all=False):
     args = parser.parse_args()
 
     if register_all:
-        global PATHSTR_LIST, MAIN_DEBUG
-        PATHSTR_LIST, MAIN_DEBUG = args.paths, args.debug
+        global PATHSTR_LIST, DEBUG
+        PATHSTR_LIST, DEBUG = args.paths, args.debug
 
     global GENERATE, RECREATE
     GENERATE, RECREATE = args.generate, args.recreate
@@ -280,9 +283,6 @@ def register_args(parser: argparse.ArgumentParser, register_all=False):
     global LEVEL_LIMIT, PRIVATES
     LEVEL_LIMIT, PRIVATES = args.level_limit, args.privates
 
-    global DEBUG
-    DEBUG = args.debug
-
     global INDEX_STR, NEW_INDEX_STR
     INDEX_STR, NEW_INDEX_STR = args.indexStr, args.newIndex
 
@@ -290,9 +290,7 @@ def register_args(parser: argparse.ArgumentParser, register_all=False):
     FOOTER_PATH = args.footerPath
 
 
-def register_config_args(path: Path) -> Dict:
-    config = read_config(path / INTEGRATION_FILE)
-
+def register_config_args(config: dict, path: Path) -> Dict:
     new_args = ""
     for section in config.sections():
         if section.split()[0] == INTEGRATION_MODULE:
@@ -302,31 +300,29 @@ def register_config_args(path: Path) -> Dict:
     if new_args:
         sys.argv = [__file__, str(path)] + shlex.split(new_args)
     else:
-        print(f"{str(path)} için entegrasyon özelliği mevcut değil")
-        print(
-            f"\t`{INTEGRATION_FILE}` dosyası içerisindeki `integration`" +
-            "alanında args` özelliği yok"
-        )
+        logger.warning(f"""
+        {str(path)} için entegrasyon özelliği mevcut değil
+        {INTEGRATION_FILE}` dosyası içerisindeki `integration` alanında `args` özelliği yok
+        """.strip())
         return
 
     parser = initialize_parser()
     register_args(parser)
 
-    return config
-
 
 def integrate(path: Path, override=False):
     if path.is_dir():
-        if not override:
-            config = register_config_args(path)
+        config = read_config(path / INTEGRATION_FILE)
 
-        if MAIN_DEBUG:
-            print(f"`{str(path)}` için gitbook entegrasyonu çalıştırıldı.")
+        if not override:
+            register_config_args(config, path)
+
+        logger.info(f"`{str(path)}` için gitbook entegrasyonu başlatılıyor.")
 
         if GENERATE:
             gitbook.generate_readmes(
                 path, privates=PRIVATES, index=INDEX_STR,
-                new_index=NEW_INDEX_STR, level_limit=LEVEL_LIMIT, debug=DEBUG
+                new_index=NEW_INDEX_STR, level_limit=LEVEL_LIMIT
             )
 
         if RECREATE:
@@ -335,31 +331,35 @@ def integrate(path: Path, override=False):
                 footer_path=FOOTER_PATH
             )
 
-            gitbook.create_summary_file(path, debug=DEBUG)
+            gitbook.create_summary_file(path)
             gitbook.insert_summary_file(
-                path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR, debug=DEBUG
+                path, filestr, index=INDEX_STR, new_index=NEW_INDEX_STR
             )
 
         if UPDATE:
-            updateSubSummaries(config, path, INDEX_STR, push=PUSH, debug=DEBUG)
+            updateSubSummaries(config, path, INDEX_STR, push=PUSH)
 
         # TIP: Committe iken yapmaktadır (önceden push edilmesine gerek yok)
         if CHANGELOG:
             gitbook.create_changelog(
-                path, repo_url=REPO_URL, push=PUSH, debug=DEBUG,
+                path, repo_url=REPO_URL, push=PUSH,
                 ignore_commits=IGNORE_COMMITS, commit_msg=COMMIT_MSG
             )
 
-        if MAIN_DEBUG:
-            print(f"`{str(path)}` için gitbook entegrasyonu tamamlandı.")
+        logger.info(f"`{str(path)}` için gitbook entegrasyonu tamamlandı.")
 
-    elif MAIN_DEBUG:
-        print(f"Hatalı yol: {path}")
+    else:
+        logger.error(f"Hatalı yol: {path}")
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+
     parser = initialize_parser()
     register_args(parser, register_all=True)
+
+    if DEBUG:
+        logging.basicConfig(level=logging.DEBUG)
 
     override_config = any([GENERATE, RECREATE, UPDATE, CHANGELOG])
     for pathstr in PATHSTR_LIST:

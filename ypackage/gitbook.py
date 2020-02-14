@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime
 from pathlib import Path
@@ -9,6 +10,8 @@ from .github import (generate_raw_url_from_repo_url, get_github_raw_link,
 from .markdown import (SpecialFile, check_links, create_header, create_link,
                        create_markdown_file, generate_dirlink,
                        generate_filelink, insert_file, make_linkstr)
+
+logger = logging.getLogger(__name__)
 
 DESCRIPTIPON_TEMPLATE = """---
 description: >-
@@ -96,10 +99,10 @@ def get_summary_path(workdir: Path) -> Path:
     return workdir / SUMMARY_FILE
 
 
-def create_summary_file(workdir: Path, debug=False):
+def create_summary_file(workdir: Path):
     filepath = get_summary_path(workdir)
     if not filepath.exists():
-        write_file(filepath, SUMMARY_FILE_HEADER + "\n\n", debug=debug)
+        write_file(filepath, SUMMARY_FILE_HEADER + "\n\n")
 
 
 def generate_summary_filestr(
@@ -159,11 +162,10 @@ def generate_summary_filestr(
 
 
 def insert_summary_file(
-    workdir: Path, filestr: str, index: str = "Index", new_index: str = None,
-    debug=False
+    workdir: Path, filestr: str, index: str = "Index", new_index: str = None
 ):
     FILEPATH = get_summary_path(workdir)
-    insert_file(FILEPATH, filestr, index=index, new_index=new_index, debug=debug)
+    insert_file(FILEPATH, filestr, index=index, new_index=new_index)
 
 
 def generate_summary(
@@ -177,7 +179,7 @@ def generate_summary(
 
 def generate_readmes(
         startpath: Path, level_limit: int = -1, privates=[], index="Index", header=None,
-        new_index=None, clearify=False, debug=False, direct_link: bool = False
+        new_index=None, clearify=False, direct_link: bool = False
 ):
     # DEV: Ders notlarını README'ye ekleme direkt olarak dizin dosya oluştur
     def clear_private_dirs() -> list:
@@ -197,7 +199,7 @@ def generate_readmes(
 
         return filestr
 
-    def generate_markdown_files_for_subitems(startpath: Path, clearify=False, debug=debug) -> str:
+    def generate_markdown_files_for_subitems(startpath: Path, clearify=False) -> str:
         # DEV: Aynı dizindekiler aynı dosya altına yazılacak
         for root, dirs, files in os.walk(startpath):
             # Sıralama her OS için farklı olabiliyor
@@ -232,13 +234,14 @@ def generate_readmes(
                     if clearify:
                         try:
                             os.rename(oldfile, filepath)
-                            print(oldfile + " -> " + filepath)
+
+                            logger.info(oldfile + " -> " + filepath + " taşındı")
                         except Exception as e:
                             create_markdown_file(filepath, os.path.basename(root))
-                            print(f"`{oldfile}` aktarılamadı. {e}")
+                            logger.error(f"{oldfile} aktarılamadı. {e}")
 
                 insert_file(filepath, filestr, index=index, force=True,
-                            fileheader=os.path.basename(root), new_index=new_index, debug=debug)
+                            fileheader=os.path.basename(root), new_index=new_index)
 
     filestr = ""
     for root, dirs, files in os.walk(startpath):
@@ -260,7 +263,7 @@ def generate_readmes(
         if level_limit == -1 or level < level_limit:
             filestr = generate_links_for_nonmarkdowns(files)
         elif level == level_limit:  # 1
-            generate_markdown_files_for_subitems(root, clearify=clearify, debug=debug)
+            generate_markdown_files_for_subitems(root, clearify=clearify)
         else:
             if clearify and level > level_limit:
                 readme_path = SpecialFile.README_FILE.get_filepath(root=root)
@@ -272,7 +275,7 @@ def generate_readmes(
             filepath = SpecialFile.README_FILE.get_filepath(root=root)
             fileheader = os.path.basename(root)
             insert_file(filepath, filestr, index=index, force=True,
-                        fileheader=fileheader, new_index=new_index, debug=debug)
+                        fileheader=fileheader, new_index=new_index)
 
 
 def get_summary_url_from_repo_url(repo_url):
@@ -291,7 +294,7 @@ def check_summary(path):
 
 def create_changelog(
     path: Path, ignore_commits=[], repo_url=None, since: datetime = None,
-    to: datetime = None, push=False, commit_msg=None, debug=False
+    to: datetime = None, push=False, commit_msg=None
 ):
     if not commit_msg:
         commit_msg = "💫 YGitBookIntegration"
@@ -315,7 +318,7 @@ def create_changelog(
             oldfilestr = file.read()
 
     if oldfilestr != filestr:
-        write_file(cpath, filestr, debug=debug)
+        write_file(cpath, filestr)
 
         if push:
             push_to_github(path, [cpath], commit_msg)
