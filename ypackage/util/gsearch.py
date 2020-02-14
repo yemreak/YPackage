@@ -1,9 +1,11 @@
-import argparse
 import logging
 import re
+from argparse import ArgumentParser
 
 import googlesearch
 import requests
+
+from ..lib.common import initialize_logging
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +18,9 @@ def get_status_code(url) -> str:
     return status_code
 
 
-def log_url_by_status(query: str, fpath: str, status_code: str = None, exclude: str = None, mode="a") -> None:
+def log_url_by_status(
+        query: str, fpath: str, status_code: str = None, exclude: str = None, mode="a"
+) -> None:
 
     def write_file(string, file):
         file.write(string + "\n")
@@ -43,8 +47,8 @@ def log_url_by_status(query: str, fpath: str, status_code: str = None, exclude: 
     file.close()
 
 
-def main():
-    parser = argparse.ArgumentParser(
+def initialize_parser() -> ArgumentParser:
+    parser = ArgumentParser(
         description='Google arama sonuçlarını raporlama',
     )
     parser.add_argument(
@@ -75,9 +79,24 @@ def main():
         default=None
     )
 
-    args = parser.parse_args()
+    parser.add_argument(
+        "--debug",
+        "-d",
+        action="store_true",
+        dest="debug",
+        help="Bilgilendirici metinleri gösterme"
+    )
+
+    return parser
+
+
+def main():
+    args = initialize_parser().parse_args()
+
     QUERIES, STATUS_CODE, EXCLUDE = args.queries, args.status_code, args.exclude
-    OUTPUT = args.output
+    OUTPUT, DEBUG = args.output, args.debug
+
+    initialize_logging(detailed=DEBUG)
 
     for query in QUERIES:
         filename = re.sub(r"[^\w ]", "_", query) + ".txt" if not OUTPUT else OUTPUT
@@ -85,7 +104,7 @@ def main():
         excluded_file = f"{EXCLUDE} dosyasında olmayan" if EXCLUDE else "tüm"
 
         logger.info(f"""
-        {query} sorgusu için {filename} dosyasına {condition} http durumuna sahip olan 
+        {query} sorgusu için {filename} dosyasına {condition} http durumuna sahip olan
         {excluded_file} bağlantılar raporlanıyor.
         """.strip())
 

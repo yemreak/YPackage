@@ -1,4 +1,7 @@
-import argparse
+import logging
+from argparse import ArgumentParser
+
+from ..lib.common import initialize_logging
 
 PATTERN_ID = "?id="
 URL_DRIVE = "https://drive.google.com"
@@ -28,8 +31,8 @@ def get_id(url: str) -> str:
     return url[ix:]
 
 
-def main():
-    parser = argparse.ArgumentParser(
+def initialize_parser() -> ArgumentParser:
+    parser = ArgumentParser(
         description='Google Drive için direkt url oluşturucu',
     )
     parser.add_argument(
@@ -45,13 +48,26 @@ def main():
         dest="revers",
         help="Direkt urlden önizlenebilir url oluşturma (Kullanıcılar için)"
     )
+    parser.add_argument(
+        "--debug",
+        "-d",
+        action="store_true",
+        dest="debug",
+        help="Bilgilendirici metinleri gösterme"
+    )
 
-    args = parser.parse_args()
-    URLS, REVERSE = args.urls, args.revers
+    return parser
+
+
+def main():
+    args = initialize_parser().parse_args()
+    URLS, REVERSE, DEBUG = args.urls, args.revers, args.debug
+
+    initialize_logging(detailed=DEBUG)
 
     function = drive_to_direct if not REVERSE else direct_to_drive
     for url in URLS:
-        print(function(url))
+        logging.info(function(url))
 
 
 if __name__ == "__main__":

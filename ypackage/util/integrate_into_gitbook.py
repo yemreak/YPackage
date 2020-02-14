@@ -1,13 +1,13 @@
-﻿import argparse
-import configparser
+﻿import configparser
 import logging
 import shlex
 import sys
+from argparse import ArgumentParser
 from glob import glob
 from pathlib import Path
 from typing import Dict
 
-from . import filesystem, gitbook, github, markdown
+from ..lib import common, filesystem, gitbook, github, markdown
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +15,16 @@ INTEGRATION_FILE = ".ygitbookintegration"
 INTEGRATION_MODULE = "integration"
 SUBMODULE_MODULE = "submodule"
 COMMIT_UPDATE_SUBMODULES = "✨ Alt sayfalar güncellendi"
+
+# CLI arguments
+PATHSTR_LIST, DEBUG = None
+GENERATE, RECREATE = None
+UPDATE, CHANGELOG, REPO_URL = None
+IGNORE_COMMITS, COMMIT_MSG, PUSH = None
+IGNORE_COMMITS, COMMIT_MSG, PUSH = None
+LEVEL_LIMIT, PRIVATES = None
+INDEX_STR, NEW_INDEX_STR = None
+FOOTER_PATH = None
 
 # def execute_integrate(path: str, option: str):
 #     COMMANDS = f"""
@@ -140,7 +150,7 @@ def updateSubSummaries(config: Dict, workdir: Path, index: str, push=False) -> N
 
 
 def initialize_parser():
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description='Create `README.md` and `SUMMARY.md` file for GitBook synchronization',
     )
     parser.add_argument(
@@ -264,7 +274,7 @@ def initialize_parser():
     return parser
 
 
-def register_args(parser: argparse.ArgumentParser, register_all=False):
+def register_args(parser: ArgumentParser, register_all=False):
     args = parser.parse_args()
 
     if register_all:
@@ -353,13 +363,11 @@ def integrate(path: Path, override=False):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
-
     parser = initialize_parser()
+
     register_args(parser, register_all=True)
 
-    if DEBUG:
-        logging.basicConfig(level=logging.DEBUG)
+    common.initialize_logging(detailed=DEBUG)
 
     override_config = any([GENERATE, RECREATE, UPDATE, CHANGELOG])
     for pathstr in PATHSTR_LIST:
