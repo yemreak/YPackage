@@ -17,13 +17,13 @@ SUBMODULE_MODULE = "submodule"
 COMMIT_UPDATE_SUBMODULES = "✨ Alt sayfalar güncellendi"
 
 # CLI arguments
-PATHSTR_LIST, DEBUG = None
-GENERATE, RECREATE = None
-UPDATE, CHANGELOG, REPO_URL = None
-IGNORE_COMMITS, COMMIT_MSG, PUSH = None
-IGNORE_COMMITS, COMMIT_MSG, PUSH = None
-LEVEL_LIMIT, PRIVATES = None
-INDEX_STR, NEW_INDEX_STR = None
+PATHSTR_LIST, DEBUG = None, None
+GENERATE, RECREATE = None, None
+UPDATE, CHANGELOG, REPO_URL = None, None, None
+IGNORE_COMMITS, COMMIT_MSG, PUSH = None, None, None
+IGNORE_COMMITS, COMMIT_MSG, PUSH = None, None, None
+LEVEL_LIMIT, PRIVATES = None, None
+INDEX_STR, NEW_INDEX_STR = None, None
 FOOTER_PATH = None
 
 # def execute_integrate(path: str, option: str):
@@ -48,12 +48,12 @@ def read_config(cpath: Path) -> dict:
         config.read(cpath, encoding="utf-8")
     except Exception as e:
         logger.error(f"Hata oluştu {e}")
-        return None
+        return {}
 
     return config
 
 
-def updateSubSummaries(config: Dict, workdir: Path, index: str, push=False) -> None:
+def updateSubSummaries(config: Dict, workdir: Path, index: str, push=False):
     """Alt modülleri günceller
 
     Arguments:
@@ -119,11 +119,11 @@ def updateSubSummaries(config: Dict, workdir: Path, index: str, push=False) -> N
             url = section['url']
             root = section['root']
 
-            description = None
+            description = ""
             if "description" in section:
                 description = section['description']
 
-            until = None
+            until = ""
             if "until" in section:
                 until = section['until']
 
@@ -266,7 +266,6 @@ def initialize_parser():
         '--new-index',
         '-nix',
         dest="newIndex",
-        default=None,
         help="Oluşturulan metin verilen yeni indekslerin arasına yazılır",
         type=str,
     )

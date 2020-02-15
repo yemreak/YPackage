@@ -19,8 +19,8 @@ def get_status_code(url) -> str:
 
 
 def log_url_by_status(
-        query: str, fpath: str, status_code: str = None, exclude: str = None, mode="a"
-) -> None:
+        query: str, fpath: str, status_code: str = 0, exclude: str = "", mode="a"
+):
 
     def write_file(string, file):
         file.write(string + "\n")
@@ -62,21 +62,18 @@ def initialize_parser() -> ArgumentParser:
         "-sc",
         dest='status_code',
         help='HTTP durum kodu',
-        default=None
     )
     parser.add_argument(
         '--output',
         "-o",
         dest='output',
         help='Tüm çıktılar tek bir dosyaya aktarılır',
-        default=None
     )
     parser.add_argument(
         '--exclude',
         "-ex",
         dest='exclude',
         help='Verilen dosya içerisindeki urlleri raporlamaz',
-        default=None
     )
 
     parser.add_argument(

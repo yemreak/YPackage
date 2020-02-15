@@ -3,7 +3,7 @@ import setuptools
 
 README_PATH = "docs/README.md"
 DYNAMIC_VERSION = False
-VERSION = "2.7.0"
+VERSION = "2.7.1"
 
 if DYNAMIC_VERSION:
     version = ""
