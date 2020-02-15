@@ -1,9 +1,9 @@
 from distutils.core import setup
-import setuptools
+from setuptools import find_packages
 
 README_PATH = "docs/README.md"
 DYNAMIC_VERSION = False
-VERSION = "2.7.1"
+VERSION = "2.7.2"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -18,39 +18,32 @@ with open(README_PATH, "r", encoding="utf-8") as file:
 
 
 setup(
-    name='ypackage',             # How you named your package folder (MyLib)
-    packages=setuptools.find_packages(),   # Chose the same as "name"
-    # Start with a small number and increase it with every change you make
+    name='ypackage',
     version=version,
-    # Chose a license from here: https://help.github.com/articles/licensing-a-repository
-    license='MIT',
-    # Give a short description about your library
     description="Yunus Emre Ak ~ YEmreAk (@yedhrab)'ın google drive direkt link oluşturma" +
     "gitbook entegrasyonu, google arama motoru sonuçlarını filtreleme ile ilgili çalışmaları ",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author='Yunus Emre Ak',
-    author_email='yedhrab@gmail.com',
+    author_email="yemreak.com@gmail.com",
+    license='Apache Software License 2.0',
     url='https://github.com/yedhrab/YPackage',
-    # Paketi açıklayan anahtar kelimeler
-        keywords=[
+    keywords=[
         'ypackage', 'yedhrab', 'yemreak', 'gitbook', 'github',
         'google-search', "google", "link", "drive", "renamer", "bulk"
     ],
-    # Kurulacak alt paketler
     install_requires=[
         "google",
         "requests",
         "pydriller"
     ],
     classifiers=[
-            # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable"
+        # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable"
         'Development Status :: 5 - Production/Stable',
         # Define that your audience are developers
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
-        'License :: OSI Approved :: MIT License',   # Again, pick a license
-        # Specify which pyhton versions that you want to support
+        'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
@@ -59,7 +52,7 @@ setup(
         'Programming Language :: Python :: 3.8',
     ],
     entry_points={
-            # Komut isteminden çalıştırma
+        # Komut isteminden çalıştırma
         # örndeğin: ypackage
         # Kullanım: 'ypacakge = ypackage.ypackage:main
         'console_scripts': [
@@ -69,7 +62,8 @@ setup(
             "yfilerenamer = ypackage.util.file_renamer:main",
             "ythemecreator = ypackage.util.theme_creator:main"
         ]
-    }
+    },
+    packages=find_packages(),
 )
 
 if DYNAMIC_VERSION:
