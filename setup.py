@@ -56,11 +56,11 @@ setup(
         # örndeğin: ypackage
         # Kullanım: 'ypacakge = ypackage.ypackage:main
         'console_scripts': [
-            'ygitbookintegration = ypackage.util.integrate_into_gitbook:main',
-            "ygoogledrive = ypackage.util.gdrive:main",
-            "ygooglesearch = ypackage.util.gsearch:main",
-            "yfilerenamer = ypackage.util.file_renamer:main",
-            "ythemecreator = ypackage.util.theme_creator:main"
+            'ygitbookintegration = ypackage.cli.integrate_into_gitbook:main',
+            "ygoogledrive = ypackage.cli.gdrive:main",
+            "ygooglesearch = ypackage.cli.gsearch:main",
+            "yfilerenamer = ypackage.cli.file_renamer:main",
+            "ythemecreator = ypackage.cli.theme_creator:main"
         ]
     },
     packages=find_packages(),

@@ -7,7 +7,7 @@ from glob import glob
 from pathlib import Path
 from typing import Dict
 
-from ..lib import common, filesystem, gitbook, github, markdown
+from .ort common, filesystem, gitbook, github, markdown
 
 logger = logging.getLogger(__name__)
 

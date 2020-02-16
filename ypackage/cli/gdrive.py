@@ -1,7 +1,7 @@
 import logging
 from argparse import ArgumentParser
 
-from ..lib.common import initialize_logging
+from ..apicommon import initialize_logging
 
 PATTERN_ID = "?id="
 URL_DRIVE = "https://drive.google.com"

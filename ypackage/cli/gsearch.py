@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 import googlesearch
 import requests
 
-from ..lib.common import initialize_logging
+from ..common import initialize_logging
 
 logger = logging.getLogger(__name__)
 

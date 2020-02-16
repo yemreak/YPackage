@@ -8,7 +8,7 @@
 			"name": "Integrate - Base",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"./IstanbulUniversity-CE",
 			]
@@ -17,7 +17,7 @@
 			"name": "Integrate - Recreate",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-r"
@@ -27,7 +27,7 @@
 			"name": "Integrate - Generate",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-g"
@@ -37,7 +37,7 @@
 			"name": "Integrate - More",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"../YLib",
@@ -47,7 +47,7 @@
 			"name": "Integrate - More - Debug",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"../YLib",
@@ -58,7 +58,7 @@
 			"name": "Integrate - More - Error",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../*",
 			]
@@ -67,7 +67,7 @@
 			"name": "Integrate - Dir",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../*",
 			]
@@ -76,7 +76,7 @@
 			"name": "Integrate - Push",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../YLib",
 				"-usp",
@@ -86,7 +86,7 @@
 			"name": "Integrate - Changelog",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-c",
@@ -98,7 +98,7 @@
 			"name": "Integrate - Changelog Push",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-cp",
@@ -108,7 +108,7 @@
 			"name": "Integrate - Complate",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-rgcd",
@@ -127,7 +127,7 @@
 			"name": "Integrate - All",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-rgc",
@@ -146,7 +146,7 @@
 			"name": "Integrate - All - Push",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.integrate",
+			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-rgcp",
@@ -172,7 +172,7 @@
 			"name": "GDrive - Base",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.gdrive",
+			"module": "ypackage.cli.gdrive",
 			"args": [
 				"https://drive.google.com/open?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
 			]
@@ -181,7 +181,7 @@
 			"name": "GDrive - Reverse",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.gdrive",
+			"module": "ypackage.cli.gdrive",
 			"args": [
 				"https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
 				"-r"
@@ -191,7 +191,7 @@
 			"name": "GDrive - ID",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.gdrive",
+			"module": "ypackage.cli.gdrive",
 			"args": [
 				"https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
 			]
@@ -200,7 +200,7 @@
 			"name": "GSearch - Simple",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.gsearch",
+			"module": "ypackage.cli.gsearch",
 			"args": [
 				"site:yemreak.com",
 			]
@@ -209,7 +209,7 @@
 			"name": "GSearch - Status Code",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.gsearch",
+			"module": "ypackage.cli.gsearch",
 			"args": [
 				"site:www.yemreak.com",
 				"-sc",
@@ -220,7 +220,7 @@
 			"name": "GSearch - Exclude",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.gsearch",
+			"module": "ypackage.cli.gsearch",
 			"args": [
 				"site:wiki.yemreak.com",
 				"-ex",
@@ -231,7 +231,7 @@
 			"name": "GSearch - Output",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.gsearch",
+			"module": "ypackage.cli.gsearch",
 			"args": [
 				"site:ai.yemreak.com",
 				"site:windows.yemreak.com",
@@ -251,7 +251,7 @@
 			"name": "YFile - Base",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.yfile",
+			"module": "ypackage.cli.file_renamer",
 			"args": [
 				".",
 				"-p",
@@ -264,7 +264,7 @@
 			"name": "YFile - Group",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.yfile",
+			"module": "ypackage.cli.file_renamer",
 			"args": [
 				".",
 				"-p",
@@ -277,7 +277,7 @@
 			"name": "YThemeCreator - Base",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.util.theme_creator",
+			"module": "ypackage.cli.theme_creator",
 			"args": [
 				"../DarkCode-Theme/core/settings.json",
 			]
@@ -286,7 +286,7 @@
 			"name": "YThemeCreator - Error",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.util.theme_creator",
+			"module": "ypackage.cli.theme_creator",
 			"args": [
 				"../DarkCode-Theme/core/darkcode.json",
 			]

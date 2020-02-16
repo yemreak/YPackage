@@ -20,7 +20,8 @@ Kişisel python modüllerim
 ## 👨‍💻 Geliştirici Notları
 
 - 🧱 Temel kullanım `import ypackage` şeklindedir
-- 🐣 Modüllere `ypackage.lib.<modül>` şeklinde erişilir
+- 🖤 CLI işlemlerine `ypackage.cli` içerisinde bulunur
+- 💎 Çekirdek modüllere `ypackage.<modül>` şeklinde erişilir
 
 | 🍱 Modül		| 📝 Açıklama								 |
 | ------------ | ---------------------------------------- |

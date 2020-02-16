@@ -1,8 +1,8 @@
 import logging
 from argparse import ArgumentParser
 
-from ..lib.common import initialize_logging
-from ..lib.filesystem import rename_files, rename_folders
+from ..common import initialize_logging
+from ..filesystem import rename_files, rename_folders
 
 
 def initialize_parser():
@@ -77,7 +77,16 @@ def main():
 
     for path in PATHS:
         function = rename_folders if DIR_MODE else rename_files
-        function(path, PATTERN, TO, ignore_case=not CASE_SENSITIVE, recursive=RECURSIVE)
+        result = function(
+            path,
+            PATTERN,
+            TO,
+            ignore_case=not CASE_SENSITIVE,
+            recursive=RECURSIVE
+        )
+
+        if not result:
+            logging.info(f"{PATTERN=} {RECURSIVE=} için değişiklik yapılmadı")
 
 
 if __name__ == "__main__":
