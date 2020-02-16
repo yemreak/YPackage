@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 README_PATH = "docs/README.md"
 DYNAMIC_VERSION = False
-VERSION = "2.7.2"
+VERSION = "2.7.3"
 
 if DYNAMIC_VERSION:
     version = ""
