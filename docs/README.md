@@ -35,9 +35,9 @@ Kişisel python modüllerim
 
 ## 💖 Destek ve İletişim
 
-​[​![Github](.https://github.com/yedhrab/YPackage/blob/master/docs/.github/assets/github_32px.png)​](https://github.com/yedhrab) [​![LinkedIn](.https://github.com/yedhrab/YPackage/blob/master/docs/.github/assets/linkedin_32px.png)​](https://www.linkedin.com/in/yemreak/) [​![Website](.https://github.com/yedhrab/YPackage/blob/master/docs/.github/assets/geography_32px.png)​](https://yemreak.com/) [​![Mail](.https://github.com/yedhrab/YPackage/blob/master/docs/.github/assets/gmail_32px.png)​](mailto:yemreak.com@gmail.com?subject=YPackage%20%7C%20GitHub)​
+​[​![Github](../.github/assets/github_32px.png)​](https://github.com/yedhrab) [​![LinkedIn](../.github/assets/linkedin_32px.png)​](https://www.linkedin.com/in/yemreak/) [​![Website](../.github/assets/geography_32px.png)​](https://yemreak.com/) [​![Mail](../.github/assets/gmail_32px.png)​](mailto:yemreak.com@gmail.com?subject=YPackage%20%7C%20GitHub)​
 
-​[​![Patreon](.https://github.com/yedhrab/YPackage/blob/master/docs/.github/assets/become_a_patron_32px.png)](https://www.patreon.com/yemreak/)
+​[​![Patreon](../.github/assets/become_a_patron_32px.png)](https://www.patreon.com/yemreak/)
 
 ## 🔏 Lisans
 
