@@ -23,7 +23,7 @@ description: >-
 SUMMARY_FILE = "SUMMARY.md"
 SUMMARY_FILE_HEADER = "# Summary"
 
-CHANGELOG_FILE = "CHANGELOG.md"
+CHANGELOG_FILE = "changelog.md"
 CHANGELOG_HEADER = u"👀 Neler değişti"
 CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
@@ -301,7 +301,7 @@ def create_changelog(
 
     cpath = path / CHANGELOG_FILE
 
-    filestr = "# ✨ Değişiklikler"
+    filestr = "# " + CHANGELOG_HEADER
     filestr += "\n\n"
     filestr += "## 📋 Tüm Değişiklikler"
     filestr += "\n\n"
