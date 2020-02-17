@@ -35,7 +35,8 @@ setup(
     install_requires=[
         "google",
         "requests",
-        "pydriller"
+        "pydriller",
+        "coloredlogs"
     ],
     classifiers=[
         # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable"
