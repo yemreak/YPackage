@@ -111,7 +111,7 @@ def main():
     # Gettings args
     PATHS, DEBUG = args.paths, args.debug
 
-    initialize_logging(detailed=DEBUG)
+    initialize_logging(level=DEBUG)
 
     for path in PATHS:
         path = Path(path)

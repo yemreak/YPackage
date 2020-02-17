@@ -7,7 +7,7 @@ from glob import glob
 from pathlib import Path
 from typing import Dict
 
-from .ort common, filesystem, gitbook, github, markdown
+from .. import common, filesystem, gitbook, github, markdown
 
 logger = logging.getLogger(__name__)
 
@@ -366,7 +366,8 @@ def main():
 
     register_args(parser, register_all=True)
 
-    common.initialize_logging(detailed=DEBUG)
+    log_level = logging.DEBUG if DEBUG else logging.INFO
+    common.initialize_logging(level=log_level)
 
     override_config = any([GENERATE, RECREATE, UPDATE, CHANGELOG])
     for pathstr in PATHSTR_LIST:
