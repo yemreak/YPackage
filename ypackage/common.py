@@ -8,9 +8,9 @@ def initialize_logging(level=logging.INFO):
     import coloredlogs
 
     if level == logging.DEBUG:
-        log_format = r"%(levelname)s:%(filename)s %(message)s"
+        log_format = r"%(name)s[%(process)d] %(levelname)s %(message)s"
     else:
-        log_format = r"%(message)s"
+        log_format = r"%(levelname)s %(message)s"
 
     coloredlogs.install(fmt=log_format, level=level)
     logger.debug("Rekli raporlayıcı aktif edildi")
