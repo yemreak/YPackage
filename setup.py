@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 README_PATH = "docs/README.md"
 DYNAMIC_VERSION = False
-VERSION = "2.7.3"
+VERSION = "2.7.4"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -28,7 +28,7 @@ setup(
     author_email="yemreak.com@gmail.com",
     license='Apache Software License 2.0',
     url='https://github.com/yedhrab/YPackage',
-    download_url=f'https://github.com/yedhrab/YPackage/archive/{version}.tar.gz',
+    download_url=f"https://github.com/yedhrab/YPackage/releases/download/{VERSION}/ypackage-{VERSION}-py3-none-any.whl",
     keywords=[
         'ypackage', 'yedhrab', 'yemreak', 'gitbook', 'github',
         'google-search', "google", "link", "drive", "renamer", "bulk"
