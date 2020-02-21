@@ -93,7 +93,8 @@ def main():
     QUERIES, STATUS_CODE, EXCLUDE = args.queries, args.status_code, args.exclude
     OUTPUT, DEBUG = args.output, args.debug
 
-    initialize_logging(detailed=DEBUG)
+    log_level = logging.DEBUG if DEBUG else logging.INFO
+    initialize_logging(level=log_level)
 
     for query in QUERIES:
         filename = re.sub(r"[^\w ]", "_", query) + ".txt" if not OUTPUT else OUTPUT

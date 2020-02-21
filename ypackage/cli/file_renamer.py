@@ -70,10 +70,10 @@ def main():
     PATTERN, TO = args.pattern, args.to
     SILENT = args.silent
 
-    initialize_logging()
+    logger = logging.getLogger(__name__)
 
-    if SILENT:
-        logging.basicConfig(level=logging.ERROR)
+    log_level = logging.ERROR if SILENT else logging.DEBUG
+    initialize_logging(level=log_level)
 
     for path in PATHS:
         function = rename_folders if DIR_MODE else rename_files
@@ -86,7 +86,7 @@ def main():
         )
 
         if not result:
-            logging.info(f"{PATTERN=} {RECURSIVE=} için değişiklik yapılmadı")
+            logger.warning(f"{PATTERN=} {RECURSIVE=} için değişiklik yapılmadı")
 
 
 if __name__ == "__main__":

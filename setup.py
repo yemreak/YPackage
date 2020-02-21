@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 README_PATH = "docs/README.md"
 DYNAMIC_VERSION = False
-VERSION = "2.7.2"
+VERSION = "2.7.3"
 
 if DYNAMIC_VERSION:
     version = ""
@@ -28,6 +28,7 @@ setup(
     author_email="yemreak.com@gmail.com",
     license='Apache Software License 2.0',
     url='https://github.com/yedhrab/YPackage',
+    download_url=f'https://github.com/yedhrab/YPackage/archive/{version}.tar.gz',
     keywords=[
         'ypackage', 'yedhrab', 'yemreak', 'gitbook', 'github',
         'google-search', "google", "link", "drive", "renamer", "bulk"
@@ -35,7 +36,8 @@ setup(
     install_requires=[
         "google",
         "requests",
-        "pydriller"
+        "pydriller",
+        "coloredlogs"
     ],
     classifiers=[
         # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable"

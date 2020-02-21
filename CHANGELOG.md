@@ -1,5 +1,11 @@
 # 👀 What's New
 
+## 🏷️ 2.7.3
+
+- 🌃 Background package added
+- 🎨 Colorful log added
+- ✨ Logging improved
+
 ## 🏷️ 2.7.2
 
 - 👨‍🔧 Package names fixed

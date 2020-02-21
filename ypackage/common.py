@@ -1,16 +1,19 @@
-import re
 import logging
+import re
+
+logger = logging.getLogger(__name__)
 
 
-def initialize_logging(detailed=False):
-    if detailed:
-        logformat = r"%(levelname)s:%(filename)s %(message)s"
-        loglevel = logging.DEBUG
+def initialize_logging(level=logging.INFO):
+    import coloredlogs
+
+    if level == logging.DEBUG:
+        log_format = r"%(name)s[%(process)d] %(levelname)s %(message)s"
     else:
-        logformat = r"%(message)s"
-        loglevel = logging.INFO
+        log_format = r"%(levelname)s %(message)s"
 
-    logging.basicConfig(format=logformat, level=loglevel)
+    coloredlogs.install(fmt=log_format, level=level)
+    logger.debug("Rekli raporlayıcı aktif edildi")
 
 
 def exit_if_not(condition, message=None):
