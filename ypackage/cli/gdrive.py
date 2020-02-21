@@ -63,7 +63,8 @@ def main():
     args = initialize_parser().parse_args()
     URLS, REVERSE, DEBUG = args.urls, args.revers, args.debug
 
-    initialize_logging(detailed=DEBUG)
+    log_level = logging.DEBUG if DEBUG else logging.INFO
+    initialize_logging(level=log_level)
 
     function = drive_to_direct if not REVERSE else direct_to_drive
     for url in URLS:
