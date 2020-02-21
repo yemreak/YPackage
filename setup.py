@@ -28,6 +28,7 @@ setup(
     author_email="yemreak.com@gmail.com",
     license='Apache Software License 2.0',
     url='https://github.com/yedhrab/YPackage',
+    download_url=f'https://github.com/yedhrab/YPackage/archive/{version}.tar.gz',
     keywords=[
         'ypackage', 'yedhrab', 'yemreak', 'gitbook', 'github',
         'google-search', "google", "link", "drive", "renamer", "bulk"
