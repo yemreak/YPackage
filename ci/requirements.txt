@@ -1,6 +1,4 @@
-pytest
-behave
-behave-classy
-coveralls
+setuptools
 wheel
-pillow
+pytest
+flake8
