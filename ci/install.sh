@@ -1,6 +1,6 @@
-python -m venv venv
+python3 -m venv venv
 source venv/Scripts/activate
-python -m pip install --upgrade pip 
-python -m pip install --upgrade -r .\ci\requirements.txt
-python -m pip install --upgrade .
+python3 -m pip install --upgrade pip 
+python3 -m pip install --upgrade -r .\ci\requirements.txt
+python3 -m pip install --upgrade .
 deactivate
