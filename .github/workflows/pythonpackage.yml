@@ -19,24 +19,24 @@ jobs:
 
           - os: macos-latest
             INSTALL: |
-              chmod u+x ./ci/install.sh
+              chmod u+x ./ci/install.sh &&
               ./ci/install.sh
             TEST: |
-              chmod u+x ./ci/test.sh
+              chmod u+x ./ci/test.sh &&
               ./ci/test.sh
             QUALITY_TEST: |
-              chmod u+x ./ci/quality_test.sh
+              chmod u+x ./ci/quality_test.sh &&
               ./ci/quality_test.sh
 
           - os: macos-latest
             INSTALL: |
-              chmod u+x ./ci/install.sh
+              chmod u+x ./ci/install.sh &&
               ./ci/install.sh
             TEST: |
-              chmod u+x ./ci/test.sh
+              chmod u+x ./ci/test.sh &&
               ./ci/test.sh
             QUALITY_TEST: |
-              chmod u+x ./ci/quality_test.sh
+              chmod u+x ./ci/quality_test.sh &&
               ./ci/quality_test.sh
 
     steps:
