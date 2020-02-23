@@ -1,6 +1,10 @@
 # Windows dosyaları
 desktop.ini
 
+# Custumized file
+.vscode/settings.json
+ahk_install.exe
+
 # Python
 __pycache__
 
@@ -143,4 +147,3 @@ dmypy.json
 
 # pytype static type analyzer
 .pytype/
-.vscode/settings.json

@@ -1,0 +1,6 @@
+pytest
+behave
+behave-classy
+coveralls
+wheel
+pillow
