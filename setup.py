@@ -1,16 +1,9 @@
-from distutils.core import setup
-from setuptools import find_packages
+from setuptools import setup
 
+VERSION = "2.7.4.1"
 README_PATH = "docs/README.md"
-DYNAMIC_VERSION = False
-VERSION = "2.7.4"
 
-if DYNAMIC_VERSION:
-    version = ""
-    with open(".version", "r", encoding="utf-8") as file:
-        version = (int(file.read().strip()) + 1) / 10
-else:
-    version = VERSION
+# test_requirements = ['behave', 'behave-classy', 'pytest']
 
 long_description = ""
 with open(README_PATH, "r", encoding="utf-8") as file:
@@ -19,7 +12,8 @@ with open(README_PATH, "r", encoding="utf-8") as file:
 
 setup(
     name='ypackage',
-    version=version,
+    packages=['ypackage'],
+    version=VERSION,
     description="Yunus Emre Ak ~ YEmreAk (@yedhrab)'ın google drive direkt link oluşturma" +
     "gitbook entegrasyonu, google arama motoru sonuçlarını filtreleme ile ilgili çalışmaları ",
     long_description=long_description,
@@ -28,7 +22,6 @@ setup(
     author_email="yemreak.com@gmail.com",
     license='Apache Software License 2.0',
     url='https://github.com/yedhrab/YPackage',
-    download_url=f"https://github.com/yedhrab/YPackage/releases/download/{VERSION}/ypackage-{VERSION}-py3-none-any.whl",
     keywords=[
         'ypackage', 'yedhrab', 'yemreak', 'gitbook', 'github',
         'google-search', "google", "link", "drive", "renamer", "bulk"
@@ -65,9 +58,7 @@ setup(
             "ythemecreator = ypackage.cli.theme_creator:main"
         ]
     },
-    packages=find_packages(),
+    # tests_require=test_requirements,
+    include_package_data=True,
+    zip_safe=False
 )
-
-if DYNAMIC_VERSION:
-    with open(".version", "w", encoding="utf-8") as file:
-        file.write(str(int(version * 10)))
