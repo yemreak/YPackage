@@ -1,3 +1,3 @@
-source venv/Scripts/activate
-python setup.py sdist bdist_wheel
+source venv/Scripts/activate &&
+python setup.py sdist bdist_wheel &&
 deactivate
