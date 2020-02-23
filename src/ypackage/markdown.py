@@ -141,9 +141,13 @@ def read_first_link(string: str) -> dict:
             dict -- Link verisi
 
     Examples:
-            >>> result[0] = "[name](url)"
-            >>> result[1] = "name"
-            >>> result[2] = "url"
+        >>> result = read_first_link('- [name](url)')
+        >>> result[0]
+        '[name](url)'
+        >>> result[1]
+        'name'
+        >>> result[2]
+        'url'
     """
     return re.search(f"{LINK_REGEX}|$", string)
 
@@ -165,16 +169,21 @@ def find_link(line: str) -> dict:
     """Varsa link verisini döndürür
 
     Arguments:
-            string {str} -- Bağlantı aranacak metin dosyası
+        string {str} -- Bağlantı aranacak metin dosyası
 
     Returns:
-            dict -- Bulunan bağlantılar
+        dict -- Bulunan bağlantılar
 
     Examples:
-            >>> result = find_link("- [name](url)")
-            >>> result[0] = "[name](url)"
-            >>> result[1] = "name"
-            >>> result[2] = "url"
+        >>> result = find_link("- [name](url)")
+        >>> result[0]
+        '[name](url)'
+
+        >>> result[1]
+        'name'
+
+        >>> result[2]
+        'url'
     """
     return re.search(LINK_REGEX, line)
 
@@ -183,15 +192,21 @@ def findall_links(string: str) -> dict:
     """Tüm linkleri döndürür
 
     Arguments:
-            string {str} -- Bağlantı aranacak metin dosyası
+        string {str} -- Bağlantı aranacak metin dosyası
 
     Returns:
-            dict -- Bulunan bağlantılar
+        dict -- Bulunan bağlantılar
 
     Examples:
-            >>> result[0] = ('name', 'url')
-            >>> result[0][1] = "name"
-            >>> result[0][1] = "url"
+        >>> result = find_link("- [name](url)")
+        >>> result[0]
+        '[name](url)'
+
+        >>> result[1]
+        'name'
+
+        >>> result[2]
+        'url'
     """
     return re.findall(LINK_REGEX, string)
 

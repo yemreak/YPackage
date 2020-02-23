@@ -18,15 +18,15 @@ def find_level(root: Path, startpath: Path) -> int:
     """Dizin seviyesini bulma
 
     Arguments:
-            root {Path} -- Dizin yolu
-            startpath {Path} -- Ana dizin yolu
+        root {Path} -- Dizin yolu
+        startpath {Path} -- Ana dizin yolu
 
     Returns:
-            int -- Derinlik seviyesi
+        int -- Derinlik seviyesi
 
     Examples:
-            >>> result = find_level(Path("./Documents/Configuration"), Path("."))
-            >>> print(result) # 2
+        >>> find_level(Path("./Documents/Configuration"), Path("."))
+        2
     """
     return len(root.relative_to(startpath).parts)
 
@@ -169,6 +169,9 @@ def listdir_grouped(root: Path, privates=[], include_hidden=False) -> Tuple[List
     Examples:
             >>> dirs, files = listdir_grouped(".")
     """
+    if isinstance(root, str):
+        root = Path(root)
+
     paths = [x for x in root.iterdir()]
 
     dirs, files = [], []
