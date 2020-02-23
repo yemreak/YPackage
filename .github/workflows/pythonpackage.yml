@@ -18,14 +18,14 @@ jobs:
             QUALITY_TEST: .\ci\quality_test.bat
 
           - os: macos-latest
-            INSTALL: .\ci\install.sh
-            TEST: .\ci\test.sh
-            QUALITY_TEST: .\ci\quality_test.sh
+            INSTALL: ./ci/install.sh
+            TEST: ./ci/test.sh
+            QUALITY_TEST: ./ci/quality_test.sh
 
           - os: ubuntu-latest
-            INSTALL: .\ci\install.sh
-            TEST: .\ci\test.sh
-            QUALITY_TEST: .\ci\quality_test.sh
+            INSTALL: ./ci/install.sh
+            TEST: ./ci/test.sh
+            QUALITY_TEST: ./ci/quality_test.sh
 
     steps:
       - uses: actions/checkout@v1
