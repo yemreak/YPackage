@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = "2.7.4.2"
+VERSION = "2.7.4.3"
 README_PATH = "docs/README.md"
 
 # test_requirements = ['behave', 'behave-classy', 'pytest']
