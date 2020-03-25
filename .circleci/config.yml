@@ -12,8 +12,11 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          command: ./manage.py test
-          name: Test
+          command: pytest
+          name: ⚗️ Functional testing
+      - run:
+          command: flake8 --exclude=venv* --statistics
+          name: 🧐 Python code style testing
 
 workflows:
   main:
