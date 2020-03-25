@@ -9,7 +9,7 @@ from setuptools.command.install import install
 VERSION = "2.7.4.3"
 README_PATH = "docs/README.md"
 
-# test_requirements = ["behave", "behave-classy", "pytest"]
+test_requirements = ["pytest"]  # "behave", "behave-classy",
 
 long_description = ""
 with open(README_PATH, "r", encoding="utf-8") as file:
@@ -111,6 +111,6 @@ setup(
             "ythemecreator = ypackage.cli.theme_creator:main",
         ]
     },
-    cmdclass={'verify': VerifyVersionCommand}
-    # tests_require=test_requirements,
+    cmdclass={'verify': VerifyVersionCommand},
+    tests_require=test_requirements,
 )

@@ -17,6 +17,11 @@ jobs:
           command: |
             python -m pytest .
 
+      - run:
+          name: 💠 Functionality testing
+          command: |
+            pip install .
+
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
 
