@@ -4,7 +4,7 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  build-and-test:
+  🏗️ Build:
     executor: python/default
     steps:
       - checkout
@@ -12,6 +12,8 @@ jobs:
       - python/install-deps
       - python/save-cache
 
+  ⚗️ Test:
+      executor: python/default
       - run:
           name: ⚗️ Functional testing
           command: |
@@ -25,7 +27,7 @@ jobs:
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
 
-  deploy:
+  ⏫ Deploy:
     executor: python/default
     steps:
       - checkout
@@ -60,13 +62,19 @@ jobs:
 workflows:
   main:
     jobs:
-      - build-and-test:
+      - 🏗️ Build: 
+          filters:
+            tags:
+              only: /.*/
+      - ⚗️ Test: 
+          requires:
+              - 🏗️ Build
           filters:
             tags:
               only: /.*/
       - deploy:
           requires:
-              - build-and-test
+              - ⚗️ Test
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
