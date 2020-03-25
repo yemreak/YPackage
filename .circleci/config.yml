@@ -18,9 +18,10 @@ jobs:
             python -m pytest .
 
       - run:
-          name: 🧐 Python code style testing
-          command: |
-            python -m flake8 --exclude=venv* --statistics
+          name: 📋 Upload CodeCov.io Data
+          command: bash <(curl -s https://codecov.io/bash) -F unittests
+          when: always # Uploads code coverage results, pass or fail
+
 
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
