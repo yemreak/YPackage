@@ -12,15 +12,21 @@ jobs:
       - python/install-deps
       - python/save-cache
 
+  test:
+    executor: python/default
+    steps:
       - run:
           name: ⚗️ Functional testing
           command: |
             python -m pytest .
 
+  quality:
+    executor: python/default
+    steps:
       - run:
           name: 🧐 Python code style testing
           command: |
-            flake8 --exclude=venv* --statistics
+            python -m flake8 --exclude=venv* --statistics
 
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
@@ -60,13 +66,16 @@ jobs:
 workflows:
   main:
     jobs:
-      - build-and-test: 
-          filters:
-            tags:
-              only: /.*/
+      - build
+      - test:
+          requires:
+            - build
+      - quality:
+          requires:
+            - test
       - deploy:
           requires:
-              - build-and-test
+            - test
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
