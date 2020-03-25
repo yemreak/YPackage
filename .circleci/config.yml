@@ -13,14 +13,14 @@ jobs:
       - python/save-cache
 
       - run:
-            name: ⚗️ Functional testing
-            command: |
-              pytest
+          name: ⚗️ Functional testing
+          command: |
+            pytest
 
-        - run:
-            name: 🧐 Python code style testing
-            command: |
-              flake8 --exclude=venv* --statistics
+      - run:
+          name: 🧐 Python code style testing
+          command: |
+            flake8 --exclude=venv* --statistics
 
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
