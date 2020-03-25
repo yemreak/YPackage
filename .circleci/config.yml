@@ -5,6 +5,7 @@ orbs:
 
 jobs:
   build:
+    name: 🏗️ Build
     executor: python/default
     steps:
       - checkout
@@ -13,21 +14,24 @@ jobs:
       - python/save-cache
 
   test:
+      name: ⚗️ Test
       executor: python/default
-      - run:
-          name: ⚗️ Functional testing
-          command: |
-            pytest
+      steps:
+        - run:
+            name: ⚗️ Functional testing
+            command: |
+              pytest
 
-      - run:
-          name: 🧐 Python code style testing
-          command: |
-            flake8 --exclude=venv* --statistics
+        - run:
+            name: 🧐 Python code style testing
+            command: |
+              flake8 --exclude=venv* --statistics
 
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
 
   deploy:
+    name: ⏫ Deploy 
     executor: python/default
     steps:
       - checkout
