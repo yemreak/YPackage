@@ -2,3 +2,4 @@ setuptools
 wheel
 pytest
 flake8
+googlesearch
