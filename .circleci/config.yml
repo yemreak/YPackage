@@ -11,14 +11,64 @@ jobs:
       - python/load-cache
       - python/install-deps
       - python/save-cache
+
       - run:
-          command: pytest
           name: ⚗️ Functional testing
+          command: |
+            pytest
+
       - run:
-          command: flake8 --exclude=venv* --statistics
           name: 🧐 Python code style testing
+          command: |
+            flake8 --exclude=venv* --statistics
+
+# Continuously Deploying Python Packages to PyPI with CircleCI
+# https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
+
+  deploy:
+    executor: python/default
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
+
+      - run:
+          name: 🏷️ Verify git tag version
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            python setup.py verify
+
+      - run:
+          name: 🔨 PYPI configuration created
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = levlaz" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+
+      - run:
+          name: 📦 Create PYPI package
+          command: |
+            python setup.py sdist bdist_wheel
+
+      - run:
+          name: ⏫ Upload package to PYPI
+          command: |
+            twine upload dist/*
 
 workflows:
   main:
     jobs:
-      - build-and-test
+      - build-and-test:
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+              - build-and-test
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
