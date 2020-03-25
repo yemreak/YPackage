@@ -2,4 +2,7 @@ setuptools
 wheel
 pytest
 flake8
-googlesearch
+google
+requests
+coloredlogs
+pydriller
