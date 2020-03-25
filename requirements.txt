@@ -6,3 +6,4 @@ google
 requests
 coloredlogs
 pydriller
+pytest
