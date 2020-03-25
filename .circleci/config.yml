@@ -4,7 +4,8 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  🏗️ Build:
+  build:
+    name: 🏗️ Build
     executor: python/default
     steps:
       - checkout
@@ -12,7 +13,8 @@ jobs:
       - python/install-deps
       - python/save-cache
 
-  ⚗️ Test:
+  test:
+      name: ⚗️ Test
       executor: python/default
       - run:
           name: ⚗️ Functional testing
@@ -62,19 +64,19 @@ jobs:
 workflows:
   main:
     jobs:
-      - 🏗️ Build: 
+      - build: 
           filters:
             tags:
               only: /.*/
-      - ⚗️ Test: 
+      - test: 
           requires:
-              - 🏗️ Build
+              - build
           filters:
             tags:
               only: /.*/
       - deploy:
           requires:
-              - ⚗️ Test
+              - test
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
