@@ -5,7 +5,6 @@ orbs:
 
 jobs:
   build:
-    name: 🏗️ Build
     executor: python/default
     steps:
       - checkout
@@ -14,7 +13,6 @@ jobs:
       - python/save-cache
 
   test:
-      name: ⚗️ Test
       executor: python/default
       - run:
           name: ⚗️ Functional testing
@@ -30,7 +28,6 @@ jobs:
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
 
   deploy:
-    name: ⏫ Deploy 
     executor: python/default
     steps:
       - checkout
