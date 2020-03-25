@@ -15,7 +15,7 @@ jobs:
       - run:
           name: ⚗️ Functional testing
           command: |
-            pytest
+            python -m pytest .
 
       - run:
           name: 🧐 Python code style testing
