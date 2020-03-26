@@ -11,6 +11,9 @@ from .filesystem import parse_to_lines, read_file, write_file, merge_lines
 LINK_REGEX = r"\[([^\[]+)\]\((.*)\)"
 HEADER_CHAR = "#"
 
+# TODO: Link için Object yapısına geçilecek
+# TODO: Comment ve Headar için de object yapısı düşünülebilir
+
 
 class Link:
 
@@ -319,7 +322,7 @@ def create_markdown_file(filepath: Path, header=None):
         header = filepath.name
 
     with filepath.open("w", encoding="utf-8") as file:
-        file.write(create_header(header,  1))
+        file.write(create_header(header, 1))
 
 
 def generate_substrings(content, index):
