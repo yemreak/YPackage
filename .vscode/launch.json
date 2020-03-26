@@ -1,16 +1,13 @@
 {
-	// Use IntelliSense to learn about possible attributes.
-	// Hover to view descriptions of existing attributes.
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
 		{
 			"name": "Integrate - Base",
 			"type": "python",
 			"request": "launch",
-			"module": "ypackage.cli.integrate_into_gitbook",
+			"module": "ypackage.cli.gitbook_integration",
 			"args": [
-				"./IstanbulUniversity-CE",
+				"./YLib"
 			]
 		},
 		{
@@ -40,7 +37,7 @@
 			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
-				"../YLib",
+				"../YLib"
 			]
 		},
 		{
@@ -60,7 +57,7 @@
 			"request": "launch",
 			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
-				"../*",
+				"../*"
 			]
 		},
 		{
@@ -69,7 +66,7 @@
 			"request": "launch",
 			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
-				"../*",
+				"../*"
 			]
 		},
 		{
@@ -79,7 +76,7 @@
 			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../YLib",
-				"-usp",
+				"-usp"
 			]
 		},
 		{
@@ -101,7 +98,7 @@
 			"module": "ypackage.cli.integrate_into_gitbook",
 			"args": [
 				"../IstanbulUniversity-CE",
-				"-cp",
+				"-cp"
 			]
 		},
 		{
@@ -112,7 +109,7 @@
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-rgcd",
-				"-ll",
+				"-dl",
 				"2",
 				"-ru",
 				"https://github.com/YEmreAk/IstanbulUniversity-CE",
@@ -131,7 +128,7 @@
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-rgc",
-				"-ll",
+				"-dl",
 				"2",
 				"-ru",
 				"https://github.com/YEmreAk/IstanbulUniversity-CE",
@@ -150,7 +147,7 @@
 			"args": [
 				"../IstanbulUniversity-CE",
 				"-rgcp",
-				"-ll",
+				"-dl",
 				"2",
 				"-ru",
 				"https://github.com/YEmreAk/IstanbulUniversity-CE",
@@ -174,7 +171,7 @@
 			"request": "launch",
 			"module": "ypackage.cli.gdrive",
 			"args": [
-				"https://drive.google.com/open?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
+				"https://drive.google.com/open?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb"
 			]
 		},
 		{
@@ -193,7 +190,7 @@
 			"request": "launch",
 			"module": "ypackage.cli.gdrive",
 			"args": [
-				"https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb",
+				"https://drive.google.com/uc?id=1H6W_NiMSKJqAbeQfJC0pABiCq6j-klEb"
 			]
 		},
 		{
@@ -202,7 +199,7 @@
 			"request": "launch",
 			"module": "ypackage.cli.gsearch",
 			"args": [
-				"site:yemreak.com",
+				"site:yemreak.com"
 			]
 		},
 		{
@@ -279,7 +276,7 @@
 			"request": "launch",
 			"module": "ypackage.cli.theme_creator",
 			"args": [
-				"../DarkCode-Theme/core/settings.json",
+				"../DarkCode-Theme/core/settings.json"
 			]
 		},
 		{
@@ -288,8 +285,8 @@
 			"request": "launch",
 			"module": "ypackage.cli.theme_creator",
 			"args": [
-				"../DarkCode-Theme/core/darkcode.json",
+				"../DarkCode-Theme/core/darkcode.json"
 			]
-		},
+		}
 	]
 }
