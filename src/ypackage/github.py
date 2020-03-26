@@ -95,7 +95,7 @@ def list_commit_links(
         repo_url = get_remote_url(path)
 
     if not repo_url:
-        return
+        return []
 
     links = []
 

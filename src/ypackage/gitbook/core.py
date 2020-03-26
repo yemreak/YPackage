@@ -312,6 +312,10 @@ def create_changelog(
         path, repo_url=repo_url, since=since, to=to,
         ignore_commits=ignore_commits + [commit_msg]
     )
+
+    if not links:
+        return
+
     filestr += "\n".join(links)
 
     oldfilestr = ""
