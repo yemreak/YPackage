@@ -21,6 +21,53 @@ jobs:
           name: 💠 Functionality testing
           command: |
             pip install .
+      
+      - run:
+          name: ⏬ Testing repos download
+          command: |
+            sudo apt install git
+            git clone https://github.com/YEmreAk/YLib ../YLib
+            git clone https://github.com/YEmreAk/YPython ../YPython
+        
+      - run:
+          name: 📖 Integrate - Base
+          command: |
+            ygitbookintegration ../YLib
+
+      - run:
+          name: 📖 Integrate - Recreate
+          command: |
+            ygitbookintegration ../YLib -r
+
+      - run:
+          name: 📖 Integrate - Generate
+          command: |
+            ygitbookintegration ../YLib -g
+
+      - run:
+          name: 📖 Integrate - More
+          command: |
+            ygitbookintegration ../YLib ../YPython
+
+      - run:
+          name: 📖 Integrate - Debug
+          command: |
+            ygitbookintegration ../YLib ../YPython -d
+
+      - run:
+          name: 📖 Integrate - Dir
+          command: |
+            ygitbookintegration "../*"
+
+      - run:
+          name: 📖 Integrate - Base
+          command: |
+            ygitbookintegration ../YLib -c -ru https://github.com/YEmreAk/YLib
+
+      - run:
+          name: 📖 Integrate - Changelog
+          command: |
+            ygitbookintegration ../IstanbulUniversity-CE -c
 
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
