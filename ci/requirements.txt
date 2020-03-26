@@ -1,4 +1,0 @@
-setuptools
-wheel
-pytest
-flake8
