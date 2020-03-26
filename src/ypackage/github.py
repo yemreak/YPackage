@@ -77,9 +77,8 @@ def get_remote_url(path) -> str:
         with Popen(r'git config --get remote.origin.url', stdout=PIPE, stderr=PIPE) as p:
             output, errors = p.communicate()
             remote_url = output.decode('utf-8').splitlines()[0].replace(".git", "")
-    except Exception as e:
-        logger.error("Repo URL'i tanımlanamadı", e)
-        exit(-1)
+    except Exception:
+        logger.error("Repo URL is undefined")
 
     os.chdir(cur_dir)
 
@@ -94,6 +93,9 @@ def list_commit_links(
 
     if not repo_url:
         repo_url = get_remote_url(path)
+
+    if not repo_url:
+        return
 
     links = []
 
