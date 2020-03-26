@@ -1,5 +1,7 @@
 import logging
 import re
+from pathlib import Path
+from configparser import ConfigParser
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +79,25 @@ def prod(numbers: list) -> int:
     for number in numbers:
         result *= number
     return result
+
+
+def read_config(cpath: Path) -> dict:
+    """Read configuration file
+
+    Arguments:
+        cpath {Path} -- Configuration file path
+
+    Returns:
+        dict -- Dictionary that contains config keys
+    """
+    try:
+        config = ConfigParser(inline_comment_prefixes="#")
+        config.read(cpath, encoding="utf-8")
+    except Exception as e:
+        logger.error(f"Cannot read config file {e}")
+        return {}
+
+    return config
 
 
 def sort(string: str) -> str:

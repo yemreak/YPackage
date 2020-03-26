@@ -6,8 +6,39 @@ from urllib.parse import quote
 
 from .common import generate_substrings as c_generate_substrings
 from .filesystem import insert_file as fs_insert_file
+from .filesystem import parse_to_lines, read_file, write_file, merge_lines
 
 LINK_REGEX = r"\[([^\[]+)\]\((.*)\)"
+HEADER_CHAR = "#"
+
+
+class Link:
+
+    TEMPLATE = "[{}]({})"
+    REGEX = r"\[([^\[]+)\]\((.*)\)"
+
+    def __init__(self, name: str, path: str):
+        self.name = name
+        self.path = path
+
+    @staticmethod
+    def from_line(line: str):
+        result = re.search(Link.REGEX, line)
+
+        if result:
+            name = result[1]
+            url = result[2]
+
+            return Link(name, url)
+
+        return None
+
+    def __str__(self):
+        return Link.TEMPLATE.format(self.name, self.path)
+
+    @staticmethod
+    def map_function(link):
+        return link
 
 
 class SpecialFile(Enum):
@@ -113,7 +144,7 @@ def create_link(path: Path, header: str = None, root: Path = Path.cwd(), ilvl=0,
 
 
 def create_header(name: str, headerlvl: int) -> str:
-    return "#" * headerlvl + f" {name}\n\n"
+    return HEADER_CHAR * headerlvl + f" {name}\n\n"
 
 
 def read_first_header(filepath: Path):
@@ -121,8 +152,8 @@ def read_first_header(filepath: Path):
     if filepath.exists():
         with filepath.open("r", encoding="utf-8") as file:
             for line in file:
-                if line.startswith("#"):
-                    header = line.strip().replace("# ", "")
+                if line.startswith(HEADER_CHAR):
+                    header = line.strip().replace(HEADER_CHAR + " ", "")
                     break
 
         if "<!--" in header:
@@ -155,11 +186,11 @@ def read_first_link(string: str) -> dict:
 def remove_title(string: str) -> str:
     lines = string.split("\n")
     for line in lines:
-        if line.count("#") == 1:
+        if line.count(HEADER_CHAR) == 1:
             lines.remove(line)
             break
         # 1'den fazla gelirse title yok demektir
-        elif line.count("#") >= 1:
+        elif line.count(HEADER_CHAR) >= 1:
             break
 
     return "\n".join(lines)
@@ -306,3 +337,64 @@ def check_links(fpath):
                     result = os.path.exists(path)
                     if not result:
                         print(path)
+
+
+def find_header_lvl(line: str) -> int:
+    return line.count(HEADER_CHAR)
+
+
+def change_title_of_string(title: str, content: str) -> str:
+    title_changed = False
+
+    lines = parse_to_lines(content)
+    for i, line in enumerate(lines):
+        header_lvl = find_header_lvl(line)
+        if header_lvl == 1:
+            lines[i] = title
+            title_changed = True
+            break
+        elif header_lvl >= 1:
+            lines[0] = title
+            title_changed = True
+            break
+
+    if not title_changed:
+        lines[0] = title
+        title_changed = True
+
+    return "\n".join(lines)
+
+
+def change_title_of_file(title: str, filepath: Path):
+    content = read_file(filepath)
+    content = change_title_of_string(title, content)
+    write_file(filepath, content)
+
+
+def map_links(content: str, func: Link.map_function) -> str:
+    """Dosyadaki tüm linkler için verilen fonksiyonu uygular
+
+    Arguments:
+        content {str} -- Metin içeriği
+        func {Link.map_function} -- Link alan ve Link döndüren fonksiyon
+
+    Returns:
+        str -- Değişen metin içeriği
+    """
+    lines = parse_to_lines(content)
+    for i, line in enumerate(lines):
+        oldlink = Link.from_line(line)
+        if oldlink:
+            newlink = func(oldlink)
+            lines[i] = lines[i].replace(str(oldlink), str(newlink))
+
+    return merge_lines(lines)
+
+
+def replace_in_links(content: str, old: str, new: str) -> str:
+
+    def replace_link(link: Link):
+        link.path = link.path.replace(old, new)
+        return link
+
+    map_links(content, replace_link)

@@ -101,7 +101,7 @@ def list_commit_links(
         links.append("|📅 Tarih|🔀 Commit|🐥 Sahibi|")
         links.append("|-|-|-|")
 
-    for commit in RepositoryMining(str(path), reversed_order=True).traverse_commits():
+    for commit in RepositoryMining(str(path), order="reverse").traverse_commits():
         title = commit.msg.split("\n")[0]
         author = commit.author.name
 
