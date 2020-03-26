@@ -35,7 +35,7 @@ echo -------------------
 echo.
 
 
-call ygooglesearch.exe site:wiki.yemreak.com -ex knowed_url.txt
+call ygooglesearch.exe site:lib.yemreak.com -ex knowed_url.txt
 
 
 echo.
