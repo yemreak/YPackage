@@ -81,7 +81,7 @@ setup(
         # örndeğin: ypackage
         # Kullanım: "ypacakge = ypackage.ypackage:main
         "console_scripts": [
-            "ygitbookintegration = ypackage.cli.integrate_into_gitbook:main",
+            "ygitbookintegration = ypackage.gitbook.cli:main",
             "ygoogledrive = ypackage.cli.gdrive:main",
             "ygooglesearch = ypackage.cli.gsearch:main",
             "yfilerenamer = ypackage.cli.file_renamer:main",
