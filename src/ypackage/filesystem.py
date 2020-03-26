@@ -52,11 +52,11 @@ def read_file(filepath: Path) -> str:
 
 
 def read_jsonc(filepath: Path) -> dict:
-    return json.loads(remove_comments(read_file(filepath), "//"))
+    return json.loads(remove_comments(read_file(filepath), "//"), strict=False)
 
 
 def read_json(filepath: Path) -> dict:
-    return json.loads(read_file(filepath))
+    return json.loads(read_file(filepath), strict=False)
 
 
 def write_json(filepath: Path, jsonstr: str, indent=4, eof_line=True):
@@ -287,3 +287,11 @@ def rename_files(
                 changed_happend = True
 
     return changed_happend
+
+
+def parse_to_lines(content: str) -> List[str]:
+    return content.split("\n")
+
+
+def merge_lines(lines: List[str]) -> str:
+    return "\n".join(lines)
