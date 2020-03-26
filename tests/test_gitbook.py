@@ -1,3 +1,10 @@
+"""
+- run:
+    name: ⚗️ Functional testing
+    command: |
+    python -m pytest .
+"""
+
 import subprocess
 import unittest
 

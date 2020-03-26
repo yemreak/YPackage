@@ -28,41 +28,49 @@ jobs:
           name: 📖 Integrate - Base
           command: |
             ygitbookintegration ../YLib
+          when: always
 
       - run:
           name: 📖 Integrate - Recreate
           command: |
             ygitbookintegration ../YLib -r
+          when: always
 
       - run:
           name: 📖 Integrate - Generate
           command: |
             ygitbookintegration ../YLib -g
+          when: always
 
       - run:
           name: 📖 Integrate - More
           command: |
             ygitbookintegration ../YLib ../YPython
+          when: always
 
       - run:
           name: 📖 Integrate - Debug
           command: |
             ygitbookintegration ../YLib ../YPython -d
+          when: always
 
       - run:
           name: 📖 Integrate - Dir
           command: |
             ygitbookintegration "../*"
+          when: always
 
       - run:
           name: 📖 Integrate - Base
           command: |
             ygitbookintegration ../YLib -c -ru https://github.com/YEmreAk/YLib
+          when: always
 
       - run:
           name: 📖 Integrate - Changelog
           command: |
-            ygitbookintegration ../IstanbulUniversity-CE -c
+            ygitbookintegration ../YLib -c
+          when: always
 
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
