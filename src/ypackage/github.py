@@ -78,7 +78,7 @@ def get_remote_url(path) -> str:
             output, errors = p.communicate()
             remote_url = output.decode('utf-8').splitlines()[0].replace(".git", "")
     except Exception as e:
-        logger.error("Repo URL'i tanımlanamadı" + e)
+        logger.error("Repo URL'i tanımlanamadı", e)
         exit(-1)
 
     os.chdir(cur_dir)
