@@ -13,12 +13,7 @@ jobs:
       - python/save-cache
 
       - run:
-          name: ⚗️ Functional testing
-          command: |
-            python -m pytest .
-
-      - run:
-          name: 💠 Functionality testing
+          name: 📦 Package installation
           command: |
             pip install .
       
