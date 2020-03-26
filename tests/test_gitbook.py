@@ -1,11 +1,22 @@
-from unittest import TestCase
+import subprocess
+import unittest
 
 
-class TestCommand(TestCase):
-    pass
+def execute(args: str):
+    return "ygitbookintegration {}".format(str)
+
+
+class TestCommand(unittest.TestCase):
 
     def setUp(self):
-        pass
+        subprocess.run("pip install .")
+
+    def test_base_integration(self):
+        subprocess.run(execute("."))
 
     def tearDown(self):
         pass
+
+
+if __name__ == "__main__":
+    unittest.main()
