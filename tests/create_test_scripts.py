@@ -40,7 +40,7 @@ END_TEMPLATE = """
 exit /B
 """
 
-path = Path(r".vscode\launch.json")
+path = Path(r".vscode/launch.json")
 content = filesystem.read_json(path)
 
 configurations = []
