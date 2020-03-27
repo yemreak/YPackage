@@ -37,7 +37,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: 🔨 Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
@@ -57,7 +57,7 @@ jobs:
         pip install pytest
         python -m pytest .
         
-    - name: Lint with flake8
+    - name: 🧐 Lint with flake8
       run: |
         pip install flake8
         # stop the build if there are Python syntax errors or undefined names
