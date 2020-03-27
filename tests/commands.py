@@ -3,7 +3,7 @@ import subprocess
 
 def _check(command: str, args: str):
     subprocess.check_output(
-        f"{command} {args}",
+        f"python -m {command} {args}",
         universal_newlines=True
     )
 
