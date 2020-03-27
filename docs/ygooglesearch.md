@@ -18,7 +18,7 @@
 https://ai.yemreak.com/x-arastirmalarim
 https://python.yemreak.com/9-ipython
 https://python.yemreak.com/1-giris
-https://wiki.yemreak.com/web/notlar
+https://lib.yemreak.com/web/notlar
 https://windows.yemreak.com/giris/dizinler
 ```
 

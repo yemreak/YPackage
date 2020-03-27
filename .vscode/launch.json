@@ -219,7 +219,7 @@
 			"request": "launch",
 			"module": "ypackage.cli.gsearch",
 			"args": [
-				"site:wiki.yemreak.com",
+				"site:lib.yemreak.com",
 				"-ex",
 				"knowed_url.txt"
 			]
