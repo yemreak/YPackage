@@ -52,11 +52,11 @@ def read_file(filepath: Path) -> str:
 
 
 def read_jsonc(filepath: Path) -> dict:
-    return json.loads(remove_comments(read_file(filepath), "//"))
+    return json.loads(remove_comments(read_file(filepath), "//"), strict=False)
 
 
 def read_json(filepath: Path) -> dict:
-    return json.loads(read_file(filepath))
+    return json.loads(read_file(filepath), strict=False)
 
 
 def write_json(filepath: Path, jsonstr: str, indent=4, eof_line=True):
@@ -153,14 +153,14 @@ def insert_file(filepath: Path, string: str, index: str, new_index: str) -> None
     return write_insertion()
 
 
-def listdir_grouped(root: Path, privates=[], include_hidden=False) -> Tuple[List, List]:
+def listdir_grouped(root: Path, ignore_folders=[], include_hidden=False) -> Tuple[List, List]:
     """Dizindeki dosya ve dizinleri sıralı olarak listeler
 
     Arguments:
             root {Path} -- Listenelecek dizin
 
     Keyword Arguments:
-            privates {list} -- Atlanılacak yollar (default: {[]})
+            ignore_folders {list} -- Atlanılacak yollar (default: {[]})
             include_hidden {bool} -- Gizli dosyaları dahil etme (default: {False})
 
     Returns:
@@ -176,7 +176,7 @@ def listdir_grouped(root: Path, privates=[], include_hidden=False) -> Tuple[List
 
     dirs, files = [], []
     for path in paths:
-        if not (not include_hidden and path.name.startswith('.')) and path.name not in privates:
+        if not (not include_hidden and path.name.startswith('.')) and path.name not in ignore_folders:
             dirs.append(path) if path.is_dir() else files.append(path)
 
     dirs.sort()
@@ -287,3 +287,11 @@ def rename_files(
                 changed_happend = True
 
     return changed_happend
+
+
+def parse_to_lines(content: str) -> List[str]:
+    return content.split("\n")
+
+
+def merge_lines(lines: List[str]) -> str:
+    return "\n".join(lines)

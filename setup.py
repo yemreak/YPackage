@@ -1,24 +1,40 @@
+import os
+import sys
 from glob import glob
 from os.path import basename, splitext
 
 from setuptools import find_packages, setup
+from setuptools.command.install import install
 
 VERSION = "2.7.4.3"
 README_PATH = "docs/README.md"
 
-# test_requirements = ["behave", "behave-classy", "pytest"]
+test_requirements = ["pytest"]  # "behave", "behave-classy",
 
 long_description = ""
 with open(README_PATH, "r", encoding="utf-8") as file:
     long_description = file.read()
 
 
+class VerifyVersionCommand(install):
+    """Custom command to verify that the git tag matches our version"""
+
+    description = 'verify that the git tag matches our version'
+
+    def run(self):
+        tag = os.getenv('CIRCLE_TAG')
+
+        if tag != VERSION:
+            info = "Git tag: {0} does not match the version of this app: {1}".format(tag, VERSION)
+            sys.exit(info)
+
+
 setup(
     name="ypackage",
     version=VERSION,
     license="Apache Software License 2.0",
-    description="Yunus Emre Ak ~ YEmreAk (@yedhrab)'ın google drive direkt link oluşturma" +
-    "gitbook entegrasyonu, google arama motoru sonuçlarını filtreleme ile ilgili çalışmaları ",
+    description="Yunus Emre Ak ~ YEmreAk (@yedhrab)'ın google drive direkt link oluşturma"
+    + "gitbook entegrasyonu, google arama motoru sonuçlarını filtreleme ile ilgili çalışmaları ",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Yunus Emre Ak",
@@ -57,36 +73,44 @@ setup(
         "Issue Tracker": "https://github.com/yedhrab/YPackage/issues",
     },
     keywords=[
-        "ypackage", "yedhrab", "yemreak", "gitbook", "github",
-        "google-search", "google", "link", "drive", "renamer", "bulk"
+        "ypackage",
+        "yedhrab",
+        "yemreak",
+        "gitbook",
+        "github",
+        "google-search",
+        "google",
+        "link",
+        "drive",
+        "renamer",
+        "bulk",
     ],
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
+    python_requires='>=3',
     install_requires=[
         # eg: "aspectlib==1.1.1", "six>=1.7",
         "google",
         "requests",
         "pydriller",
-        "coloredlogs"
+        "coloredlogs",
     ],
     extras_require={
         # eg:
         #   "rst": ["docutils>=0.11"],
         #   ":python_version=="2.6"": ["argparse"],
     },
-    setup_requires=[
-        "pytest-runner",
-    ],
+    setup_requires=["pytest-runner",],
     entry_points={
         # Komut isteminden çalıştırma
         # örndeğin: ypackage
         # Kullanım: "ypacakge = ypackage.ypackage:main
         "console_scripts": [
-            "ygitbookintegration = ypackage.cli.integrate_into_gitbook:main",
+            "ygitbookintegration = ypackage.gitbook.cli:main",
             "ygoogledrive = ypackage.cli.gdrive:main",
             "ygooglesearch = ypackage.cli.gsearch:main",
             "yfilerenamer = ypackage.cli.file_renamer:main",
-            "ythemecreator = ypackage.cli.theme_creator:main"
+            "ythemecreator = ypackage.cli.theme_creator:main",
         ]
     },
-    # tests_require=test_requirements,
+    cmdclass={'verify': VerifyVersionCommand},
+    tests_require=test_requirements,
 )

@@ -1,0 +1,9 @@
+setuptools
+wheel
+pytest
+flake8
+google
+requests
+coloredlogs
+pydriller
+pytest
