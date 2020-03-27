@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 import googlesearch
 import requests
 
+import os
 from ..common import initialize_logging
 
 logger = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ def log_url_by_status(
     file = open(fpath, mode)
 
     removal = []
-    if exclude:
+    if exclude and os.path.isfile(exclude):
         with open(exclude, "r") as exfile:
             removal = exfile.read().split("\n")
 
