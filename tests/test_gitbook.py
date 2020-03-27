@@ -1,10 +1,3 @@
-"""
-- run:
-    name: ⚗️ Functional testing
-    command: |
-    python -m pytest .
-"""
-
 import unittest
 
 from .commands import check_gitbook

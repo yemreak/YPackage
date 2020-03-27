@@ -12,7 +12,7 @@ class FileRenamerTest(unittest.TestCase):
         check_filerenamer(". -p read -t mee")
 
     def test_regex(self):
-        check_filerenamer(r". -p \"(re)(ad)\" -t \"$2$1\"")
+        check_filerenamer(". -p \"(re)(ad)\" -t \"$2$1\"")
 
     def tearDown(self):
         pass

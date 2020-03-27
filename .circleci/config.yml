@@ -15,62 +15,23 @@ jobs:
       - run:
           name: 📦 Package installation
           command: |
-            pip install .
-      
+            sudo -H  pip install .
+
       - run:
-          name: ⏬ Testing repos download
+          name: ⏬ Downloading test repos
           command: |
-            sudo apt install git
             git clone https://github.com/YEmreAk/YLib ../YLib
             git clone https://github.com/YEmreAk/YPython ../YPython
-        
-      - run:
-          name: 📖 Integrate - Base
-          command: |
-            ygitbookintegration ../YLib
-          when: always
+            git clone https://github.com/yedhrab/DarkCode-Theme ../DarkCode-Theme
 
       - run:
-          name: 📖 Integrate - Recreate
+          name: ⚗️ Functional testing
           command: |
-            ygitbookintegration ../YLib -r
-          when: always
+            python -m pytest .
 
-      - run:
-          name: 📖 Integrate - Generate
-          command: |
-            ygitbookintegration ../YLib -g
-          when: always
+      - store_test_results:
+          path: test-results
 
-      - run:
-          name: 📖 Integrate - More
-          command: |
-            ygitbookintegration ../YLib ../YPython
-          when: always
-
-      - run:
-          name: 📖 Integrate - Debug
-          command: |
-            ygitbookintegration ../YLib ../YPython -d
-          when: always
-
-      - run:
-          name: 📖 Integrate - Dir
-          command: |
-            ygitbookintegration "../*"
-          when: always
-
-      - run:
-          name: 📖 Integrate - Base
-          command: |
-            ygitbookintegration ../YLib -c -ru https://github.com/YEmreAk/YLib
-          when: always
-
-      - run:
-          name: 📖 Integrate - Changelog
-          command: |
-            ygitbookintegration ../YLib -c
-          when: always
 
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
