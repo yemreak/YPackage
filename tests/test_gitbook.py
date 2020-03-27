@@ -5,21 +5,44 @@
     python -m pytest .
 """
 
-import subprocess
 import unittest
 
-
-def execute(args: str):
-    return "ygitbookintegration {}".format(str)
+from .commands import check_gitbook
 
 
-class TestCommand(unittest.TestCase):
+class IntegrationTest(unittest.TestCase):
 
     def setUp(self):
-        subprocess.run("pip install .")
+        pass
+
+    def test_dot(self):
+        check_gitbook(".")
+
+    def test_path(self):
+        check_gitbook("../YLib")
+
+    def test_recreate(self):
+        check_gitbook("../YLib -r")
+
+    def test_generate(self):
+        check_gitbook("../YLib -g")
+
+    def test_multipath(self):
+        check_gitbook("../YLib ../YPython")
+
+    def test_multipath_debug(self):
+        check_gitbook("../YLib ../YPython -d")
+
+    def test_wildcard(self):
+        check_gitbook("../*")
+
+    def test_changelog(self):
+        check_gitbook(
+            "../YLib -c -ru https://github.com/YEmreAk/YLib"
+        )
 
     def test_base_integration(self):
-        subprocess.run(execute("."))
+        check_gitbook("ygitbookintegration ../YLib -c")
 
     def tearDown(self):
         pass
