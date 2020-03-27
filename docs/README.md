@@ -1,11 +1,17 @@
+---
+description: "\U0001F935 Kişisel python paketlerim"
+---
+
 # 📦 YPackage
 
-Kişisel python modüllerim
+## 👀 Detaylı İnceleme
 
 * 📦 [PYPI](https://pypi.org/project/ypackage/)
 * 🐙 [Github](https://github.com/yedhrab/YPackage)
 
-> ✨ Yenilikler için [CHANAGELOG](https://github.com/yedhrab/YPackage/blob/master/docs/CHANGELOG.md) alanına bakın.
+{% hint style="info" %}
+✨ Yenilikler için [👀 What's New](changelog.md) alanına bakın.
+{% endhint %}
 
 ## 👨‍💼 CLI Uygulamaları
 
