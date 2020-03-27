@@ -1,4 +1,7 @@
+import subprocess
 import unittest
+
+import pytest
 
 from .commands import check_themecreator
 
@@ -12,7 +15,8 @@ class ThemeCreatorTest(unittest.TestCase):
         check_themecreator("../DarkCode-Theme/core/settings.json")
 
     def test_error(self):
-        check_themecreator("../DarkCode-Theme/core/darkcode.json")
+        with pytest.raises(subprocess.CalledProcessError):
+            check_themecreator("../DarkCode-Theme/core/darkcode.json")
 
     def tearDown(self):
         pass
