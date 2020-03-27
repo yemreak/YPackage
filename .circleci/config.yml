@@ -26,7 +26,7 @@ jobs:
 
       - run:
           name: ⚗️ Functional testing
-          command: |
+          command: |z2
             python -m pytest .
 
       - store_test_results:
