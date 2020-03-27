@@ -276,15 +276,15 @@ def rename_files(
                 path = path_join(root, f)
                 result = rename(p, to, path)
 
-                if not changed_happend and result:
+                if result:
                     changed_happend = True
     else:
         for path in oslistdir(startpath):
             if Path(path).is_file():
                 result = rename(p, to, path)
 
-            if not changed_happend and result:
-                changed_happend = True
+                if result:
+                    changed_happend = True
 
     return changed_happend
 
