@@ -13,14 +13,24 @@ jobs:
       - python/save-cache
 
       - run:
-          name: 💠 Functionality testing
+          name: 📦 Package installation
           command: |
             pip install .
+
+      - run:
+          name: ⏬ Downloading test repos
+          command: |
+            git clone https://github.com/YEmreAk/YLib ../YLib
+            git clone https://github.com/YEmreAk/YPython ../YPython
 
       - run:
           name: ⚗️ Functional testing
           command: |
             python -m pytest .
+
+      - store_test_results:
+          path: test-results
+
 
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
