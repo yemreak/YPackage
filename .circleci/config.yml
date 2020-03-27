@@ -15,7 +15,7 @@ jobs:
       - run:
           name: 📦 Package installation
           command: |
-            sudo -H  pip install .
+            sudo -H pip3 install .
 
       - run:
           name: ⏬ Downloading test repos
