@@ -22,7 +22,7 @@ jobs:
           command: |
             git clone https://github.com/YEmreAk/YLib ../YLib
             git clone https://github.com/YEmreAk/YPython ../YPython
-            git clone https://github.com/YEmreAk/DarkCode-Theme ../DarkCode-Theme
+            git clone https://github.com/yedhrab/DarkCode-Theme ../DarkCode-Theme
 
       - run:
           name: ⚗️ Functional testing
