@@ -21,15 +21,21 @@ jobs:
         include:
           - os: windows-latest
             INSTALL: |
-              python -m pip install .
+              call python3 -m pip install --upgrade pip
+              call python3 -m pip install -r requirements.txt
+              call python3 -m pip install .  
 
           - os: macos-latest
             INSTALL: |
-              python -m pip3 install .
+              python3 -m pip install --upgrade pip
+              python3 -m pip install -r requirements.txt
+              python3 -m pip install .  
            
           - os: ubuntu-latest
             INSTALL: |
-              sudo -H pip3 install .
+              python3 -m pip install --upgrade pip
+              python3 -m pip install -r requirements.txt
+              python3 -m pip install .
 
     steps:
     - uses: actions/checkout@v2
@@ -40,10 +46,7 @@ jobs:
       
     - name: 📦 Installing dependencies
       run: |
-        python3 -m pip install --upgrade pip
-        pip install -r requirements.txt
         ${{matrix.INSTALL}}
-        
   
     - name: ⏬ Downloading test repos
       run: |
