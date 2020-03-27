@@ -2,27 +2,28 @@ import subprocess
 
 
 def _check(command: str, args: str):
-    subprocess.check_output(
-        f"python -m {command} {args}",
-        universal_newlines=True
+    return subprocess.check_output(
+        f"{command} {args}",
+        universal_newlines=True,
+        shell=True
     )
 
 
 def check_filerenamer(args: str):
-    _check("yfilerenamer", args)
+    return _check("yfilerenamer", args)
 
 
 def check_gitbook(args: str):
-    _check("ygitbookintegration", args)
+    return _check("ygitbookintegration", args)
 
 
 def check_googledrive(args: str):
-    _check("ygoogledrive", args)
+    return _check("ygoogledrive", args)
 
 
 def check_googlesearch(args: str):
-    _check("ygooglesearch", args)
+    return _check("ygooglesearch", args)
 
 
 def check_themecreator(args: str):
-    _check("ythemecreator", args)
+    return _check("ythemecreator", args)
