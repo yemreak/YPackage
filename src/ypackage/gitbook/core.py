@@ -261,7 +261,7 @@ def generate_readmes(
 
                 filepath = markdown.SpecialFile.README_FILE.get_filepath(root=Path(root))
                 if not os.path.exists(filepath):
-              relative_to(startpath, os.path.basename(root) + ".md")
+                    oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
                     if clearify:
                         try:
                             os.rename(oldfile, filepath)

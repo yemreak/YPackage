@@ -1,5 +1,4 @@
 import logging
-import os
 import re
 from enum import Enum
 from pathlib import Path
@@ -54,7 +53,7 @@ class Header:
         return self.__str__()
 
     @staticmethod
-    def find_first(string: str, level=1) -> Any:
+    def find_first(string: str, level=1) -> Union[Any, None]:
         result = re.search(Header.REGEX, string)
         if result:
             lvl = result[1].count(Header.HEADER_CHAR)
@@ -94,11 +93,14 @@ def find_all_headers_from_file(filepath, level=1) -> List[Header]:
         return Header.find_all(file.read(), level=level)
 
 
-def find_first_header(string, level=1) -> Header:
+def find_first_header(string, level=1) -> Union[Header, None]:
     return Header.find_first(string, level=level)
 
 
-def find_first_header_from_file(filepath, level=1) -> Header:
+def find_first_header_from_file(filepath, level=1) -> Union[Header, None]:
+    if not filesystem.is_exist(filepath):
+        return None
+
     with filepath.open("r", encoding="utf-8") as file:
         return Header.find_first(file.read(), level=level)
 
@@ -183,11 +185,12 @@ class Link:
         is_list: bool = False,
         single_line: bool = False
     ) -> str:
-        return ""
-        + indent.to_str()
-        + "- " if is_list else ""
-        + self.__str__
-        + "\n" if single_line else ""
+        string = indent.to_str()
+        string += "- " if is_list else ""
+        string += self.__str__()
+        string += "\n" if single_line else ""
+
+        return string
 
     def is_url(self):
         return "https://" in self.path or "http://" in self.path
@@ -235,7 +238,7 @@ def find_first_link(string) -> Link:
 def generate_custom_link_string(
     name: str,
     path: str,
-    intent: Indent = None,
+    indent: Indent = None,
     is_list: bool = False,
     single_line: bool = False
 ) -> str:
@@ -255,10 +258,17 @@ def generate_custom_link_string(
         {str} -- Oluşturulan link metni
 
     Examples:
-        >>> generate_custom_link("YPackage", "https://ypackage.yemreak.com", Indent(2), True)
-        '    - [YPackage](https://ypackage.yemreak.com)'
+        >>> generate_custom_link_string(\
+            'YPackage',\
+            'https://ypackage.yemreak.com',\
+            indent=Indent(2),\
+            is_list=True,\
+            single_line=True\
+        )
+        '    - [YPackage](https://ypackage.yemreak.com)\\n'
+
     """
-    return Link(name, path).to_str(indent=Indent, is_list=is_list, one_line=single_line)
+    return Link(name, path).to_str(indent=indent, is_list=is_list, single_line=single_line)
 
 
 def generate_file_link_string(
@@ -269,8 +279,36 @@ def generate_file_link_string(
     is_list: bool = False,
     single_line: bool = False
 ) -> str:
+    """Özel dosya linki metni oluşturma
+
+    Arguments:
+        filepath {Path} -- Dosya yolu objesi
+
+    Keyword Arguments:
+        name {str} -- Link'in ismi
+        intent {Indent} -- Varsa girinti objesi (default: {None})
+        is_list {bool} -- Liste elamanı olarak tanımlama '- ' ekler (default: {False})
+        single_line {bool} -- Tek satırda yer alan link '\n' ekler (default: {False})
+
+    Returns:
+        {str} -- Oluşturulan link metni
+
+    Examples: 
+        >>> generate_file_link_string(\
+            Path('./src/ypackage/markdown.py'),\
+            name        = 'YPackage',            \
+            root        = Path('src/ypackage/'), \
+            indent      = Indent(2),             \
+            is_list     = True,                  \
+            single_line = True\
+        )
+        '    - [YPackage](markdown.py)\\n'
+    """
     if not name:
         name = generate_name_for_file(filepath)
+
+    root = root.absolute()
+    filepath = filepath.absolute()
 
     filepath = filepath.relative_to(root)
     filepath_string = filepath.as_posix()
@@ -291,12 +329,38 @@ def generate_dir_link_string(
     is_list: bool = False,
     single_line: bool = False
 ) -> str:
+    """Özel dosya linki metni oluşturma
+
+    Arguments:
+        filepath {Path} -- Dosya yolu objesi
+
+    Keyword Arguments:
+        name {str} -- Link'in ismi
+        intent {Indent} -- Varsa girinti objesi (default: {None})
+        is_list {bool} -- Liste elamanı olarak tanımlama '- ' ekler (default: {False})
+        single_line {bool} -- Tek satırda yer alan link '\n' ekler (default: {False})
+
+    Returns:
+        {str} -- Oluşturulan link metni
+
+    Examples:
+        >>> generate_dir_link_string(   \
+            Path('src/ypackage/markdown.py'),                \
+            Path('src'),            \
+            indent      = Indent(2),    \
+            is_list     = True,         \
+            single_line = True          \
+        )
+        '    [README.md](ypackage/markdown.py/README.md)\\n'
+    """
+
     readmepath = SpecialFile.README_FILE.get_filepath(dirpath)
 
     return generate_file_link_string(
         readmepath if readmepath else dirpath,
         root=root,
-        indent=indent
+        indent=indent,
+        single_line=single_line
     )
 
 
@@ -353,6 +417,18 @@ class SpecialFile(Enum):
     LICANSE_FILE = "Licanse.md"
 
     def get_filepath(self, root: Path = Path.cwd()) -> Path:
+        """Özel dosyalar için dosya yolu oluşturur
+
+        Keyword Arguments:
+            root {Path} -- Çalışma dizini (default: {Path.cwd()})
+
+        Returns:
+            Path -- Oluşturulan dosya yolu objesi
+
+        Examples:
+            >>> SpecialFile.README_FILE.get_filepath(Path('./src/ypackage'))
+            WindowsPath('src/ypackage/README.md')
+        """
         return root / self.value
 
 
