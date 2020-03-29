@@ -62,8 +62,8 @@ def find_all_links(string) -> List[Link]:
     return Link.find_all(string)
 
 
-def find_first_link(string) -> List:
-    return List.find_first(string)
+def find_first_link(string) -> Link:
+    return Link.find_first(string)
 
 
 @deprecated
@@ -115,12 +115,12 @@ class Header:
     REGEX = r"(#+) (.*)"
     HEADER_CHAR = "#"
 
-    def __init__(self, name, level=1):
+    def __init__(self, name, level: int = 1):
         self.name = name
         self.level = level
 
     def __str__(self):
-        return self.level * Header.HEADER_CHAR + " " + self.name
+        return (self.level * Header.HEADER_CHAR) + " " + self.name
 
     @staticmethod
     def find_first(string: str, level=1) -> Any:
