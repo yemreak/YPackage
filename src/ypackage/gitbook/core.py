@@ -39,10 +39,10 @@ def make_file_link(filepath: Path, root: Path = None, direct_link: bool = False)
         root = filepath.parent
 
     if direct_link:
-        return markdown.make_linkstr(
+        return "- " + str(markdown.Link(
             filepath.name,
             github.get_github_raw_link(GITHUB_USERNAME, filepath)
-        )
+        )) + "\n"
     else:
         return markdown.create_link(filepath, root=root)
 
@@ -196,8 +196,9 @@ def generate_readmes(
                 links.append(make_file_link(startpath / f, direct_link=direct_link))
 
         if bool(links):
-            filestr = markdown.create_header(header, 2) if header else ""
+            filestr = str(markdown.Header(header, 2)) + "\n\n" if header else ""
             filestr += "".join(links)
+            markdown.generate_header_section(header, 2)
 
         return filestr
 
@@ -227,7 +228,7 @@ def generate_readmes(
                     links.append(markdown.create_link(subfilepath, root=link_root))
 
             if bool(links):
-                filestr = markdown.create_header(header, 2) if header else ""
+                filestr = markdown.generate_header_section(header, 2) if header else ""
                 filestr += "".join(links)
 
                 filepath = markdown.SpecialFile.README_FILE.get_filepath(root=Path(root))

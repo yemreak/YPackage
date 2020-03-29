@@ -40,7 +40,7 @@ def recreate_summary(options: Options):
 
 
 def fix_title_of_subsummary(content: str) -> str:
-    title = f"# {markdown.read_first_link(content)[1]}"
+    title = f"# {markdown.find_first_link(content).name}"
     content = markdown.change_title_of_string(title, content)
     return content
 
