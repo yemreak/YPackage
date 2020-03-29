@@ -3,8 +3,7 @@ import os
 import re
 from enum import Enum
 from pathlib import Path
-from typing import Any, List
-from urllib.parse import quote
+from typing import Any, List, Union
 
 from deprecated import deprecated
 
@@ -13,103 +12,30 @@ from . import common, filesystem
 logger = logging.getLogger(__name__)
 
 
-class Link:
+class Comment:
 
-    TEMPLATE = "[{}]({})"
-    REGEX = r"\[([^\[]+)\]\((.*)\)"
+    TEMPLATE = "<!-- {} -->"
 
-    def __init__(self, name: str, path: str):
-        self.name = name
-        self.path = path
+    def __init__(self, content: str):
+        self.content = content
 
     def __str__(self):
-        return Link.TEMPLATE.format(self.name, self.path)
-
-    def is_url(self):
-        return "https://" in self.path or "http://" in self.path
-
-    @property
-    def filepath(self) -> Path:
-        if not self.is_url():
-            return Path(self.path)
-
-    @staticmethod
-    def find_first(string) -> Any:
-        result = re.search(Link.REGEX, string)
-        if result:
-            name = result[1]
-            path = result[2]
-
-            return Link(name, path)
-
-    @staticmethod
-    def find_all(string: str) -> List[Any]:
-        links = []
-
-        results = re.findall(Link.REGEX, string)
-        for result in results:
-            name = result[0]
-            path = result[1]
-
-            links.append(Link(name, path))
-
-        return links
-
-    @staticmethod
-    def map_function(link):
-        return link
+        return Comment.TEMPLATE.format(self.content)
 
 
-def find_all_links(string) -> List[Link]:
-    return Link.find_all(string)
+class Indent:
 
+    TAB_SIZE = 2
+    INDENT_CHAR = " "
 
-def find_first_link(string) -> Link:
-    return Link.find_first(string)
+    def __init__(self, level: int):
+        self.level = level
 
+    def __str__(self):
+        return Indent.INDENT_CHAR * self.level * Indent.TAB_SIZE
 
-@deprecated
-def is_url(link: str) -> bool:
-    return "https://" in link or "http://" in link
-
-
-@deprecated
-def check_links(fpath):
-    with open(fpath, "r", encoding="utf-8") as f:
-        for line in f:
-            links = find_all_links(line)
-            for link in links:
-                if not link.filepath:
-                    print(link.path)
-
-
-def map_links(content: str, func: Link.map_function) -> str:
-    """Dosyadaki tüm linkler için verilen fonksiyonu uygular
-
-    Arguments:
-        content {str} -- Metin içeriği
-        func {Link.map_function} -- Link alan ve Link döndüren fonksiyon
-
-    Returns:
-        str -- Değişen metin içeriği
-    """
-    lines = filesystem.parse_to_lines(content)
-    for i, line in enumerate(lines):
-        oldlinks = Link.find_all(line)
-        for oldlink in oldlinks:
-            newlink = func(oldlink)
-            lines[i] = lines[i].replace(str(oldlink), str(newlink))
-
-    return filesystem.merge_lines(lines)
-
-
-def replace_in_links(content: str, old: str, new: str) -> str:
-
-    def replace_link(link: Link):
-        link.path = link.path.replace(old, new)
-        return link
-
-    map_links(content, replace_link)
+    def to_str(self) -> str:
+        return self.__str__()
 
 
 class Header:
@@ -123,6 +49,9 @@ class Header:
 
     def __str__(self):
         return (self.level * Header.HEADER_CHAR) + " " + self.name
+
+    def to_str(self):
+        return self.__str__()
 
     @staticmethod
     def find_first(string: str, level=1) -> Any:
@@ -220,15 +149,199 @@ def generate_header_section(name: str, level: str) -> str:
     return str(Header(name, level)) + "\n\n"
 
 
-class Comment:
+def generate_name_for_file(filepath: Path) -> str:
+    """Markdown dosyası için isim belirleme
 
-    TEMPLATE = "<!-- {} -->"
+    Arguments:
+        filepath {Path} -- Markdown dosyasının yolu
 
-    def __init__(self, content: str):
-        self.content = content
+    Returns:
+        str -- Başlığı varsa başlığı, yoksa dosya ismini döndürür
+    """
+
+    header = find_first_header_from_file(filepath)
+    name = header.to_str() if header else filepath.name
+
+    return name
+
+
+class Link:
+
+    TEMPLATE = "[{}]({})"
+    REGEX = r"\[([^\[]+)\]\((.*)\)"
+
+    def __init__(self, name: str, path: str):
+        self.name = name
+        self.path = path
 
     def __str__(self):
-        return Comment.TEMPLATE.format(self.content)
+        return Link.TEMPLATE.format(self.name, self.path)
+
+    def to_str(
+        self,
+        indent: Indent = None,
+        is_list: bool = False,
+        single_line: bool = False
+    ) -> str:
+        return ""
+        + indent.to_str()
+        + "- " if is_list else ""
+        + self.__str__
+        + "\n" if single_line else ""
+
+    def is_url(self):
+        return "https://" in self.path or "http://" in self.path
+
+    @property
+    def filepath(self) -> Path:
+        if not self.is_url():
+            return Path(self.path)
+
+    @staticmethod
+    def find_first(string) -> Any:
+        result = re.search(Link.REGEX, string)
+        if result:
+            name = result[1]
+            path = result[2]
+
+            return Link(name, path)
+
+    @staticmethod
+    def find_all(string: str) -> List[Any]:
+        links = []
+
+        results = re.findall(Link.REGEX, string)
+        for result in results:
+            name = result[0]
+            path = result[1]
+
+            links.append(Link(name, path))
+
+        return links
+
+    @staticmethod
+    def map_function(link):
+        return link
+
+
+def find_all_links(string) -> List[Link]:
+    return Link.find_all(string)
+
+
+def find_first_link(string) -> Link:
+    return Link.find_first(string)
+
+
+def generate_custom_link_string(
+    name: str,
+    path: str,
+    intent: Indent = None,
+    is_list: bool = False,
+    single_line: bool = False
+) -> str:
+    """Özel link metni oluşturma
+
+    Arguments:
+        name {str} -- Link'in ismi
+        path {str} -- Link'in adresi
+
+    Keyword Arguments:
+        intent {Indent} -- Varsa girinti objesi (default: {None})
+        is_list {bool} -- Liste elamanı olarak tanımlama '- ' ekler (default: {False})
+        single_line {bool} -- Tek satırda yer alan link '\n' ekler (default: {False})
+
+
+    Returns:
+        {str} -- Oluşturulan link metni
+
+    Examples:
+        >>> generate_custom_link("YPackage", "https://ypackage.yemreak.com", Indent(2), True)
+        '    - [YPackage](https://ypackage.yemreak.com)'
+    """
+    return Link(name, path).to_str(indent=Indent, is_list=is_list, one_line=single_line)
+
+
+def generate_file_link_string(
+    filepath: Path,
+    name: str = None,
+    root: Path = Path.cwd(),
+    indent: Indent = None,
+    is_list: bool = False,
+    single_line: bool = False
+) -> str:
+    if not name:
+        name = generate_name_for_file(filepath)
+
+    filepath = filepath.relative_to(root)
+    filepath_string = filepath.as_posix()
+
+    return generate_custom_link_string(
+        name,
+        filepath_string,
+        indent=indent,
+        is_list=is_list,
+        single_line=single_line
+    )
+
+
+def generate_dir_link_string(
+    dirpath: Path,
+    root: Path = Path.cwd(),
+    indent: Indent = None,
+    is_list: bool = False,
+    single_line: bool = False
+) -> str:
+    readmepath = SpecialFile.README_FILE.get_filepath(dirpath)
+
+    return generate_file_link_string(
+        readmepath if readmepath else dirpath,
+        root=root,
+        indent=indent
+    )
+
+
+@deprecated
+def is_url(link: str) -> bool:
+    return "https://" in link or "http://" in link
+
+
+@deprecated
+def check_links(fpath):
+    with open(fpath, "r", encoding="utf-8") as f:
+        for line in f:
+            links = find_all_links(line)
+            for link in links:
+                if not link.filepath:
+                    print(link.path)
+
+
+def map_links(content: str, func: Link.map_function) -> str:
+    """Dosyadaki tüm linkler için verilen fonksiyonu uygular
+
+    Arguments:
+        content {str} -- Metin içeriği
+        func {Link.map_function} -- Link alan ve Link döndüren fonksiyon
+
+    Returns:
+        str -- Değişen metin içeriği
+    """
+    lines = filesystem.parse_to_lines(content)
+    for i, line in enumerate(lines):
+        oldlinks = Link.find_all(line)
+        for oldlink in oldlinks:
+            newlink = func(oldlink)
+            lines[i] = lines[i].replace(str(oldlink), str(newlink))
+
+    return filesystem.merge_lines(lines)
+
+
+def replace_in_links(content: str, old: str, new: str) -> str:
+
+    def replace_link(link: Link):
+        link.path = link.path.replace(old, new)
+        return link
+
+    map_links(content, replace_link)
 
 
 class SpecialFile(Enum):
@@ -241,145 +354,6 @@ class SpecialFile(Enum):
 
     def get_filepath(self, root: Path = Path.cwd()) -> Path:
         return root / self.value
-
-
-# DEV: Figure out index string in markdown file
-
-
-def remove_extension(filepath: str) -> str:
-    """Dosya uzantısını kaldırma
-
-    Args:
-            filepath (str): Dosya yolu
-
-    Returns:
-            str: Uzantsız dosya yolu
-    """
-
-    filepath, _ = os.path.splitext(filepath)
-    return filepath
-
-
-def barename(path: str) -> str:
-    """Dosya veya dizin yolundan, yol ve uzantıyı temizleme
-
-    Args:
-            filepath (str): Dosya yolu
-
-    Returns:
-            str: Sadece dosya ismi
-    """
-
-    pathname = path
-    if os.path.isfile(path):
-        pathname = remove_extension(path)
-
-    pathname = os.path.basename(pathname)
-
-    return pathname
-
-
-def encodedpath(path: str) -> str:
-    """ Verilen yolu url formatında kodlama
-
-    Windows için gelen '\\' karakteri '/' karakterine çevrilir
-
-    Args:
-            pathname (str): Yol ismi
-
-    Returns:
-            str: Kodlanmış metin
-    """
-
-    return quote(path.replace("\\", "/"))
-
-
-def create_indent(level, size=2):
-    return ' ' * size * (level)
-
-
-def create_link(path: Path, header: str = None, root: Path = Path.cwd(), ilvl=0, isize=2) -> str:
-    """Verilen yola uygun kodlanmış markdown linki oluşturma
-
-    Arguments:
-            path {str} -- Yol
-
-    Keyword Arguments:
-            header {str} -- Link başlığı (default: {None})
-            root {str} -- Ana dizin (default: {os.getcwd()})
-            ilvl {int} -- Girinti seviyesi (default: {0})
-            isize {int} -- Girinti birim uzunluğu (default: {2})
-
-    Returns:
-            str -- Girintili markdown bağlatısı
-    """
-
-    if not header:
-        header = path.name
-
-    if not is_url(str(path)):
-        path = path.relative_to(root)
-        path = encodedpath(str(path))
-
-    indent = create_indent(ilvl, size=isize)
-    linkstr = f"- {str(Link(header, path))}\n"
-
-    return '{}{}'.format(indent, linkstr)
-
-
-def generate_filelink(
-    fpath: Path, startpath: str = os.getcwd(),
-    header: str = None, ilvl=0, isize=2
-) -> str:
-    """Dosya için markdown linki oluşturur
-
-    Arguments:
-            path {str} -- Yol
-
-    Keyword Arguments:
-            header {str} -- Link başlığı (default: {None})
-            root {str} -- Ana dizin (default: {os.getcwd()})
-            ilvl {int} -- Girinti seviyesi (default: {0})
-            isize {int} -- Girinti birim uzunluğu (default: {2})
-
-    Returns:
-            str -- Girintili markdown bağlatısı
-    """
-    if not header:
-        header = find_all_headers_from_file(fpath)
-        header = str(find_first_header_from_file(fpath)) if header else ""
-
-    return create_link(fpath, header=header, root=startpath, isize=isize, ilvl=ilvl)
-
-
-def generate_dirlink(root: Path, startpath: str = os.getcwd(), ilvl=0, isize=2) -> str:
-    """Dizin için markdown linki oluşturur
-    README.md varsa ona bağlantı verir
-
-    Arguments:
-            path {Path} -- Yol
-
-    Keyword Arguments:
-            header {str} -- Link başlığı (default: {None})
-            root {str} -- Ana dizin (default: {os.getcwd()})
-            ilvl {int} -- Girinti seviyesi (default: {0})
-            isize {int} -- Girinti birim uzunluğu (default: {2})
-
-    Returns:
-            str -- Girintili markdown bağlatısı
-    """
-
-    dirlink = ""
-    readme_path = SpecialFile.README_FILE.get_filepath(root)
-    if readme_path:
-        header = str(find_first_header_from_file(readme_path))
-        dirlink = create_link(
-            readme_path, header=header, root=startpath, isize=isize, ilvl=ilvl
-        )
-    else:
-        dirlink = create_link(root, root=startpath, isize=isize, ilvl=ilvl)
-
-    return dirlink
 
 
 def insert_file(
@@ -397,11 +371,11 @@ def insert_file(
 
 
 def create_markdown_file(filepath: Path, header=None):
-    if not bool(header):
+    if not header:
         header = filepath.name
 
-    with filepath.open("w", encoding="utf-8") as file:
-        file.write(generate_header_section(header, 1))
+    content = generate_header_section(header, 1)
+    filesystem.write_file(filepath, content)
 
 
 def generate_substrings(content, index):

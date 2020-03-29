@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from .markdown import create_link, encodedpath
+from . import markdown
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +29,8 @@ def get_raw_master_url(username) -> str:
 
 
 def get_github_raw_link(username, filepath: str) -> str:
-    filepath = os.path.relpath(filepath, start=os.getcwd())
-    filepath = encodedpath(filepath)
+    filepath = Path(filepath).relative_to(os.getcwd())
+    filepath = filepath.as_posix()
     return get_raw_master_url(username) + "/" + filepath
 
 
@@ -118,12 +118,13 @@ def list_commit_links(
             time = commit.author_date.strftime("%d/%m/%Y - %H:%M:%S")
             url = DIFF_TEMPLATE.format(repo_url, hash_value)
 
-            link = create_link(url, header=title).replace("- ", "").replace("\n", "")
+            link = markdown.Link(title, url)
+            link_str = link.to_str()
 
             if table_form:
-                link = f"|{str(time)}|{link}|{author}|"
+                link_str = f"|{str(time)}|{link_str}|{author}|"
             else:
-                link = f"- {str(time)} - {link} ~ {author}"
+                link = f"- {str(time)} - {link_str} ~ {author}"
 
             links.append(link)
 

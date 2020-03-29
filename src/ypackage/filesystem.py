@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def is_exist(filepath: Path) -> bool:
     if not filepath.exists():
-        logger.error("Dosya yolu geçersiz: " + filepath)
+        logger.error("Dosya yolu geçersiz: " + str(filepath))
         return False
     return True
 

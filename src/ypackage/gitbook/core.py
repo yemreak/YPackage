@@ -34,17 +34,22 @@ def get_specialfile_header(specialfile: markdown.SpecialFile) -> str:
         return CONTRIBUTING_HEADER
 
 
-def make_file_link(filepath: Path, root: Path = None, direct_link: bool = False) -> str:
+def make_file_link(filepath: Path, root: Path = Path.cwd(), direct_link: bool = False) -> str:
     if root is None:
         root = filepath.parent
 
+    link = None
     if direct_link:
-        return "- " + str(markdown.Link(
-            filepath.name,
-            github.get_github_raw_link(GITHUB_USERNAME, filepath)
-        )) + "\n"
+        link = markdown.Link(
+            filepath.namsignle_line.get_github_raw_link(GITHUB_USERNAME, filepath)
+        )
     else:
-        return markdown.create_link(filepath, root=root)
+        filepath = filepath.relative_to(root)
+        filepath_string = filepath.as_posix()
+
+        link = markdown.Link(filepath.name, filepath_string)
+
+    return link.to_str(is_list=True, single_line=True)
 
 
 def generate_fs_link(
@@ -54,13 +59,25 @@ def generate_fs_link(
     # RES: Decalator kavramının araştırılması lazım olabilir
 
     def append_rootlink(lines: list, root: Path, level: int) -> str:
-        dirlink = markdown.generate_dirlink(root, startpath=startpath, ilvl=level, isize=2)
-        lines.append(dirlink)
+        dirlink_string = markdown.generate_dir_link_string(
+            root,
+            root=startpath,
+            indent=markdown.Indent(level),
+            is_list=True,
+            single_line=True
+        )
+        lines.append(dirlink_string)
         return lines
 
     def append_filelink(lines: list, fpath: Path, level: int):
-        filelink = markdown.generate_filelink(fpath, startpath=startpath, ilvl=level, isize=2)
-        lines.append(filelink)
+        filelink_string = markdown.generate_file_link_string(
+            fpath,
+            root=startpath,
+            indent=markdown.Indent(level),
+            is_list=True,
+            single_line=True
+        )
+        lines.append(filelink_string)
         return lines
 
     def append_sublinks(lines: list, root: Path, level: int, dirs_only=False):
@@ -114,22 +131,29 @@ def generate_summary_filestr(
 
         def append_firstline(lines: list) -> list:
             headpath = markdown.SpecialFile.README_FILE.get_filepath(root=workdir)
-            header_link = markdown.generate_filelink(headpath, startpath=workdir)
-            lines.append(header_link)
+            headerlink_string = markdown.generate_file_link_string(
+                headpath,
+                root=workdir,
+                is_list=True,
+                single_line=True
+            )
+            lines.append(headerlink_string)
             return lines
 
         def append_specialfiles(lines: list, *specialfiles: markdown.SpecialFile) -> list:
             for specialfile in specialfiles:
                 specialfile_path = specialfile.get_filepath(workdir)
                 if specialfile_path:
-                    specialfile_link = markdown.generate_filelink(
+                    level = filesystem.find_level(workdir, workdir) + 1
+                    specialfilelink_string = markdown.generate_file_link_string(
                         specialfile_path,
-                        header=get_specialfile_header(specialfile),
-                        startpath=workdir,
-                        ilvl=filesystem.find_level(workdir, workdir) + 1,
-                        isize=2
+                        name=get_specialfile_header(specialfile),
+                        root=workdir,
+                        indent=markdown.Indent(level),
+                        is_list=True,
+                        single_line=True
                     )
-                    lines.append(specialfile_link)
+                    lines.append(specialfilelink_string)
 
             return lines
 
@@ -224,7 +248,12 @@ def generate_readmes(
                     links.append(make_file_link(subfilepath, root=root, direct_link=direct_link))
                 elif f != markdown.SpecialFile.README_FILE.value:
                     # DEV: Markdown dosyaları README'nin altına eklensin
-                    links.append(markdown.create_link(subfilepath, root=link_root))
+
+                    subfilepath = subfilepath.relative_to(link_root)
+                    subfilepath_str = subfilepath.as_posix()
+
+                    link = markdown.Link(subfilepath.name, subfilepath_str)
+                    links.append(link.to_str(one_line=True))
 
             if bool(links):
                 filestr = markdown.generate_header_section(header, 2) if header else ""
@@ -232,7 +261,7 @@ def generate_readmes(
 
                 filepath = markdown.SpecialFile.README_FILE.get_filepath(root=Path(root))
                 if not os.path.exists(filepath):
-                    oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
+              relative_to(startpath, os.path.basename(root) + ".md")
                     if clearify:
                         try:
                             os.rename(oldfile, filepath)
