@@ -7,3 +7,4 @@ requests
 coloredlogs
 pydriller
 pytest
+deprecated

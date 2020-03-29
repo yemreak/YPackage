@@ -4,6 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, List
 from urllib.parse import quote
+from deprecated import deprecated
 
 from .common import generate_substrings as c_generate_substrings
 from .filesystem import insert_file as fs_insert_file
@@ -65,12 +66,12 @@ def find_first_link(string) -> List:
     return List.find_first(string)
 
 
-@DeprecationWarning
+@deprecated
 def is_url(link: str) -> bool:
     return "https://" in link or "http://" in link
 
 
-@DeprecationWarning
+@deprecated
 def check_links(fpath):
     with open(fpath, "r", encoding="utf-8") as f:
         for line in f:

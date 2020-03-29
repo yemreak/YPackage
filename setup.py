@@ -84,6 +84,7 @@ setup(
         "drive",
         "renamer",
         "bulk",
+        "deprecated"
     ],
     python_requires='>=3',
     install_requires=[
@@ -98,7 +99,7 @@ setup(
         #   "rst": ["docutils>=0.11"],
         #   ":python_version=="2.6"": ["argparse"],
     },
-    setup_requires=["pytest-runner",],
+    setup_requires=["pytest-runner", ],
     entry_points={
         # Komut isteminden çalıştırma
         # örndeğin: ypackage
