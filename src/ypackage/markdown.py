@@ -4,6 +4,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, List
 from urllib.parse import quote
+
 from deprecated import deprecated
 
 from .common import generate_substrings as c_generate_substrings
@@ -210,7 +211,7 @@ def generate_header_section(name: str, level: str) -> str:
 
     Examples:
         >>> generate_header_section("YPackage", 1)
-        '# YPackage\n\n'
+        '# YPackage\\n\\n'
     """
     return str(Header(name, level)) + "\n\n"
 
@@ -341,7 +342,8 @@ def generate_filelink(
             str -- Girintili markdown bağlatısı
     """
     if not header:
-        header = str(find_first_header_from_file(fpath))
+        header = find_all_headers_from_file(fpath)
+        header = str(find_first_header_from_file(fpath)) if header else ""
 
     return create_link(fpath, header=header, root=startpath, isize=isize, ilvl=ilvl)
 
