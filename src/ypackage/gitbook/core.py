@@ -196,9 +196,8 @@ def generate_readmes(
                 links.append(make_file_link(startpath / f, direct_link=direct_link))
 
         if bool(links):
-            filestr = str(markdown.Header(header, 2)) + "\n\n" if header else ""
+            filestr = markdown.generate_header_section(header, 2) if header else ""
             filestr += "".join(links)
-            markdown.generate_header_section(header, 2)
 
         return filestr
 

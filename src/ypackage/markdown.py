@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 from enum import Enum
@@ -7,9 +8,9 @@ from urllib.parse import quote
 
 from deprecated import deprecated
 
-from .common import generate_substrings as c_generate_substrings
-from .filesystem import insert_file as fs_insert_file
-from .filesystem import merge_lines, parse_to_lines, read_file, write_file
+from . import common, filesystem
+
+logger = logging.getLogger(__name__)
 
 
 class Link:
@@ -92,14 +93,14 @@ def map_links(content: str, func: Link.map_function) -> str:
     Returns:
         str -- Değişen metin içeriği
     """
-    lines = parse_to_lines(content)
+    lines = filesystem.parse_to_lines(content)
     for i, line in enumerate(lines):
         oldlinks = Link.find_all(line)
         for oldlink in oldlinks:
             newlink = func(oldlink)
             lines[i] = lines[i].replace(str(oldlink), str(newlink))
 
-    return merge_lines(lines)
+    return filesystem.merge_lines(lines)
 
 
 def replace_in_links(content: str, old: str, new: str) -> str:
@@ -157,6 +158,9 @@ def find_all_headers(string, level=1) -> List[Header]:
 
 
 def find_all_headers_from_file(filepath, level=1) -> List[Header]:
+    if not filesystem.is_exist(filepath):
+        return []
+
     with filepath.open("r", encoding="utf-8") as file:
         return Header.find_all(file.read(), level=level)
 
@@ -173,7 +177,7 @@ def find_first_header_from_file(filepath, level=1) -> Header:
 def change_title_of_string(title: str, content: str) -> str:
     title_changed = False
 
-    lines = parse_to_lines(content)
+    lines = filesystem.parse_to_lines(content)
     for i, line in enumerate(lines):
         header = find_first_header(line)
         if header:
@@ -190,13 +194,13 @@ def change_title_of_string(title: str, content: str) -> str:
         lines[0] = title
         title_changed = True
 
-    return merge_lines(lines)
+    return filesystem.merge_lines(lines)
 
 
 def change_title_of_file(title: str, filepath: Path):
-    content = read_file(filepath)
+    content = filesystem.read_file(filepath)
     content = change_title_of_string(title, content)
-    write_file(filepath, content)
+    filesystem.write_file(filepath, content)
 
 
 def generate_header_section(name: str, level: str) -> str:
@@ -389,7 +393,7 @@ def insert_file(
     if bool(new_index):
         new_index = str(Comment(new_index))
 
-    fs_insert_file(filepath, string, index=index, new_index=new_index)
+    filesystem.insert_file(filepath, string, index=index, new_index=new_index)
 
 
 def create_markdown_file(filepath: Path, header=None):
@@ -402,4 +406,4 @@ def create_markdown_file(filepath: Path, header=None):
 
 def generate_substrings(content, index):
     index = str(Comment(index))
-    return c_generate_substrings(content, index)
+    return common.generate_substrings(content, index)

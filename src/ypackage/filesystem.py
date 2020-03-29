@@ -14,6 +14,13 @@ from .regex import compile_pattern, remove_comments, rename_string
 logger = logging.getLogger(__name__)
 
 
+def is_exist(filepath: Path) -> bool:
+    if not filepath.exists():
+        logger.error("Dosya yolu geçersiz: " + filepath)
+        return False
+    return True
+
+
 def find_level(root: Path, startpath: Path) -> int:
     """Dizin seviyesini bulma
 
@@ -35,7 +42,7 @@ def write_file(filepath: Path, string: str):
     with filepath.open("w", encoding="utf-8") as file:
         file.write(string)
 
-        logger.info(f"{filepath} dosyası güncellendi")
+        logger.info(f"Dosya güncellendi {filepath}")
 
 
 def copy_file(src: Path, dst: Path):
@@ -46,9 +53,8 @@ def copy_file(src: Path, dst: Path):
 
 def read_file(filepath: Path) -> str:
     with filepath.open("r", encoding="utf-8") as file:
+        logger.debug(f"Dosya okunuyor: {filepath}")
         return file.read()
-
-        logger.info(f"{filepath} dosyası okundu")
 
 
 def read_jsonc(filepath: Path) -> dict:
