@@ -185,7 +185,7 @@ class Link:
         is_list: bool = False,
         single_line: bool = False
     ) -> str:
-        string = indent.to_str()
+        string = indent.to_str() if indent else ""
         string += "- " if is_list else ""
         string += self.__str__()
         string += "\n" if single_line else ""
