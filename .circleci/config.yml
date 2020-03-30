@@ -28,7 +28,7 @@ jobs:
           name: ⚗️ Functional testing
           command: |
             mkdir test-results
-            python -m pytest --junitxml=test-results/junit. .
+            python -m pytest --junitxml=test-results/junit.xml
 
       - store_test_results:
           path: test-results
