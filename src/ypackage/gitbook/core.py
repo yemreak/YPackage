@@ -17,7 +17,6 @@ description: >-
 SUMMARY_FILE = "SUMMARY.md"
 SUMMARY_FILE_HEADER = "# Summary"
 
-CHANGELOG_FILE = "changelog.md"
 CHANGELOG_HEADER = u"👀 Neler değişti"
 CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
@@ -28,9 +27,9 @@ def generate_description(string: str) -> str:
 
 
 def get_specialfile_header(specialfile: markdown.SpecialFile) -> str:
-    if specialfile == markdown.SpecialFile.CHANGELOG_FILE:
+    if specialfile == markdown.SpecialFile.CHANGELOG:
         return CHANGELOG_HEADER
-    elif specialfile == markdown.SpecialFile.CONTRIBUTING_FILE:
+    elif specialfile == markdown.SpecialFile.CONTRIBUTING:
         return CONTRIBUTING_HEADER
 
 
@@ -60,6 +59,7 @@ def generate_file_link_string(filepath: Path, root: Path = None, github_link=Fal
     if github_link:
         filepath_string = github.get_github_raw_link(
             GITHUB_USERNAME,
+            "YPackage" if Path.cwd().name == "project" else Path.cwd().name,  # TODO: burayı düzelt
             filepath
         )
         filepath = Path(filepath_string)
@@ -273,7 +273,7 @@ def generate_readmes(
                         github_link=github_link
                     )
                     links.append(link_string)
-                elif f != markdown.SpecialFile.README_FILE.value:
+                elif f != markdown.SpecialFile.README.value:
                     # DEV: Markdown dosyaları README'nin altına eklensin
 
                     subfilepath = subfilepath.relative_to(link_root)
@@ -357,7 +357,7 @@ def create_changelog(
     if not commit_msg:
         commit_msg = "💫 YGitBookIntegration"
 
-    cpath = path / CHANGELOG_FILE
+    cpath = path / markdown.SpecialFile.CHANGELOG
 
     filestr = "# " + CHANGELOG_HEADER
     filestr += "\n\n"

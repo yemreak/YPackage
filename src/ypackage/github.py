@@ -20,15 +20,15 @@ def get_github_userprofile_url(username) -> str:
     return get_github_url() + "/" + username
 
 
-def get_github_repo_url(username) -> str:
-    return get_github_userprofile_url(username) + "/" + os.path.basename(os.getcwd())
+def get_github_repo_url(username: str, projectname: str) -> str:
+    return get_github_userprofile_url(username) + "/" + projectname
 
 
 def get_raw_master_url(username) -> str:
     return get_github_repo_url(username) + "/raw/master"
 
 
-def get_github_raw_link(username: str, filepath: Path) -> str:
+def get_github_raw_link(username: str, projectname: str, filepath: Path) -> str:
     """GitHub raw dosyalarına URL metni oluşturur
 
     Arguments:
@@ -39,13 +39,13 @@ def get_github_raw_link(username: str, filepath: Path) -> str:
         str -- URL metni
 
     Examples:
-        >>> get_github_raw_link('yedhrab', Path('src'))
+        >>> get_github_raw_link('yedhrab', 'YPackage', Path('src'))
         'https://github.com/yedhrab/YPackage/raw/master/src'
     """
     filepath = filepath.absolute().relative_to(Path.cwd())
     filepath_string = filepath.as_posix()
 
-    return get_raw_master_url(username) + "/" + filepath_string
+    return get_raw_master_url(username, projectname) + "/" + filepath_string
 
 
 def split_repo_url(repo_url) -> tuple:
