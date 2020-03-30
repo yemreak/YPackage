@@ -38,9 +38,9 @@ def get_github_raw_link(username: str, filepath: Path) -> str:
     Returns:
         str -- URL metni
 
-    Examples:d
-        >>> get_github_raw_link('YPackage', Path('src'))
-        'https://github.com/YPackage/YPackage/raw/master/src'
+    Examples:
+        >>> get_github_raw_link('yedhrab', Path('src'))
+        'https://github.com/yedhrab/YPackage/raw/master/src'
     """
     filepath = filepath.absolute().relative_to(Path.cwd())
     filepath_string = filepath.as_posix()

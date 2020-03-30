@@ -1,7 +1,7 @@
 import logging
 import re
 from enum import Enum
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Any, List, Union
 
 from deprecated import deprecated
@@ -39,7 +39,7 @@ class Indent:
 
 class Header:
 
-    REGEX = r"(#+) (.*)"
+    REGEX = r"(#+) (.*)\n"
     HEADER_CHAR = "#"
 
     def __init__(self, name, level: int = 1):
@@ -159,10 +159,14 @@ def generate_name_for_file(filepath: Path) -> str:
 
     Returns:
         str -- Başlığı varsa başlığı, yoksa dosya ismini döndürür
+
+    Examples:
+        >>> generate_name_for_file(Path('docs/README.md'))
+        '📦 YPackage'
     """
 
     header = find_first_header_from_file(filepath)
-    name = header.to_str() if header else filepath.name
+    name = header.name if header else filepath.name
 
     return name
 
@@ -274,7 +278,7 @@ def generate_custom_link_string(
 def generate_file_link_string(
     filepath: Path,
     name: str = None,
-    root: Path = Path.cwd(),
+    root: Path = None,
     indent: Indent = None,
     is_list: bool = False,
     single_line: bool = False
@@ -307,10 +311,11 @@ def generate_file_link_string(
     if not name:
         name = generate_name_for_file(filepath)
 
-    root = root.absolute()
-    filepath = filepath.absolute()
+    if root:
+        root = root.absolute()
+        filepath = filepath.absolute()
+        filepath = filepath.relative_to(root)
 
-    filepath = filepath.relative_to(root)
     filepath_string = filepath.as_posix()
 
     return generate_custom_link_string(
@@ -354,7 +359,7 @@ def generate_dir_link_string(
         '    [README.md](ypackage/markdown.py/README.md)\\n'
     """
 
-    readmepath = SpecialFile.README_FILE.get_filepath(dirpath)
+    readmepath = SpecialFile.README.get_filepath(dirpath)
 
     return generate_file_link_string(
         readmepath if readmepath else dirpath,
@@ -410,11 +415,11 @@ def replace_in_links(content: str, old: str, new: str) -> str:
 
 class SpecialFile(Enum):
 
-    README_FILE = "README.md"
-    CHANGELOG_FILE = "CHANGELOG.md"
-    CODE_OF_CONTACT = "CODE_OF_CONDUCT.md"
-    CONTRIBUTING_FILE = "CONTRIBUTING.md"
-    LICANSE_FILE = "Licanse.md"
+    README = "README.md"
+    CHANGELOG = "CHANGELOG.md"
+    CODE_OF_CONDUCT = "CODE_OF_CONDUCT.md"
+    CONTRIBUTING = "CONTRIBUTING.md"
+    LICENSE = "LICENSE.md"
 
     def get_filepath(self, root: Path = Path.cwd()) -> Path:
         """Özel dosyalar için dosya yolu oluşturur
@@ -426,8 +431,21 @@ class SpecialFile(Enum):
             Path -- Oluşturulan dosya yolu objesi
 
         Examples:
-            >>> SpecialFile.README_FILE.get_filepath(PosixPath('./src/ypackage'))
-            PosixPath('src/ypackage/README.md')
+            >>> SpecialFile.README.get_filepath(PurePath('./src/ypackage')).as_posix()
+            'src/ypackage/README.md'
+
+            >>> SpecialFile.CHANGELOG.get_filepath(PurePath('./src/ypackage')).as_posix()
+            'src/ypackage/CHANGELOG.md'
+
+            >>> SpecialFile.CODE_OF_CONDUCT.get_filepath(PurePath('./src/ypackage')).as_posix()
+            'src/ypackage/CODE_OF_CONDUCT.md'
+
+            >>> SpecialFile.CONTRIBUTING.get_filepath(PurePath('./src/ypackage')).as_posix()
+            'src/ypackage/CONTRIBUTING.md'
+
+            >>> SpecialFile.LICENSE.get_filepath(PurePath('./src/ypackage')).as_posix()
+            'src/ypackage/LICENSE.md'
+
         """
         return root / self.value
 

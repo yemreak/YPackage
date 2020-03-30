@@ -34,7 +34,7 @@ def get_specialfile_header(specialfile: markdown.SpecialFile) -> str:
         return CONTRIBUTING_HEADER
 
 
-def generate_file_link_string(filepath: Path, root: Path = Path.cwd(), github_link=False) -> str:
+def generate_file_link_string(filepath: Path, root: Path = None, github_link=False) -> str:
     """GitBook için dosya link metni oluşturma
 
     Arguments:
@@ -48,14 +48,22 @@ def generate_file_link_string(filepath: Path, root: Path = Path.cwd(), github_li
         str -- Oluşturulan link metni
 
     Examples:
-        >>> generate_file_link_string(           \
-            Path('./src/ypackage/markdown.py'),  \
-            root        = Path('src/ypackage/'), \
-            github_link = True                   \
+        >>> generate_file_link_string(    \
+            Path('./docs/README.md'),     \
+            github_link = True            \
         )
-        '    - [YPackage](markdown.py)\\n'
+        '- [📦 YPackage](https:/github.com/yedhrab/YPackage/raw/master/docs/README.md)\\n'
     """
-    name = github.get_github_raw_link(GITHUB_USERNAME, filepath) if github_link else filepath.name
+
+    name = markdown.generate_name_for_file(filepath)
+
+    if github_link:
+        filepath_string = github.get_github_raw_link(
+            GITHUB_USERNAME,
+            filepath
+        )
+        filepath = Path(filepath_string)
+
     return markdown.generate_file_link_string(
         filepath,
         name,
@@ -103,7 +111,7 @@ def generate_fs_link(
             for fpath in files:
                 if all([
                     ".md" in fpath.name,
-                    markdown.SpecialFile.README_FILE.value not in fpath.name
+                    markdown.SpecialFile.README.value not in fpath.name
                 ]):
                     lines = append_filelink(lines, fpath, level)
 
@@ -143,7 +151,7 @@ def generate_summary_filestr(
     def append_header(filestr):
 
         def append_firstline(lines: list) -> list:
-            headpath = markdown.SpecialFile.README_FILE.get_filepath(root=workdir)
+            headpath = markdown.SpecialFile.README.get_filepath(root=workdir)
             headerlink_string = markdown.generate_file_link_string(
                 headpath,
                 root=workdir,
@@ -173,8 +181,8 @@ def generate_summary_filestr(
         lines = append_firstline([])
         lines = append_specialfiles(
             lines,
-            markdown.SpecialFile.CHANGELOG_FILE,
-            markdown.SpecialFile.CONTRIBUTING_FILE
+            markdown.SpecialFile.CHANGELOG,
+            markdown.SpecialFile.CONTRIBUTING
         )
 
         filestr += "".join(lines)
@@ -278,7 +286,7 @@ def generate_readmes(
                 filestr = markdown.generate_header_section(header, 2) if header else ""
                 filestr += "".join(links)
 
-                filepath = markdown.SpecialFile.README_FILE.get_filepath(root=Path(root))
+                filepath = markdown.SpecialFile.README.get_filepath(root=Path(root))
                 if not os.path.exists(filepath):
                     oldfile = os.path.join(startpath, os.path.basename(root) + ".md")
                     if clearify:
@@ -316,13 +324,13 @@ def generate_readmes(
             generate_markdown_files_for_subitems(root, clearify=clearify)
         else:
             if clearify and level > depth_limit:
-                readme_path = markdown.SpecialFile.README_FILE.get_filepath(root=root)
+                readme_path = markdown.SpecialFile.README.get_filepath(root=root)
                 if os.path.exists(readme_path):
                     os.remove(readme_path)
             continue
 
         if bool(filestr):
-            filepath = markdown.SpecialFile.README_FILE.get_filepath(root=root)
+            filepath = markdown.SpecialFile.README.get_filepath(root=root)
             fileheader = os.path.basename(root)
             markdown.insert_file(filepath, filestr, index=index, force=True,
                                  fileheader=fileheader, new_index=new_index)
