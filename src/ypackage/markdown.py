@@ -78,7 +78,7 @@ class Header:
             >>> header = Header.find_first('# HEHO\\n#HOHO')
 
             >>> header.name
-            'HOHO'
+            'HEHO'
 
             >>> header.level
             1
@@ -108,7 +108,7 @@ class Header:
         Examples:
             >>> headers = Header.find_all('# HEHO\\n# HOHO')
             >>> headers[0].name
-            'HEHE'
+            'HEHO'
             >>> headers[1].name
             'HOHO'
         """
@@ -484,19 +484,19 @@ class SpecialFile(Enum):
             Path -- Oluşturulan dosya yolu objesi
 
         Examples:
-            >>> SpecialFile.README.get_filepath(PurePath('./src/ypackage')).as_posix()
+            >>> SpecialFile.README.get_filepath(Path('./src/ypackage')).as_posix()
             'src/ypackage/README.md'
 
-            >>> SpecialFile.CHANGELOG.get_filepath(PurePath('./src/ypackage')).as_posix()
+            >>> SpecialFile.CHANGELOG.get_filepath(Path('./src/ypackage')).as_posix()
             'src/ypackage/CHANGELOG.md'
 
-            >>> SpecialFile.CODE_OF_CONDUCT.get_filepath(PurePath('./src/ypackage')).as_posix()
+            >>> SpecialFile.CODE_OF_CONDUCT.get_filepath(Path('./src/ypackage')).as_posix()
             'src/ypackage/CODE_OF_CONDUCT.md'
 
-            >>> SpecialFile.CONTRIBUTING.get_filepath(PurePath('./src/ypackage')).as_posix()
+            >>> SpecialFile.CONTRIBUTING.get_filepath(Path('./src/ypackage')).as_posix()
             'src/ypackage/CONTRIBUTING.md'
 
-            >>> SpecialFile.LICENSE.get_filepath(PurePath('./src/ypackage')).as_posix()
+            >>> SpecialFile.LICENSE.get_filepath(Path('./src/ypackage')).as_posix()
             'src/ypackage/LICENSE.md'
 
         """

@@ -24,8 +24,8 @@ def get_github_repo_url(username: str, projectname: str) -> str:
     return get_github_userprofile_url(username) + "/" + projectname
 
 
-def get_raw_master_url(username) -> str:
-    return get_github_repo_url(username) + "/raw/master"
+def get_raw_master_url(username: str, projectname: str) -> str:
+    return get_github_repo_url(username, projectname) + "/raw/master"
 
 
 def get_github_raw_link(username: str, projectname: str, filepath: Path) -> str:
