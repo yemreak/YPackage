@@ -1,7 +1,8 @@
 import logging
 import re
-from pathlib import Path
 from configparser import ConfigParser
+from pathlib import Path
+from typing import AnyStr, List, Pattern
 
 logger = logging.getLogger(__name__)
 
@@ -105,3 +106,103 @@ def sort(string: str) -> str:
     lines.sort()
     result = "\n".join(lines)
     return result
+
+
+def parse_to_lines(content: str) -> List[str]:
+    return content.split("\n")
+
+
+def merge_lines(lines: List[str]) -> str:
+    return "\n".join(lines)
+
+
+def rename_string(regex: Pattern[AnyStr], to: str, string: str) -> str:
+    """Metni yeniden adlandırma
+
+    Arguments:
+        regex {Pattern[AnyStr]} -- Aranan regex
+        to {str} -- Yeni isim
+        path {str} -- Yol
+
+    Returns:
+        bool -- Adlandırma yapıldıysa true
+    """
+    result = regex.search(string)
+    if result:
+        if result.lastindex:
+            for i in range(result.lastindex + 1):
+                to = to.replace(f"${i}", result[i])
+
+        string = regex.sub(to, string)
+
+    return string
+
+
+def generate_insertion_string(string: str, index: str) -> str:
+    insertion_string = index + "\n\n"
+    insertion_string += string + "\n\n"
+    insertion_string += index + "\n"
+    return insertion_string
+
+
+def insert_to_string(string: str, content: str, start_pos: int, end_pos: int) -> str:
+    """String içerisideki verilen konumdaki metni değiştirme
+
+    Arguments:
+        string {str} -- Eklenecek string
+        content {str} -- Asıl içerik
+        start_pos {int} -- Başlangıç indeksi
+        end_pos {int} -- Bitiş indeksi
+
+    Returns:
+        str -- Eklenme yapılmış string
+
+    Exampls:
+        >>> insert_to_string('Selam', 'Merhaba YEmreAk', 0, 7)
+        'Selam YEmreAk'
+    """
+    content = content[:start_pos] + string + content[end_pos:]
+    return content
+
+
+def insert_to_string_by_string(
+        string: str,
+        content: str,
+        start_string: str,
+        end_string: str
+) -> str:
+    """İçerik içerisideki verilen indekslerin arasındaki metni değiştirme
+
+    Arguments:
+        string {str} -- Eklenecek string
+        content {str} -- Asıl içerik
+        index {str} -- İndeks metni
+
+    Returns:
+        str -- Değiştirilmiş içerik
+
+    Exampls:
+        >>> insert_to_string_by_string(     \
+                'YPackage',                 \
+                'Merhaba YEmreAk Merhaba',  \
+                'Merhaba ',                 \
+                ' Merhaba'                  \
+            )
+        'Merhaba YPackage Merhaba'
+        >>> insert_to_string_by_string(     \
+                'YPackage',                 \
+                'Merhaba YEmreAk Merhaba',  \
+                'Heey ',                    \
+                ' Merhaba'                  \
+            )
+        'Merhaba YEmreAk Merhaba'
+    """
+
+    start_positions = [m.start() for m in re.finditer(start_string, content)]
+    end_positions = [m.start() for m in re.finditer(end_string, content)]
+
+    for start_pos, end_pos in zip(start_positions, end_positions):
+        start_pos = start_pos + len(start_string)
+        content = insert_to_string(string, content, start_pos, end_pos)
+
+    return content

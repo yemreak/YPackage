@@ -1,8 +1,12 @@
 import logging
 import re
-from typing import AnyStr, Pattern
+from typing import AnyStr, Pattern, List
 
 logger = logging.getLogger(__name__)
+
+
+def find_in_content(pattern: str, content: str) -> List[str]:
+    results = re.findall(pattern, content)
 
 
 def words_regex(*words):
@@ -13,28 +17,6 @@ def words_regex(*words):
         pattern.append(r"\b" + word)
 
     return "|".join(pattern)
-
-
-def rename_string(regex: Pattern[AnyStr], to: str, string: str) -> str:
-    """Metni yeniden adlandırma
-
-    Arguments:
-        regex {Pattern[AnyStr]} -- Aranan regex
-        to {str} -- Yeni isim
-        path {str} -- Yol
-
-    Returns:
-        bool -- Adlandırma yapıldıysa true
-    """
-    result = regex.search(string)
-    if result:
-        if result.lastindex:
-            for i in range(result.lastindex + 1):
-                to = to.replace(f"${i}", result[i])
-
-        string = regex.sub(to, string)
-
-    return string
 
 
 def compile_pattern(pattern, ignore_case=False) -> Pattern[AnyStr]:

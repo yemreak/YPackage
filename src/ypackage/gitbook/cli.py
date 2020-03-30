@@ -5,7 +5,7 @@ from typing import List
 
 from .. import common, github, markdown
 from . import core
-from .options import OptionParser, Options
+from .entity import OptionParser, Options
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ def recreate_summary(options: Options):
 
 
 def fix_title_of_subsummary(content: str) -> str:
-    title = f"# {markdown.find_first_link(content).name}"
+    title = f"# {markdown.core.find_first_link(content).name}"
     content = markdown.change_title_of_string(title, content)
     return content
 

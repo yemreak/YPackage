@@ -106,10 +106,10 @@ setup(
         # Kullanım: "ypacakge = ypackage.ypackage:main
         "console_scripts": [
             "ygitbookintegration = ypackage.gitbook.cli:main",
+            "yfilerenamer = ypackage.filesystem.cli:main",
             "ygoogledrive = ypackage.cli.gdrive:main",
             "ygooglesearch = ypackage.cli.gsearch:main",
-            "yfilerenamer = ypackage.cli.file_renamer:main",
-            "ythemecreator = ypackage.cli.theme_creator:main",
+            "ythemecreator = ypackage.cli.theme_creator:main"
         ]
     },
     cmdclass={'verify': VerifyVersionCommand},

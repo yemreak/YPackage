@@ -5,7 +5,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from ..common import initialize_logging
-from ..filesystem import copy_file, read_jsonc, write_json
+from ..filesystem import copy_file, read_jsonc, write_json_to_file
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ def generate_theme(coretheme: dict, theme_settings: dict, outdir: Path, corethem
         )
 
     # Write theme to file
-    write_json(new_theme_path, new_theme)
+    write_json_to_file(new_theme_path, new_theme)
 
     return new_theme, new_theme_path
 
@@ -100,7 +100,7 @@ def generate_extension(coretheme: dict, extension_setting: dict, outdir: Path):
     ext_theme_path = outdir / ext_theme_filename
 
     # Write extension to file
-    write_json(ext_theme_path, ext_theme)
+    write_json_to_file(ext_theme_path, ext_theme)
 
     return ext_theme, ext_theme_path
 

@@ -27,7 +27,7 @@ def generate_description(string: str) -> str:
 
 
 def get_specialfile_header(specialfile: markdown.SpecialFile) -> str:
-    if specialfile == markdown.SpecialFile.CHANGELOG:
+    if specialfile == markdown.entity.SpecialFile.CHANGELOG:
         return CHANGELOG_HEADER
     elif specialfile == markdown.SpecialFile.CONTRIBUTING:
         return CONTRIBUTING_HEADER
@@ -141,7 +141,7 @@ def get_summary_path(workdir: Path) -> Path:
 def create_summary_file(workdir: Path):
     filepath = get_summary_path(workdir)
     if not filepath.exists():
-        filesystem.write_file(filepath, SUMMARY_FILE_HEADER + "\n\n")
+        filesystem.write_to_file(filepath, SUMMARY_FILE_HEADER + "\n\n")
 
 
 def generate_summary_filestr(
@@ -332,8 +332,15 @@ def generate_readmes(
         if bool(filestr):
             filepath = markdown.SpecialFile.README.get_filepath(root=root)
             fileheader = os.path.basename(root)
-            markdown.insert_file(filepath, filestr, index=index, force=True,
-                                 fileheader=fileheader, new_index=new_index)
+
+            if filepath.exists():
+                markdown.create_markdown_file(filepath, fileheader)
+
+            markdown.insert_to_file(
+                filestr,
+                filepath,
+                index_string=index
+            )
 
 
 def get_summary_url_from_repo_url(repo_url):
@@ -342,7 +349,7 @@ def get_summary_url_from_repo_url(repo_url):
 
 def read_summary_from_url(repo_url):
     raw_url = get_summary_url_from_repo_url(repo_url)
-    return filesystem.read_file_by_url(raw_url)
+    return filesystem.read_file_from_url(raw_url)
 
 
 def check_summary(path):
@@ -380,7 +387,7 @@ def create_changelog(
             oldfilestr = file.read()
 
     if oldfilestr != filestr:
-        filesystem.write_file(cpath, filestr)
+        filesystem.write_to_file(cpath, filestr)
 
         if push:
             github.push_to_github(path, [cpath], commit_msg)
