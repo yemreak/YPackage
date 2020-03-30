@@ -293,14 +293,14 @@ def generate_file_link_string(
     Returns:
         {str} -- Oluşturulan link metni
 
-    Examples: 
-        >>> generate_file_link_string(\
-            Path('./src/ypackage/markdown.py'),\
+    Examples:
+        >>> generate_file_link_string(           \
+            Path('./src/ypackage/markdown.py'),  \
             name        = 'YPackage',            \
             root        = Path('src/ypackage/'), \
             indent      = Indent(2),             \
             is_list     = True,                  \
-            single_line = True\
+            single_line = True                   \
         )
         '    - [YPackage](markdown.py)\\n'
     """
@@ -426,8 +426,8 @@ class SpecialFile(Enum):
             Path -- Oluşturulan dosya yolu objesi
 
         Examples:
-            >>> SpecialFile.README_FILE.get_filepath(Path('./src/ypackage'))
-            WindowsPath('src/ypackage/README.md')
+            >>> SpecialFile.README_FILE.get_filepath(PosixPath('./src/ypackage'))
+            PosixPath('src/ypackage/README.md')
         """
         return root / self.value
 

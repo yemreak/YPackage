@@ -28,10 +28,24 @@ def get_raw_master_url(username) -> str:
     return get_github_repo_url(username) + "/raw/master"
 
 
-def get_github_raw_link(username, filepath: str) -> str:
-    filepath = Path(filepath).relative_to(os.getcwd())
-    filepath = filepath.as_posix()
-    return get_raw_master_url(username) + "/" + filepath
+def get_github_raw_link(username: str, filepath: Path) -> str:
+    """GitHub raw dosyalarına URL metni oluşturur
+
+    Arguments:
+        username {str} -- GitHub kullanıcı adı
+        filepath {Path} -- Dosya yolu objesi
+
+    Returns:
+        str -- URL metni
+
+    Examples:d
+        >>> get_github_raw_link('YPackage', Path('src'))
+        'https://github.com/YPackage/YPackage/raw/master/src'
+    """
+    filepath = filepath.absolute().relative_to(Path.cwd())
+    filepath_string = filepath.as_posix()
+
+    return get_raw_master_url(username) + "/" + filepath_string
 
 
 def split_repo_url(repo_url) -> tuple:

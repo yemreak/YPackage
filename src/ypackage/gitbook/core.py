@@ -34,22 +34,35 @@ def get_specialfile_header(specialfile: markdown.SpecialFile) -> str:
         return CONTRIBUTING_HEADER
 
 
-def make_file_link(filepath: Path, root: Path = Path.cwd(), direct_link: bool = False) -> str:
-    if root is None:
-        root = filepath.parent
+def generate_file_link_string(filepath: Path, root: Path = Path.cwd(), github_link=False) -> str:
+    """GitBook için dosya link metni oluşturma
 
-    link = None
-    if direct_link:
-        link = markdown.Link(
-            filepath.namsignle_line.get_github_raw_link(GITHUB_USERNAME, filepath)
+    Arguments:
+        filepath {Path} -- Dosya yolu objesi
+
+    Keyword Arguments:
+        root {Path} -- Çalışma dizini yolu objesi (default: {Path.cwd()})
+        github_link {bool} -- GitHub adresini işaret etme (default: {False})
+
+    Returns:
+        str -- Oluşturulan link metni
+
+    Examples:
+        >>> generate_file_link_string(           \
+            Path('./src/ypackage/markdown.py'),  \
+            root        = Path('src/ypackage/'), \
+            github_link = True                   \
         )
-    else:
-        filepath = filepath.relative_to(root)
-        filepath_string = filepath.as_posix()
-
-        link = markdown.Link(filepath.name, filepath_string)
-
-    return link.to_str(is_list=True, single_line=True)
+        '    - [YPackage](markdown.py)\\n'
+    """
+    name = github.get_github_raw_link(GITHUB_USERNAME, filepath) if github_link else filepath.name
+    return markdown.generate_file_link_string(
+        filepath,
+        name,
+        root=root,
+        single_line=True,
+        is_list=True
+    )
 
 
 def generate_fs_link(
@@ -205,7 +218,7 @@ def generate_summary(
 
 def generate_readmes(
         startpath: Path, depth_limit: int = -1, ignore_folders=[], index="Index", header=None,
-        new_index=None, clearify=False, direct_link: bool = False
+        new_index=None, clearify=False, github_link: bool = False
 ):
     # DEV: Ders notlarını README'ye ekleme direkt olarak dizin dosya oluştur
     def clear_private_dirs() -> list:
@@ -217,7 +230,8 @@ def generate_readmes(
         links = []
         for f in files:
             if ".md" not in f:
-                links.append(make_file_link(startpath / f, direct_link=direct_link))
+                link_string = generate_file_link_string(startpath / f, github_link=github_link)
+                links.append(link_string)
 
         if bool(links):
             filestr = markdown.generate_header_section(header, 2) if header else ""
@@ -245,7 +259,12 @@ def generate_readmes(
             for f in files:
                 subfilepath = root / f
                 if ".md" not in f:
-                    links.append(make_file_link(subfilepath, root=root, direct_link=direct_link))
+                    link_string = generate_file_link_string(
+                        subfilepath,
+                        root=root,
+                        github_link=github_link
+                    )
+                    links.append(link_string)
                 elif f != markdown.SpecialFile.README_FILE.value:
                     # DEV: Markdown dosyaları README'nin altına eklensin
 
