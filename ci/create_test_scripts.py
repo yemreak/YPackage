@@ -80,4 +80,4 @@ for configuration in content["configurations"]:
 
 for command in test_strings.keys():
     test_strings[command] += END_TEMPLATE
-    filesystem.write_file(Path(outpaths[command]), test_strings[command])
+    filesystem.write_to_file(Path(outpaths[command]), test_strings[command])
