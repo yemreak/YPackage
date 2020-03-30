@@ -75,7 +75,7 @@ class Header:
             Union[Any, None] -- Bulunan Header objesi
 
         Examples:
-            >>> header = Header.find_first('# HEHO\n#HOHO')
+            >>> header = Header.find_first('# HEHO\\n#HOHO')
 
             >>> header.name
             'HOHO'
@@ -106,7 +106,7 @@ class Header:
             List[Any] -- Header listesi
 
         Examples:
-            >>> headers = Header.find_all('# HEHO\n# HOHO')
+            >>> headers = Header.find_all('# HEHO\\n# HOHO')
             >>> headers[0].name
             'HEHE'
             >>> headers[1].name
@@ -308,7 +308,7 @@ def generate_custom_link_string(
     Keyword Arguments:
         intent {Indent} -- Varsa girinti objesi (default: {None})
         is_list {bool} -- Liste elamanı olarak tanımlama '- ' ekler (default: {False})
-        single_line {bool} -- Tek satırda yer alan link '\n' ekler (default: {False})
+        single_line {bool} -- Tek satırda yer alan link '\\n' ekler (default: {False})
 
 
     Returns:
@@ -345,7 +345,7 @@ def generate_file_link_string(
         name {str} -- Link'in ismi
         intent {Indent} -- Varsa girinti objesi (default: {None})
         is_list {bool} -- Liste elamanı olarak tanımlama '- ' ekler (default: {False})
-        single_line {bool} -- Tek satırda yer alan link '\n' ekler (default: {False})
+        single_line {bool} -- Tek satırda yer alan link '\\n' ekler (default: {False})
 
     Returns:
         {str} -- Oluşturulan link metni
@@ -396,7 +396,7 @@ def generate_dir_link_string(
         name {str} -- Link'in ismi
         intent {Indent} -- Varsa girinti objesi (default: {None})
         is_list {bool} -- Liste elamanı olarak tanımlama '- ' ekler (default: {False})
-        single_line {bool} -- Tek satırda yer alan link '\n' ekler (default: {False})
+        single_line {bool} -- Tek satırda yer alan link '\\n' ekler (default: {False})
 
     Returns:
         {str} -- Oluşturulan link metni
