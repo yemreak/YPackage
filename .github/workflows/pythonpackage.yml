@@ -55,7 +55,8 @@ jobs:
     - name: ⚗️ Functional testing
       run: |
         pip install pytest
-        python -m pytest .
+        mkdir test-results
+        python -m pytest --junitxml=test-results/junit.xml
         
     - name: 🧐 Lint with flake8
       run: |

@@ -257,25 +257,25 @@ class Link:
         if not self.is_url():
             return Path(self.path)
 
-    @staticmethod
-    def find_first(string) -> Any:
-        result = re.search(Link.REGEX, string)
+    @classmethod
+    def find_first(cls, content: str) -> Any:
+        result = re.search(Link.REGEX, content)
         if result:
             name = result[1]
             path = result[2]
 
-            return Link(name, path)
+            return cls(name, path)
 
-    @staticmethod
-    def find_all(string: str) -> List[Any]:
+    @classmethod
+    def find_all(cls, content: str) -> List[Any]:
         links = []
 
-        results = re.findall(Link.REGEX, string)
+        results = re.findall(Link.REGEX, content)
         for result in results:
             name = result[0]
             path = result[1]
 
-            links.append(Link(name, path))
+            links.append(cls(name, path))
 
         return links
 
