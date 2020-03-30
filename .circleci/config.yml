@@ -27,9 +27,13 @@ jobs:
       - run:
           name: ⚗️ Functional testing
           command: |
-            python -m pytest .
+            mkdir test-results
+            python -m pytest --junitxml=test-results/junit. .
 
       - store_test_results:
+          path: test-results
+
+      - store_artifacts:
           path: test-results
 
 
