@@ -29,8 +29,8 @@ class OptionParser(ArgumentParser):
             help="İşlemleri çıktı göstermeden tamamlar"
         )
         self.parser.add_argument(
-            "--dir",
-            "-d",
+            "--dir-mode",
+            "-dm",
             action="store_true",
             dest="dir_mode",
             help="Dosya yerine dizinlerin adlarını değiştirir"
@@ -50,11 +50,18 @@ class OptionParser(ArgumentParser):
             required=True
         )
         self.parser.add_argument(
-            "--c",
             "--case-sensitive",
+            "-cs",
             action="store_true",
             dest="case_sensitive",
-            help="BÜyük küçük harf duyarlılığını aktif eder"
+            help="Büyük küçük harf duyarlılığını aktif eder"
+        )
+        self.parser.add_argument(
+            "--debug",
+            "-d",
+            action="store_true",
+            dest="debug",
+            help="Debug çıktılarını aktif eder",
         )
 
     def parse_args(self):

@@ -21,7 +21,7 @@ def rename(options: Options):
 
     if not result:
         logger.warning(
-            f"Değişiklik yapılmadı: {options.pattern=} {options.recursive=}"
+            f"Değişiklik yapılmadı: {options.pattern=} {options.to=}"
         )
 
 
