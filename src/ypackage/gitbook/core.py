@@ -357,7 +357,7 @@ def create_changelog(
     if not commit_msg:
         commit_msg = "💫 YGitBookIntegration"
 
-    cpath = path / markdown.SpecialFile.CHANGELOG
+    cpath = markdown.SpecialFile.CHANGELOG.get_filepath(path)
 
     filestr = "# " + CHANGELOG_HEADER
     filestr += "\n\n"

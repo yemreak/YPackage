@@ -1,7 +1,7 @@
 import logging
 import re
 from enum import Enum
-from pathlib import Path, PurePath
+from pathlib import Path
 from typing import Any, List, Union
 
 from deprecated import deprecated
@@ -18,6 +18,9 @@ class Comment:
     def __init__(self, content: str):
         self.content = content
 
+    def __repr__(self):
+        return f"Comment({self.content.__repr__()})"
+
     def __str__(self):
         return Comment.TEMPLATE.format(self.content)
 
@@ -30,6 +33,9 @@ class Indent:
     def __init__(self, level: int):
         self.level = level
 
+    def __repr__(self):
+        return f"Indent({self.level.__repr__()})"
+
     def __str__(self):
         return Indent.INDENT_CHAR * self.level * Indent.TAB_SIZE
 
@@ -39,12 +45,15 @@ class Indent:
 
 class Header:
 
-    REGEX = r"(#+) (.*)\n"
+    REGEX = r"(#+) (.*)"
     HEADER_CHAR = "#"
 
-    def __init__(self, name, level: int = 1):
+    def __init__(self, name: str, level: int = 1):
         self.name = name
         self.level = level
+
+    def __repr__(self):
+        return f"Header({self.name.__repr__()}, {self.level.__repr__()})"
 
     def __str__(self):
         return (self.level * Header.HEADER_CHAR) + " " + self.name
@@ -52,26 +61,67 @@ class Header:
     def to_str(self):
         return self.__str__()
 
-    @staticmethod
-    def find_first(string: str, level=1) -> Union[Any, None]:
-        result = re.search(Header.REGEX, string)
+    @classmethod
+    def find_first(cls, content: str, level=1) -> Union[Any, None]:
+        """İçerik içerisindeki ilk header'ı bulma
+
+        Arguments:
+            string {str} -- İçerik
+
+        Keyword Arguments:
+            level {int} -- Header seviyesi (default: {1})
+
+        Returns:
+            Union[Any, None] -- Bulunan Header objesi
+
+        Examples:
+            >>> header = Header.find_first('# HEHO\n#HOHO')
+
+            >>> header.name
+            'HOHO'
+
+            >>> header.level
+            1
+
+        """
+
+        result = re.search(cls.REGEX, content)
         if result:
-            lvl = result[1].count(Header.HEADER_CHAR)
+            lvl = result[1].count(cls.HEADER_CHAR)
             name = result[2]
 
-            return Header(name, level=lvl)
+            return cls(name, level=lvl)
 
-    @staticmethod
-    def find_all(string, level=1) -> List[Any]:
+    @classmethod
+    def find_all(cls, string, level=1) -> List[Any]:
+        """İçerik içerisindeki tüm header'ları buluyor
+
+        Arguments:
+            string {str} -- İçerik metni
+
+        Keyword Arguments:
+            level {int} -- Bulunacak header seviyesi (default: {1})
+
+        Returns:
+            List[Any] -- Header listesi
+
+        Examples:
+            >>> headers = Header.find_all('# HEHO\n# HOHO')
+            >>> headers[0].name
+            'HEHE'
+            >>> headers[1].name
+            'HOHO'
+        """
+
         headers = []
 
-        results = re.findall(Header.REGEX, string)
+        results = re.findall(cls.REGEX, string)
         for result in results:
-            lvl = result[0].count(Header.HEADER_CHAR)
+            lvl = result[0].count(cls.HEADER_CHAR)
             name = result[1]
 
             if lvl == level:
-                headers.append(Header(name, level=lvl))
+                headers.append(cls(name, level=lvl))
 
         return headers
 
@@ -179,6 +229,9 @@ class Link:
     def __init__(self, name: str, path: str):
         self.name = name
         self.path = path
+
+    def __repr__(self):
+        return f"Link({self.name.__repr__()}, {self.path.__repr__()})"
 
     def __str__(self):
         return Link.TEMPLATE.format(self.name, self.path)
