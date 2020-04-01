@@ -215,7 +215,7 @@ class SpecialFile(Enum):
     CHANGELOG = "CHANGELOG.md"
     CODE_OF_CONDUCT = "CODE_OF_CONDUCT.md"
     CONTRIBUTING = "CONTRIBUTING.md"
-    LICENSE = "LICENSE.md"
+    LICENSE = "LICENSE"
 
     def get_filepath(self, root: Path = Path.cwd()) -> Path:
         """Özel dosyalar için dosya yolu oluşturur

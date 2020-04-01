@@ -108,7 +108,7 @@ def generate_file_link_string(
         >>> generate_file_link_string(    \
             Path('./docs/README.md'),     \
             root = Path('./docs'),        \
-            signle_line=True,             \
+            single_line=True,             \
             is_list=True,                 \
         )
         '- [📦 YPackage](README.md)\\n'

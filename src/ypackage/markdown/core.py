@@ -513,7 +513,7 @@ def has_readme_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_readme_file('.')
+        >>> has_readme_file(Path('.'))
         True
     """
     filepath = SpecialFile.README.get_filepath(dirpath)
