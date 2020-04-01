@@ -306,7 +306,8 @@ def insert_summary_file(
     workdir: Path, filestr: str, index: str = "Index", new_index: str = None
 ):
     FILEPATH = get_summary_path(workdir)
-    markdown.insert_to_file(FILEPATH, filestr, index=index, new_index=new_index)
+    markdown.insert_to_file(FILEPATH, filestr, index_string=index)
+    # new_index=new_index
 
 
 def generate_summary(

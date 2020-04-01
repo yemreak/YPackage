@@ -240,7 +240,7 @@ class SpecialFile(Enum):
             'src/ypackage/CONTRIBUTING.md'
 
             >>> SpecialFile.LICENSE.get_filepath(Path('./src/ypackage')).as_posix()
-            'src/ypackage/LICENSE.md'
+            'src/ypackage/LICENSE'
 
         """
         return root / self.value

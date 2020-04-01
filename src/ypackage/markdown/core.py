@@ -466,7 +466,7 @@ def license_path_for_dir(dirpath: Path) -> Path:
 
     Examples:
         >>> license_path_for_dir(Path('.')).as_posix()
-        'LICENSE.md'
+        'LICENSE'
     """
     return SpecialFile.LICENSE.get_filepath(dirpath)
 
@@ -513,7 +513,7 @@ def has_readme_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_readme_file(Path('.'))
+        >>> has_readme_file(Path('docs'))
         True
     """
     filepath = SpecialFile.README.get_filepath(dirpath)
