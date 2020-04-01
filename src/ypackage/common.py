@@ -7,6 +7,29 @@ from typing import AnyStr, List, Pattern
 logger = logging.getLogger(__name__)
 
 
+class Options:
+
+    LOG_LOAD_TEMPLATE = "{} ile komut çalıştırılıyor"
+    LOG_LOAD_SYSTEM_ARGS = "Parametreler"
+
+    def __repr__(self):
+        raise NotImplementedError
+
+    def load_system_args(self, workdir: Path):
+        raise NotImplementedError
+
+    def log_load(self, load_type: str):
+        message = self.LOG_LOAD_TEMPLATE.format(load_type)
+        message += "\n"
+        message += repr(self)
+
+        logger.info(message)
+
+    @classmethod
+    def from_sytem_args(cls, workdir: Path):
+        raise NotImplementedError
+
+
 def initialize_logging(level=logging.INFO):
     import coloredlogs
 
@@ -176,7 +199,8 @@ def insert_to_string_by_string(
     Arguments:
         string {str} -- Eklenecek string
         content {str} -- Asıl içerik
-        index {str} -- İndeks metni
+        start_string {str} -- Başlangıç metni
+        end_string {str} -- Bitiş metni
 
     Returns:
         str -- Değiştirilmiş içerik

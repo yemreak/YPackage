@@ -26,7 +26,7 @@ def must_exist(filepath: Path) -> bool:
         bool -- Varsa true
 
     Examples:
-        >>> is_exist(Path('docs/README.md'))
+        >>> must_exist(Path('docs/README.md'))
         True
     """
 
@@ -79,9 +79,12 @@ def find_level(filepath: Path, root: Path) -> int:
 
 def read_file(filepath: Path) -> str:
     content = ""
-    with filepath.open("r", encoding="utf-8") as file:
-        logger.debug(f"Dosya okunuyor: {filepath}")
-        content = file.read()
+    try:
+        with filepath.open("r", encoding="utf-8") as file:
+            logger.debug(f"Dosya okunuyor: {filepath}")
+            content = file.read()
+    except Exception:
+        logger.debug(f"Dosya okunamadı: {filepath}")
     return content
 
 
@@ -126,13 +129,13 @@ def read_file_from_url(url: str, encoding="utf-8") -> str:
     """URLdeki dosyayı okuma
 
     Arguments:
-            rawUrl {str} -- URL (https, http)
+        rawUrl {str} -- URL (https, http)
 
     Keyword Arguments:
-            encoding {str} -- Dosya kodlanması (default: {"utf-8"})
+        encoding {str} -- Dosya kodlanması (default: {"utf-8"})
 
     Returns:
-            str -- Okunan metin
+        str -- Okunan metin
     """
 
     file = urlopen(url)
@@ -159,11 +162,36 @@ def write_json_to_file(filepath: Path, content: str, indent=4, eof_line=True):
     return write_to_file(filepath, content)
 
 
-def insert_to_file(string: str, filepath: Path, start_string: str, end_string: str) -> bool:
+def insert_to_file(
+    string: str,
+    filepath: Path,
+    start_string: str,
+    end_string: str,
+    must_inserted=False
+) -> bool:
+    """Verilen stringler arasına istenen stringi yerleştirir
+
+    Arguments:
+        string {str} -- Yerleştirilecek metin
+        filepath {Path} -- Dosya yolu objesi
+        start_string {str} -- Başlangıç metni
+        end_string {str} -- Bitiş metni
+
+    Keyword Arguments:
+        must_inserted {bool} -- Verilen indeksler bulunamazsa dosyanın sonuna indeksler ile ekler
+
+    Returns:
+        bool -- Dosyada değişiklik olduysa True
+    """
+
     content = read_file(filepath)
     new_content = common.insert_to_string_by_string(string, content, start_string, end_string)
 
     if new_content == content:
+        if must_inserted:
+            new_content += start_string + string + end_string
+            return write_to_file(filepath, new_content)
+
         return False
 
     return write_to_file(filepath, new_content)
@@ -262,17 +290,17 @@ def listdir_grouped(root: Path, ignore_folders=[], include_hidden=False) -> Tupl
     """Dizindeki dosya ve dizinleri sıralı olarak listeler
 
     Arguments:
-            root {Path} -- Listenelecek dizin
+        root {Path} -- Listenelecek dizin
 
     Keyword Arguments:
-            ignore_folders {list} -- Atlanılacak yollar (default: {[]})
-            include_hidden {bool} -- Gizli dosyaları dahil etme (default: {False})
+        ignore_folders {list} -- Atlanılacak yollar (default: {[]})
+        include_hidden {bool} -- Gizli dosyaları dahil etme (default: {False})
 
     Returns:
-            tuple -- dizin, dosya listesi
+        tuple -- dizin, dosya listesi
 
     Examples:
-            >>> dirs, files = listdir_grouped(".")
+        >>> dirs, files = listdir_grouped(".")
     """
     if isinstance(root, str):
         root = Path(root)
@@ -291,3 +319,37 @@ def listdir_grouped(root: Path, ignore_folders=[], include_hidden=False) -> Tupl
     files.sort()
 
     return dirs, files
+
+
+def is_hidden(dirpath: Path) -> bool:
+    """Dizin gizliliğini kontrol eder
+
+    Arguments:
+        dirpath {Path} -- Dizin yolu objesi
+
+    Returns:
+        bool -- Gizli ise True
+
+    Examples:
+        >>> is_hidden(Path('.github'))
+        True
+        >>> is_hidden(Path('random'))
+        False
+    """
+    return dirpath.name.startswith(".")
+
+
+def list_nonhidden_dirs(dirpath: Path) -> List[Path]:
+    dirlist = []
+    for path in sorted(dirpath.iterdir()):
+        if path.is_dir() and not is_hidden(path):
+            dirlist.append(path)
+    return dirlist
+
+
+def list_nonhidden_files(dirpath: Path) -> List[Path]:
+    dirlist = []
+    for path in sorted(dirpath.iterdir()):
+        if path.is_file() and not is_hidden(path):
+            dirlist.append(path)
+    return dirlist

@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 from typing import List
 
-from ..common import read_config
+from .. import common
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +108,7 @@ class ConfigOptions:
     def from_file(filepath: Path):
         workdir = filepath.parent
 
-        config = read_config(filepath)
+        config = common.read_config(filepath)
 
         integration = IntegrationOptions()
         submodules = []
@@ -257,7 +257,9 @@ class OptionParser(ArgumentParser):
         return self.parser.parse_args()
 
 
-class Options:
+class Options(common.Options):
+
+    LOG_LOAD_CONFIG = "Yapılandırma dosyası"
 
     def __init__(
         self,
@@ -301,9 +303,29 @@ class Options:
 
         self.submodules = submodules
 
+    def __repr__(self):
+        return f"Options(" + \
+            "workdir=" + repr(self.workdir) + \
+            ", update=" + repr(self.update) + \
+            ", recreate=" + repr(self.recreate) + \
+            ", generate=" + repr(self.generate) + \
+            ", changelog=" + repr(self.changelog) + \
+            ", depth_limit=" + repr(self.depth_limit) + \
+            ", debug=" + repr(self.debug) + \
+            ", store=" + repr(self.store) + \
+            ", push=" + repr(self.push) + \
+            ", repo_url=" + repr(self.repo_url) + \
+            ", commit_msg=" + repr(self.commit_msg) + \
+            ", ignore_commits=" + repr(self.ignore_commits) + \
+            ", ignore_folders=" + repr(self.ignore_folders) + \
+            ", index=" + repr(self.index) + \
+            ", new_index=" + repr(self.new_index) + \
+            ", footer_path=" + repr(self.footer_path) + \
+            ")"
+
     def load_integration_from_config(self, config: ConfigOptions):
         sys.argv = [__file__, str(self.workdir)] + config.integration.args
-        return self.load_system_args()
+        return self.load_system_args(config.workdir)
 
     def load_submodules_from_config(self, config: ConfigOptions):
         self.submodules = config.submodules
@@ -316,6 +338,8 @@ class Options:
         self.load_submodules_from_config(config)
         self.load_integration_from_config(config)
 
+        self.log_load(self.LOG_LOAD_CONFIG)
+
     def load_config_from_workdir(self, workdir: Path):
         config = ConfigOptions.from_workdir(workdir)
         return self.load_config(config)
@@ -324,9 +348,10 @@ class Options:
         config = ConfigOptions.from_file(filepath)
         return self.load_config(config)
 
-    def load_system_args(self):
+    def load_system_args(self, workdir: Path):
         args = OptionParser().parse_args()
 
+        self.workdir = workdir
         self.update = args.update
         self.recreate = args.recreate
         self.generate = args.generate
@@ -343,6 +368,8 @@ class Options:
         self.new_index = args.new_index
         self.footer_path = args.footer_path
 
+        self.log_load(self.LOG_LOAD_SYSTEM_ARGS)
+
     @staticmethod
     def from_config(config: ConfigOptions):
         options = Options()
@@ -354,8 +381,15 @@ class Options:
         options = Options()
 
         if use_system_args:
-            options.load_system_args()
+            options.load_system_args(workdir)
         else:
             options.load_config_from_workdir(workdir)
 
         return options
+
+    def log_load(self, load_type: str):
+        message = self.LOG_LOAD_TEMPLATE.format(load_type)
+        message += "\n"
+        message += repr(self)
+
+        logger.info(message)

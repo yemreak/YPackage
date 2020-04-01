@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from .. import filesystem, github, markdown
+from .. import common, filesystem, github, markdown
 
 logger = logging.getLogger(__name__)
 
@@ -22,18 +22,71 @@ CONTRIBUTING_HEADER = u"💖 Katkıda Bulunma Rehberi"
 GITHUB_USERNAME = "yedhrab"
 
 
-def generate_description(string: str) -> str:
-    return DESCRIPTIPON_TEMPLATE.format(string)
+def generate_readme_for_dir(dirpath: Path, index_string: str, must_inserted=False) -> bool:
+    """Verilen dizin için markdown olmayan dosyaların bağlantılarının listesini README
+    dosyasına verilen indeksler arasına yerleştirir
+
+    Arguments:
+        dirpath {Path} -- [description]
+        index_string {str} -- [description]
+
+    Keyword Arguments:
+        must_inserted {bool} -- [description] (default: {False})
+
+    Returns:
+        {bool} -- Değişim varsa True
+    """
+
+    content = generate_nonmarkdown_filelist_string(dirpath)
+    if not content:
+        return False
+
+    readme_path = markdown.readme_path_for_dir(dirpath)
+    if not readme_path.exists():
+        markdown.create_markdown_file(readme_path, header=dirpath.name)
+
+    return markdown.insert_to_file(
+        content,
+        readme_path,
+        index_string,
+        must_inserted=must_inserted
+    )
 
 
-def get_specialfile_header(specialfile: markdown.SpecialFile) -> str:
-    if specialfile == markdown.entity.SpecialFile.CHANGELOG:
-        return CHANGELOG_HEADER
-    elif specialfile == markdown.SpecialFile.CONTRIBUTING:
-        return CONTRIBUTING_HEADER
+def insert_to_file(
+    string: str,
+    filepath: Path,
+    index_string: str,
+    must_inserted=False
+) -> bool:
+    """Verilen metni markdown dosyasına indeks metinlerini yorum satırlarına alarak ekler
+
+    Arguments:
+        string {str} -- Yerleştirilecek metin
+        filepath {Path} -- Dosya yolu objesi
+        index_string {str} -- Başlangıç metni
+
+    Keyword Arguments:
+        must_inserted {bool} -- Verilen indeksler bulunamazsa dosyanın sonuna indeksler ile ekler
+
+    Returns:
+        bool -- Dosyada değişiklik olduysa True
+    """
+    return markdown.insert_to_file(
+        string,
+        filepath,
+        index_string,
+        must_inserted=True
+    )
 
 
-def generate_file_link_string(filepath: Path, root: Path = None, github_link=False) -> str:
+def generate_file_link_string(
+    filepath: Path,
+    root: Path = None,
+    github_link=False,
+    single_line=False,
+    is_list=False
+) -> str:
     """GitBook için dosya link metni oluşturma
 
     Arguments:
@@ -51,26 +104,65 @@ def generate_file_link_string(filepath: Path, root: Path = None, github_link=Fal
             Path('./docs/README.md'),     \
             github_link = True            \
         )
-        '- [📦 YPackage](https:/github.com/yedhrab/YPackage/raw/master/docs/README.md)\\n'
+        '- [📦 YPackage](https://github.com/yedhrab/YPackage/raw/master/docs/README.md)\\n'
+        >>> generate_file_link_string(    \
+            Path('./docs/README.md'),     \
+            root = Path('./docs')         \
+        )
+        '- [📦 YPackage](README.md)\\n'
     """
 
-    name = markdown.generate_name_for_file(filepath)
-
     if github_link:
-        filepath_string = github.get_github_raw_link(
+        name = markdown.generate_name_for_file(filepath)
+        rawlink = github.get_github_raw_link(
             GITHUB_USERNAME,
             "YPackage" if Path.cwd().name == "project" else Path.cwd().name,  # TODO: burayı düzelt
             filepath
         )
-        filepath = Path(filepath_string)
+        return markdown.generate_custom_link_string(
+            name,
+            rawlink,
+            single_line=True,
+            is_list=True
+        )
 
     return markdown.generate_file_link_string(
         filepath,
-        name,
         root=root,
-        single_line=True,
-        is_list=True
+        single_line=single_line,
+        is_list=is_list
     )
+
+
+def generate_nonmarkdown_filelist_string(dirpath: Path) -> str:
+    nonmarkdown_filepaths = markdown.list_nonmarkdown_files(dirpath)
+
+    if not nonmarkdown_filepaths:
+        return ""
+
+    filelink_strings = []
+    for filepath in nonmarkdown_filepaths:
+        filelink_strings.append(
+            generate_file_link_string(
+                filepath,
+                root=dirpath,
+                is_list=True
+            )
+        )
+
+    content = common.merge_lines(filelink_strings)
+    return content
+
+
+def generate_description(string: str) -> str:
+    return DESCRIPTIPON_TEMPLATE.format(string)
+
+
+def get_specialfile_header(specialfile: markdown.SpecialFile) -> str:
+    if specialfile == markdown.entity.SpecialFile.CHANGELOG:
+        return CHANGELOG_HEADER
+    elif specialfile == markdown.SpecialFile.CONTRIBUTING:
+        return CONTRIBUTING_HEADER
 
 
 def generate_fs_link(

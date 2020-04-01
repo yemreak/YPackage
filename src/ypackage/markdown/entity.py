@@ -94,13 +94,10 @@ class Header(Template):
 
         Examples:
             >>> header = Header.find_first('# HEHO\\n#HOHO')
-
             >>> header.name
             'HEHO'
-
             >>> header.level
             1
-
         """
 
         result = re.search(cls.REGEX, content)

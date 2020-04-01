@@ -3,7 +3,7 @@ from glob import glob
 from pathlib import Path
 from typing import List
 
-from .. import common, github, markdown
+from .. import common, filesystem, github, markdown
 from . import core
 from .entity import OptionParser, Options
 
@@ -12,13 +12,12 @@ logger = logging.getLogger(__name__)
 
 def generate_readmes(options: Options):
     if options.generate:
-        return core.generate_readmes(
-            options.workdir,
-            ignore_folders=options.ignore_folders,
-            index=options.index,
-            new_index=options.new_index,
-            depth_limit=options.depth_limit
-        )
+        options.depth_limit -= 1
+        for dirpath in filesystem.list_nonhidden_dirs(options.workdir):
+            core.generate_readme_for_dir(dirpath, options.index, must_inserted=True)
+
+            options.workdir = dirpath
+            generate_readmes(options)
 
 
 def recreate_summary(options: Options):

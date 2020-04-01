@@ -1,6 +1,8 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+from .. import common
+
 
 class OptionParser(ArgumentParser):
 
@@ -68,12 +70,12 @@ class OptionParser(ArgumentParser):
         return self.parser.parse_args()
 
 
-class Options:
+class Options(common.Options):
 
     def __init__(
         self,
-        pattern: str,
-        to: str,
+        pattern: str = "",
+        to: str = "",
         workdir=Path('.'),
         recursive=False,
         silent=False,
@@ -90,25 +92,33 @@ class Options:
         self.case_sensitive = case_sensitive
         self.debug = debug
 
-    @classmethod
-    def from_sytem_args(cls, path: Path):
+    def __repr__(self):
+        return f"Options(" + \
+            "workdir=" + repr(self.workdir) + \
+            "recursive=" + repr(self.recursive) + \
+            "silent=" + repr(self.silent) + \
+            "dir_mode=" + repr(self.dir_mode) + \
+            "pattern=" + repr(self.pattern) + \
+            "to=" + repr(self.to) + \
+            "case_sensitive=" + repr(self.case_sensitive) + \
+            "debug=" + repr(self.debug) + \
+            ")"
+
+    def load_system_args(self, workdir: Path):
         args = OptionParser().parse_args()
 
-        recursive = args.recursive
-        silent = args.silent
-        dir_mode = args.dir_mode
-        pattern = args.pattern
-        to = args.to
-        case_sensitive = args.case_sensitive
-        debug = args.debug
+        self.recursive = args.recursive
+        self.silent = args.silent
+        self.dir_mode = args.dir_mode
+        self.pattern = args.pattern
+        self.to = args.to
+        self.case_sensitive = args.case_sensitive
+        self.debug = args.debug
 
-        return cls(
-            pattern,
-            to,
-            workdir=path,
-            recursive=recursive,
-            silent=silent,
-            dir_mode=dir_mode,
-            case_sensitive=case_sensitive,
-            debug=debug
-        )
+        self.log_load(self.LOG_LOAD_SYSTEM_ARGS)
+
+    @classmethod
+    def from_sytem_args(cls, workdir: Path):
+        options = cls()
+        options.load_system_args(workdir)
+        return options
