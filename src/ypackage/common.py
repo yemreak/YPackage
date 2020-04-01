@@ -2,7 +2,7 @@ import logging
 import re
 from configparser import ConfigParser
 from pathlib import Path
-from typing import AnyStr, List, Pattern
+from typing import AnyStr, List, Pattern, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -220,13 +220,84 @@ def insert_to_string_by_string(
                 ' Merhaba'                  \
             )
         'Merhaba YEmreAk Merhaba'
+        >>> insert_to_string_by_string(     \
+                'YPackage',                 \
+                'Merhaba YEmreAk Merhaba',  \
+                'Merhaba',                  \
+                'Merhaba'                   \
+            )
+        'MerhabaYPackageMerhaba'
     """
 
-    start_positions = [m.start() for m in re.finditer(start_string, content)]
-    end_positions = [m.start() for m in re.finditer(end_string, content)]
-
-    for start_pos, end_pos in zip(start_positions, end_positions):
+    positions = position_index_from_string_index(content, start_string, end_string)
+    for start_pos, end_pos in positions:
         start_pos = start_pos + len(start_string)
         content = insert_to_string(string, content, start_pos, end_pos)
 
     return content
+
+
+def position_index_from_string_index(
+    content: str,
+    start_string: str,
+    end_string: str
+) -> List[Tuple[int, int]]:
+    spos = [m.start() for m in re.finditer(start_string, content)]
+    epos = [m.start() for m in re.finditer(end_string, content)]
+
+    positions = match_start_and_end_positions(spos, epos)
+    return positions
+
+
+def match_start_and_end_positions(spos: list, epos: list) -> List[Tuple[int, int]]:
+    """[summary]
+
+    Arguments:
+        spos {list} -- [description]
+        epos {list} -- [description]
+
+    Returns:
+        List[Tuple[int, int]] -- [description]
+
+    Examples:
+        >>> match_start_and_end_positions(  \
+            [1, 3, 5],                      \
+            [2, 4, 7]                       \
+            )
+        [(1, 2), (3, 4), (5, 7)]
+        >>> match_start_and_end_positions(  \
+            [1, 3, 5],                      \
+            [1, 5, 9]                       \
+            )
+        [(1, 5), (5, 9)]
+        >>> match_start_and_end_positions(  \
+            [131],                          \
+            [130, 275]                      \
+            )
+        [(131, 275)]
+    """
+    positions = []
+
+    istart, iend = 0, 0
+    while istart < len(spos):
+        if istart != 0 and spos[istart] < epos[iend - 1]:
+            istart += 1
+            continue
+
+        while iend < len(epos) and not (spos[istart] < epos[iend]):
+            iend += 1
+
+        if not (iend < len(epos)):
+            break
+
+        positions.append((spos[istart], epos[iend]))
+        istart += 1
+        iend += 1
+
+    return positions
+
+
+def has_indexes(content: str, start_string: str, end_string: str) -> bool:
+    positions = position_index_from_string_index(content, start_string, end_string)
+    result = bool(positions)
+    return result

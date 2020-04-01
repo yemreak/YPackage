@@ -162,6 +162,12 @@ def write_json_to_file(filepath: Path, content: str, indent=4, eof_line=True):
     return write_to_file(filepath, content)
 
 
+def has_indexes(filepath: Path, start_string: str, end_string: str) -> bool:
+    content = read_file(filepath)
+    result = common.has_indexes(content, start_string, end_string)
+    return result
+
+
 def insert_to_file(
     string: str,
     filepath: Path,
@@ -188,7 +194,9 @@ def insert_to_file(
     new_content = common.insert_to_string_by_string(string, content, start_string, end_string)
 
     if new_content == content:
-        if must_inserted:
+        insert_conditions = must_inserted
+        insert_conditions &= not has_indexes(filepath, start_string, end_string)
+        if insert_conditions:
             new_content += start_string + string + end_string
             return write_to_file(filepath, new_content)
 
