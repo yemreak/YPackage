@@ -104,10 +104,12 @@ def generate_file_link_string(
             Path('./docs/README.md'),     \
             github_link = True            \
         )
-        '- [📦 YPackage](https://github.com/yedhrab/YPackage/raw/master/docs/README.md)\\n'
+        '[📦 YPackage](https://github.com/yedhrab/YPackage/raw/master/docs/README.md)'
         >>> generate_file_link_string(    \
             Path('./docs/README.md'),     \
-            root = Path('./docs')         \
+            root = Path('./docs'),        \
+            signle_line=True,             \
+            is_list=True,                 \
         )
         '- [📦 YPackage](README.md)\\n'
     """
@@ -122,8 +124,8 @@ def generate_file_link_string(
         return markdown.generate_custom_link_string(
             name,
             rawlink,
-            single_line=True,
-            is_list=True
+            single_line=single_line,
+            is_list=is_list
         )
 
     return markdown.generate_file_link_string(
@@ -304,7 +306,7 @@ def insert_summary_file(
     workdir: Path, filestr: str, index: str = "Index", new_index: str = None
 ):
     FILEPATH = get_summary_path(workdir)
-    markdown.insert_file(FILEPATH, filestr, index=index, new_index=new_index)
+    markdown.insert_to_file(FILEPATH, filestr, index=index, new_index=new_index)
 
 
 def generate_summary(

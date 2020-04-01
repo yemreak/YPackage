@@ -581,7 +581,7 @@ def has_license_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_license_file('.')
+        >>> has_license_file(Path('.'))
         True
     """
     filepath = SpecialFile.LICENSE.get_filepath(dirpath)
