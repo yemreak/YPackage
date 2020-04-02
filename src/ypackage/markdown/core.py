@@ -198,8 +198,10 @@ def generate_name_for_file(filepath: Path) -> str:
         'LICENSE'
     """
 
+    header = None
     if is_markdown(filepath):
         header = find_first_header_from_file(filepath)
+
     name = header.name if header else filepath.name
     return name
 
