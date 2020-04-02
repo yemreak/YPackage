@@ -194,11 +194,13 @@ def generate_name_for_file(filepath: Path) -> str:
     Examples:
         >>> generate_name_for_file(Path('docs/README.md'))
         '📦 YPackage'
+        >>> generate_name_for_file(Path('LICENSE'))
+        'LICENSE'
     """
 
-    header = find_first_header_from_file(filepath)
+    if is_markdown(filepath):
+        header = find_first_header_from_file(filepath)
     name = header.name if header else filepath.name
-
     return name
 
 
@@ -586,3 +588,21 @@ def has_license_file(dirpath: Path) -> bool:
     """
     filepath = SpecialFile.LICENSE.get_filepath(dirpath)
     return filepath.exists()
+
+
+def is_markdown(filepath: Path) -> bool:
+    """Verilen dosyanın markdown mı
+
+    Arguments:
+        filepath {Path} -- Dosya yolu objesi
+
+    Returns:
+        bool -- Markdown ise True
+
+    Examples:
+        >>> is_markdown(Path('docs/README.md'))
+        True
+        >>> is_markdown(Path('LICENSE'))
+        False
+    """
+    return filepath.name[-3:] == ".md"

@@ -13,9 +13,10 @@ from .core import (change_title_of_file, change_title_of_string,
                    generate_header_section, generate_name_for_file,
                    generate_substrings, has_changelo_file,
                    has_code_of_conduct_file, has_contributing_file,
-                   has_license_file, has_readme_file, insert_to_file, is_url,
-                   license_path_for_dir, list_nonmarkdown_files, map_links,
-                   readme_path_for_dir, replace_in_links)
+                   has_license_file, has_readme_file, insert_to_file,
+                   is_markdown, is_url, license_path_for_dir,
+                   list_nonmarkdown_files, map_links, readme_path_for_dir,
+                   replace_in_links)
 from .entity import Comment, Header, Indent, Link, SpecialFile
 
 __all__ = [
@@ -56,5 +57,6 @@ __all__ = [
     'has_changelo_file',
     'has_code_of_conduct_file',
     'has_contributing_file',
-    'has_license_file'
+    'has_license_file',
+    'is_markdown'
 ]
