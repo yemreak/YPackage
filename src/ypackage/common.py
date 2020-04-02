@@ -23,10 +23,10 @@ class Options:
         message += "\n"
         message += repr(self)
 
-        logger.info(message)
+        logger.debug(message)
 
     @classmethod
-    def from_sytem_args(cls, workdir: Path):
+    def from_system_args(cls, workdir: Path):
         raise NotImplementedError
 
 
@@ -39,7 +39,7 @@ def initialize_logging(level=logging.INFO):
         log_format = r"%(levelname)s %(message)s"
 
     coloredlogs.install(fmt=log_format, level=level)
-    logger.debug("Rekli raporlayıcı aktif edildi")
+    logger.debug("Renkli raporlayıcı aktif edildi")
 
 
 def exit_if_not(condition, message=None):

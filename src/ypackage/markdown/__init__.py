@@ -12,7 +12,7 @@ from .core import (change_title_of_file, change_title_of_string,
                    generate_substrings, has_changelog_file,
                    has_code_of_conduct_file, has_contributing_file,
                    has_license_file, has_readme_file, insert_to_file,
-                   is_markdown, is_readme, is_url, license_path_for_dir,
+                   is_markdown, is_readme, license_path_for_dir,
                    list_markdown_files, list_nonmarkdown_files, map_links,
                    readme_path_for_dir, replace_in_links)
 from .entity import Comment, Header, Indent, Link, SpecialFile
@@ -39,7 +39,6 @@ __all__ = [
     'generate_link_string',
     'generate_filelink_string',
     'generate_dirlink_string',
-    'is_url',
     'check_links',
     'map_links',
     'replace_in_links',

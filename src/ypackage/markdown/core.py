@@ -1,3 +1,4 @@
+from copy import deepcopy
 from pathlib import Path
 from typing import List, Tuple, Union
 from urllib.parse import quote
@@ -75,7 +76,7 @@ def create_markdown_file(filepath: Path, header: str = None) -> bool:
     Returns:
         bool -- Oluşturma başarılı ise True
     """
-    
+
     if not header:
         header = filepath.name
 
@@ -151,6 +152,8 @@ def find_first_header_from_file(filepath, level=1) -> Union[Header, None]:
 
 
 def change_title_of_string(title: str, content: str) -> str:
+    # DEV: Test yaz
+    title = Header(title, 1).to_str()
     title_changed = False
 
     lines = common.parse_to_lines(content)
@@ -384,11 +387,6 @@ def generate_dirlink_string(
 
 
 @deprecated
-def is_url(link: str) -> bool:
-    return "https://" in link or "http://" in link
-
-
-@deprecated
 def check_links(fpath):
     with open(fpath, "r", encoding="utf-8") as f:
         for line in f:
@@ -403,17 +401,24 @@ def map_links(content: str, func: Link.map_function) -> str:
 
     Arguments:
         content {str} -- Metin içeriği
-        func {Link.map_function} -- Link alan ve Link döndüren fonksiyon
+        func {Link.map_function} -- Link alan ve değiştiren fonksiyon
 
     Returns:
         str -- Değişen metin içeriği
     """
+
+    # DEV: Test yaz
+    # TODO: Fonksiyon kopyalanmıyor
+    # TODO: Map yapısını diğer objelere de yap
+    # RES: Şu kopyalanma olayını iyi öğren
     lines = common.parse_to_lines(content)
     for i, line in enumerate(lines):
-        oldlinks = Link.find_all(line)
-        for oldlink in oldlinks:
-            newlink = func(oldlink)
-            lines[i] = lines[i].replace(str(oldlink), str(newlink))
+        links = Link.find_all(line)
+        for link in links:
+            link_string = str(link)
+            func(link)
+            newlink_string = str(link)
+            lines[i] = lines[i].replace(link_string, newlink_string)
 
     return common.merge_lines(lines)
 

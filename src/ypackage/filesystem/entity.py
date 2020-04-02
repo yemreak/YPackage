@@ -118,7 +118,7 @@ class Options(common.Options):
         self.log_load(self.LOG_LOAD_SYSTEM_ARGS)
 
     @classmethod
-    def from_sytem_args(cls, workdir: Path):
+    def from_system_args(cls, workdir: Path):
         options = cls()
         options.load_system_args(workdir)
         return options

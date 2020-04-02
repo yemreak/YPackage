@@ -3,7 +3,7 @@ from glob import glob
 from pathlib import Path
 from typing import List
 
-from .. import common, github, markdown
+from .. import common, filesystem, github, markdown
 from .core import (create_changelog, generate_description_section,
                    generate_readme_for_project, generate_summary_for_project,
                    read_summary_from_url)
@@ -33,17 +33,18 @@ def recreate_summary_by_options(options: Options):
 
 
 def fix_title_of_subsummary(content: str) -> str:
-    title = f"# {markdown.find_first_link(content).name}"
-    content = markdown.change_title_of_string(title, content)
+    link = markdown.find_first_link(content)
+    if link:
+        content = markdown.change_title_of_string(link.name, content)
     return content
 
 
-def fix_links_of_subsummary(content: str) -> str:
+def fix_links_of_subsummary(content: str, url: str) -> str:
 
-    def fix_link(link: markdown.Link) -> markdown.Link:
-        if not markdown.is_url(link.path):
+    def fix_link(link: markdown.Link):
+        if not link.is_url():
+            link.path = url + "/" + link.path
             link.path = link.path.replace(".md", "").replace("README", "")
-            return link
 
     content = markdown.map_links(content, fix_link)
     return content
@@ -64,13 +65,15 @@ def update_sub_summaries_by_options(options: Options) -> str:
                 content = substring[0]
 
             content = fix_title_of_subsummary(content)
-            content = fix_links_of_subsummary(content)
+            content = fix_links_of_subsummary(content, submodule.root)
 
             if submodule.description:
                 content = insert_description(submodule.description, content)
 
             if submodule.until:
                 content = content[: content.find(submodule.until)]
+
+            filesystem.write_to_file(submodule.path, content)
 
             changed_filepaths.append(submodule.path)
 

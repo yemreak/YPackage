@@ -104,6 +104,7 @@ def list_commit_links(
     since: datetime = None, to: datetime = None, table_form=False
 ) -> List[str]:
     from pydriller import RepositoryMining
+    logging.getLogger('pydriller').setLevel(logging.ERROR)
 
     if not repo_url:
         repo_url = get_remote_url(path)

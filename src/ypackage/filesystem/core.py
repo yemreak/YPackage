@@ -9,6 +9,7 @@ from os.path import join as os_path_join
 from pathlib import Path
 from shutil import copyfile
 from typing import AnyStr, List, Pattern, Tuple
+from urllib.error import HTTPError
 from urllib.request import urlopen
 
 from .. import common
@@ -126,7 +127,7 @@ def read_part_of_file(filepath: Path, index: str) -> str:
 
 
 def read_file_from_url(url: str, encoding="utf-8") -> str:
-    """URLdeki dosyayı okuma
+    """URL ile dosya okuma
 
     Arguments:
         rawUrl {str} -- URL (https, http)
@@ -138,10 +139,16 @@ def read_file_from_url(url: str, encoding="utf-8") -> str:
         str -- Okunan metin
     """
 
-    file = urlopen(url)
-    content = file.read()
-    content = content.decode(encoding)
-    file.close()
+    content = ""
+    try:
+        file = urlopen(url)
+        content = file.read()
+        content = content.decode(encoding)
+        file.close()
+        logger.debug(f"URL üzerinden dosya okundu: {url}")
+    except HTTPError as error:
+        logger.error(f"Dosya okunamadı: {error.url} <HTTPError {error.code}: {error.msg}>")
+
     return content
 
 
@@ -152,7 +159,7 @@ def write_to_file(filepath: Path, content: str) -> bool:
             logger.info(f"Dosya güncellendi: {filepath}")
             return True
     except Exception:
-        logger.error(f"Dosyaya yazılamadı: {filepath}")
+        logger.exception(f"Dosyaya yazılamadı: {filepath}")
         return False
 
 

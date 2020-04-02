@@ -77,7 +77,10 @@ class Header(Template):
         return (self.level * Header.HEADER_CHAR) + " " + self.name
 
     def to_str(self, is_section=False):
-        return self.__str__() + "\n\n"
+        string = self.__str__()
+        if is_section:
+            string += "\n\n"
+        return string
 
     @classmethod
     def find_first(cls, content: str, level=1) -> Union[Any, None]:
@@ -205,8 +208,8 @@ class Link(Template):
         return links
 
     @staticmethod
-    def map_function(link):
-        return link
+    def map_function(link) -> None:
+        pass
 
 
 class SpecialFile(Enum):

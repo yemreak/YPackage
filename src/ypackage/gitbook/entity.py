@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 from typing import List
 
-from .. import common, markdown
+from .. import common
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,12 @@ class IntegrationOptions:
     def __init__(self, name: str = "", args: list = []):
         self.name = name
         self.args = args
+
+    def __repr__(self):
+        return f"IntegrationOptions(" + \
+            "name=" + repr(self.name) + \
+            ", args=" + repr(self.args) + \
+            ")"
 
     @staticmethod
     def from_module(name: str, module: dict):
@@ -49,6 +55,16 @@ class SubmoduleOptions:
         self.url = url
         self.root = root
         self.until = until
+
+    def __repr__(self):
+        return f"SubmoduleOptions(" + \
+            "name=" + repr(self.name) + \
+            ", description=" + repr(self.description) + \
+            ", path=" + repr(self.path) + \
+            ", url=" + repr(self.url) + \
+            ", root=" + repr(self.root) + \
+            ", until=" + repr(self.until) + \
+            ")"
 
     @staticmethod
     def from_module(name: str, module: dict, root="."):
@@ -96,6 +112,13 @@ class ConfigOptions:
         self.integration = integration_options
         self.submodules = submodule_options
 
+    def __repr__(self):
+        return f"ConfigOptions(" + \
+            "workdir=" + repr(self.workdir) + \
+            ", integration=" + repr(self.integration) + \
+            ", submodules=" + repr(self.submodules) + \
+            ")"
+
     @property
     def filepath(self) -> Path:
         return self.workdir / ConfigOptions.FILENAME
@@ -128,7 +151,7 @@ class ConfigOptions:
                     SubmoduleOptions.from_module(
                         module_name,
                         module,
-                        root=filepath
+                        root=workdir
                     )
                 )
 
@@ -321,6 +344,7 @@ class Options(common.Options):
             ", index=" + repr(self.index) + \
             ", new_index=" + repr(self.new_index) + \
             ", footer_path=" + repr(self.footer_path) + \
+            ", submodules=" + repr(self.submodules) + \
             ")"
 
     def load_integration_from_config(self, config: ConfigOptions):
@@ -386,10 +410,3 @@ class Options(common.Options):
             options.load_config_from_workdir(workdir)
 
         return options
-
-    def log_load(self, load_type: str):
-        message = self.LOG_LOAD_TEMPLATE.format(load_type)
-        message += "\n"
-        message += repr(self)
-
-        logger.info(message)
