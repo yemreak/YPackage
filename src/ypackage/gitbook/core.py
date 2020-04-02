@@ -256,7 +256,7 @@ def generate_description_section(string: str) -> str:
         str -- Oluşturulan açıklama metni alanı
     Examles:
         >>> generate_description_section('Selam')
-        '---\\ndescription: >-\\n Selam\\n---\\n\\n'
+        '---\\ndescription: >-\\n  Selam\\n---\\n\\n'
     """
     return DESCRIPTION_TEMPLATE.format(string)
 
