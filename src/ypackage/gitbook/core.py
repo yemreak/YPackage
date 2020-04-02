@@ -142,14 +142,14 @@ def generate_filelink_string(
         str -- Oluşturulan link metni
 
     Examples:
-        >>> generate_file_link_string(    \
+        >>> generate_filelink_string(    \
             Path('./docs/README.md'),     \
             root = Path('./docs'),        \
             single_line=True,             \
             is_list=True,                 \
         )
         '- [📦 YPackage](README.md)\\n'
-        >>> generate_file_link_string(    \
+        >>> generate_filelink_string(    \
             Path('./docs/README.md'),     \
             github_link = True            \
         )
@@ -190,8 +190,10 @@ def summary_path_for_project(projectpath: Path) -> Path:
         Path -- README dosya yolu objesi
 
     Examples:
-        >>> summary_path_for_dir(Path('.')).as_posix()
+        >>> summary_path_for_project(Path('.')).as_posix()
         'SUMMARY.md'
+        >>> summary_path_for_project(Path('docs')).as_posix()
+        'docs/SUMMARY.md'
     """
 
     # TODO: Buraya uygun bir yapı lazım
@@ -209,6 +211,8 @@ def has_summary_file(projectpath: Path) -> bool:
 
     Examples:
         >>> has_summary_file(Path('docs'))
+        True
+        >>> has_summary_file(Path('.'))
         False
     """
     summary_path = summary_path_for_project(projectpath)
@@ -251,7 +255,7 @@ def generate_description_section(string: str) -> str:
     Returns:
         str -- Oluşturulan açıklama metni alanı
     Examles:
-        >>> generate_description('Selam')
+        >>> generate_description_section('Selam')
         '---\\ndescription: >-\\n Selam\\n---\\n\\n'
     """
     return DESCRIPTION_TEMPLATE.format(string)
@@ -316,7 +320,7 @@ def generate_summary_header_section() -> str:
 
     Examles:
         >>> generate_summary_header_section()
-        '# Tablo of Contents\n\n'
+        '# 📋 Table of Contents\\n\\n'
     """
     header_section = markdown.generate_header_section(SUMMARY_FILE_HEADER, 1)
     return header_section

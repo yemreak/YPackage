@@ -239,12 +239,12 @@ def generate_link_string(
         {str} -- Oluşturulan link metni
 
     Examples:
-        >>> generate_custom_link_string(\
-            'YPackage',\
-            'https://ypackage.yemreak.com',\
-            indent_level=2,\
-            is_list=True,\
-            single_line=True\
+        >>> generate_link_string(           \
+            'YPackage',                     \
+            'https://ypackage.yemreak.com', \
+            indent_level = 2,               \
+            is_list      = True,            \
+            single_line  = True             \
         )
         '    - [YPackage](https://ypackage.yemreak.com)\\n'
 
@@ -279,7 +279,7 @@ def generate_filelink_string(
         {str} -- Oluşturulan link metni
 
     Examples:
-        >>> generate_file_link_string(              \
+        >>> generate_filelink_string(               \
             Path('./src/ypackage/markdown.py'),     \
             name         = 'YPackage',              \
             root         = Path('src/ypackage/'),   \
@@ -332,7 +332,7 @@ def encode_filepath(filepath: Path) -> str:
 def generate_dirlink_string(
     dirpath: Path,
     root: Path = Path.cwd(),
-    indent: Indent = None,
+    indent_level=0,
     is_list: bool = False,
     single_line: bool = False
 ) -> str:
@@ -351,10 +351,10 @@ def generate_dirlink_string(
         {str} -- Oluşturulan link metni
 
     Examples:
-        >>> generate_dir_link_string(               \
+        >>> generate_dirlink_string(                \
             Path('src/ypackage/markdown.py'),       \
             Path('src'),                            \
-            indent      = Indent(2),                \
+            indent_level=2,                         \
             is_list     = True,                     \
             single_line = True                      \
         )
@@ -366,7 +366,7 @@ def generate_dirlink_string(
     return generate_filelink_string(
         readme_path if readme_path else dirpath,
         root=root,
-        indent=indent,
+        indent_level=indent_level,
         single_line=single_line
     )
 
@@ -425,7 +425,7 @@ def list_nonmarkdown_files(dirpath: Path) -> List[Path]:
         List[Path] -- Sıralı markdown olmayan dosya listesi
 
     Examles:
-        >>> list_markdown_files(Path('docs'))
+        >>> list_nonmarkdown_files(Path('docs'))
         []
         >>> nonmarkdowns = list_nonmarkdown_files(Path('.'))
         >>> Path('LICENSE') in nonmarkdowns
@@ -662,5 +662,5 @@ def is_readme(filepath: Path) -> bool:
         >>> is_readme(Path('LICENSE'))
         False
     """
-    result = filepath.name == SpecialFile.README
+    result = filepath.name == SpecialFile.README.value
     return result
