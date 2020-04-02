@@ -316,8 +316,8 @@ class Options(common.Options):
             ", push=" + repr(self.push) + \
             ", repo_url=" + repr(self.repo_url) + \
             ", commit_msg=" + repr(self.commit_msg) + \
-            ", ignore_commits=" + repr(self.ignore_commits) + \
-            ", ignore_folders=" + repr(self.ignored_folders) + \
+            ", ignored_commits=" + repr(self.ignore_commits) + \
+            ", ignored_folders=" + repr(self.ignored_folders) + \
             ", index=" + repr(self.index) + \
             ", new_index=" + repr(self.new_index) + \
             ", footer_path=" + repr(self.footer_path) + \

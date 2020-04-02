@@ -22,9 +22,10 @@ def generate_readmes(options: Options):
 
 def recreate_summary(options: Options):
     if options.recreate:
-        core.generate_summary_for_dir(
+        core.generate_summary_for_project(
             options.workdir,
             options.index,
+            ignored_folders=options.ignored_folders,
             must_inserted=True
         )
 

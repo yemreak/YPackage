@@ -26,7 +26,7 @@ GITHUB_USERNAME = "yedhrab"
 def generate_readme_for_project(
     projectpath: Path,
     index_string: str,
-    ignored_folders: List[Path] = [],
+    ignored_folders: List[str] = [],
     must_inserted=False
 ) -> bool:
     """Proje için markdown olmayan dosyaların bağlantılarının listesini README
@@ -35,6 +35,7 @@ def generate_readme_for_project(
     Arguments:
         dirpath {Path} -- Dizin yolu objesi
         index_string {str} -- İndeks metni
+        ignored_folders {List[str]} -- Görmezden gelinecek dizin isimleri
 
     Keyword Arguments:
         must_inserted {bool} -- Dosyada indeks olmaza, dosya sonuna indeks ile ekler \
@@ -45,7 +46,6 @@ def generate_readme_for_project(
     """
 
     # TODO: Depth özelliği eklenmeli
-
     dirpaths = filesystem.list_nonhidden_dirs(projectpath)
     for dirpath in dirpaths:
         if dirpath.name not in ignored_folders:
@@ -219,8 +219,8 @@ def has_summary_file(projectpath: Path) -> bool:
     return summary_path.exists()
 
 
-def create_summary_file_for_project(projectpath: Path) -> bool:
-    content = generate_summary_filelist_string(projectpath)
+def create_summary_file_for_project(projectpath: Path, ignored_folders: List[str] = []) -> bool:
+    content = generate_summary_filelist_string(projectpath, ignored_folders=ignored_folders)
     summary_path = summary_path_for_project(projectpath)
     return filesystem.write_to_file(summary_path, content)
 
@@ -261,21 +261,23 @@ def generate_description_section(string: str) -> str:
     return DESCRIPTION_TEMPLATE.format(string)
 
 
-def generate_summary_filelist_string(projectpath: Path) -> str:
+def generate_summary_filelist_string(projectpath: Path, ignored_folders: List[str] = []) -> str:
     content = generate_summary_header_section()
     content += generate_summary_filelinks_string(
         projectpath,
         projectpath,
-        indent_level=0
+        indent_level=0,
+        ignored_folders=ignored_folders
     )
 
     return content
 
 
 def generate_summary_filelinks_string(
-        projectpath: Path,
-        dirpath: Path,
-        indent_level=1
+    projectpath: Path,
+    dirpath: Path,
+    indent_level=1,
+    ignored_folders: List[str] = []
 ) -> str:
     content = ""
 
@@ -303,11 +305,13 @@ def generate_summary_filelinks_string(
 
     directories = filesystem.list_nonhidden_dirs(dirpath)
     for directory in directories:
-        content += generate_summary_filelinks_string(
-            projectpath,
-            directory,
-            indent_level=indent_level + 1
-        )
+        if directory.name not in ignored_folders:
+            content += generate_summary_filelinks_string(
+                projectpath,
+                directory,
+                indent_level=indent_level + 1,
+                ignored_folders=ignored_folders
+            )
 
     return content
 
@@ -326,9 +330,10 @@ def generate_summary_header_section() -> str:
     return header_section
 
 
-def generate_summary_for_dir(
+def generate_summary_for_project(
     projectpath: Path,
     index_string: str,
+    ignored_folders: List[str] = [],
     must_inserted=False
 ) -> bool:
     """Verilen dizin için markdown dosyalarının bağlantılarının listesini SUMMARY
@@ -337,6 +342,7 @@ def generate_summary_for_dir(
     Arguments:
         projectpath {Path} -- Proje dizini yolu
         index_string {str} -- [description]
+        ignored_folders {List[str]} -- Görmezden gelinecek dizin isimleri
 
     Keyword Arguments:
         must_inserted {bool} -- [description] (default: {False})
@@ -345,7 +351,7 @@ def generate_summary_for_dir(
         {bool} -- Değişim varsa True
     """
 
-    content = generate_summary_filelist_string(projectpath)
+    content = generate_summary_filelist_string(projectpath, ignored_folders=ignored_folders)
     if not content:
         return False
 
