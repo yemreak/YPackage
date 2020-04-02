@@ -15,7 +15,8 @@ def generate_readmes(options: Options):
         core.generate_readme_for_project(
             options.workdir,
             options.index,
-            True
+            ignored_folders=options.ignored_folders,
+            must_inserted=True
         )
 
 

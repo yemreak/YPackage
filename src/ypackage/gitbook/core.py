@@ -2,6 +2,7 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import List
 
 from .. import common, filesystem, github, markdown
 
@@ -25,6 +26,7 @@ GITHUB_USERNAME = "yedhrab"
 def generate_readme_for_project(
     projectpath: Path,
     index_string: str,
+    ignored_folders: List[Path] = [],
     must_inserted=False
 ) -> bool:
     """Proje için markdown olmayan dosyaların bağlantılarının listesini README
@@ -43,12 +45,21 @@ def generate_readme_for_project(
     """
 
     # TODO: Depth özelliği eklenmeli
-    # TODO: Privates eklenmeli
 
     dirpaths = filesystem.list_nonhidden_dirs(projectpath)
     for dirpath in dirpaths:
-        generate_readme_for_dir(dirpath, index_string, must_inserted=must_inserted)
-        generate_readme_for_project(dirpath, index_string, must_inserted=must_inserted)
+        if dirpath.name not in ignored_folders:
+            generate_readme_for_dir(
+                dirpath,
+                index_string,
+                must_inserted=must_inserted
+            )
+            generate_readme_for_project(
+                dirpath,
+                index_string,
+                ignored_folders=ignored_folders,
+                must_inserted=must_inserted
+            )
 
 
 def generate_readme_for_dir(dirpath: Path, index_string: str, must_inserted=False) -> bool:

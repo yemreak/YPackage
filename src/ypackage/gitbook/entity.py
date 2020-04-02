@@ -275,7 +275,7 @@ class Options(common.Options):
         repo_url="",
         commit_msg="",
         ignore_commits: List[str] = [],
-        ignore_folders: List[str] = ["res", "__pycache__"],
+        ignored_folders: List[str] = ["res", "__pycache__"],
         index="",
         new_index="",
         footer_path="",
@@ -296,7 +296,7 @@ class Options(common.Options):
         self.repo_url = repo_url
         self.commit_msg = commit_msg
         self.ignore_commits = ignore_commits
-        self.ignore_folders = ignore_folders
+        self.ignored_folders = ignored_folders
         self.index = index
         self.new_index = new_index
         self.footer_path = footer_path
@@ -317,7 +317,7 @@ class Options(common.Options):
             ", repo_url=" + repr(self.repo_url) + \
             ", commit_msg=" + repr(self.commit_msg) + \
             ", ignore_commits=" + repr(self.ignore_commits) + \
-            ", ignore_folders=" + repr(self.ignore_folders) + \
+            ", ignore_folders=" + repr(self.ignored_folders) + \
             ", index=" + repr(self.index) + \
             ", new_index=" + repr(self.new_index) + \
             ", footer_path=" + repr(self.footer_path) + \
