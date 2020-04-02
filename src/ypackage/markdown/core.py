@@ -63,12 +63,24 @@ def insert_to_file(
     )
 
 
-def create_markdown_file(filepath: Path, header: str = None):
+def create_markdown_file(filepath: Path, header: str = None) -> bool:
+    """Markdown dosyası oluşturur
+
+    Arguments:
+        filepath {Path} -- Dosya yolu objesi
+
+    Keyword Arguments:
+        header {str} -- Dosyanın başlık metni (default: {None})
+
+    Returns:
+        bool -- Oluşturma başarılı ise True
+    """
+    
     if not header:
         header = filepath.name
 
     content = generate_header_section(header, 1)
-    filesystem.write_to_file(filepath, content)
+    return filesystem.write_to_file(filepath, content)
 
 
 def generate_substrings(content, index):

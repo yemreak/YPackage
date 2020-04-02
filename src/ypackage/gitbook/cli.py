@@ -3,16 +3,18 @@ from glob import glob
 from pathlib import Path
 from typing import List
 
-from .. import common, filesystem, github, markdown
-from . import core
+from .. import common, github, markdown
+from .core import (create_changelog, generate_description_section,
+                   generate_readme_for_project, generate_summary_for_project,
+                   read_summary_from_url)
 from .entity import OptionParser, Options
 
 logger = logging.getLogger(__name__)
 
 
-def generate_readmes(options: Options):
+def generate_readmes_by_options(options: Options):
     if options.generate:
-        core.generate_readme_for_project(
+        generate_readme_for_project(
             options.workdir,
             options.index,
             ignored_folders=options.ignored_folders,
@@ -20,9 +22,9 @@ def generate_readmes(options: Options):
         )
 
 
-def recreate_summary(options: Options):
+def recreate_summary_by_options(options: Options):
     if options.recreate:
-        core.generate_summary_for_project(
+        generate_summary_for_project(
             options.workdir,
             options.index,
             ignored_folders=options.ignored_folders,
@@ -31,7 +33,7 @@ def recreate_summary(options: Options):
 
 
 def fix_title_of_subsummary(content: str) -> str:
-    title = f"# {markdown.core.find_first_link(content).name}"
+    title = f"# {markdown.find_first_link(content).name}"
     content = markdown.change_title_of_string(title, content)
     return content
 
@@ -48,14 +50,14 @@ def fix_links_of_subsummary(content: str) -> str:
 
 
 def insert_description(description: str, content: str) -> str:
-    return core.generate_description_section(description) + content
+    return generate_description_section(description) + content
 
 
-def update_sub_summaries(options: Options) -> str:
+def update_sub_summaries_by_options(options: Options) -> str:
     changed_filepaths = []
     if options.update:
         for submodule in options.submodules:
-            content = core.read_summary_from_url(submodule.url)
+            content = read_summary_from_url(submodule.url)
 
             substring = markdown.generate_substrings(content, options.index)
             if substring:
@@ -75,14 +77,14 @@ def update_sub_summaries(options: Options) -> str:
     return changed_filepaths
 
 
-def push_changed_files_to_github(changed_filepaths: List[Path], options: Options):
+def push_changed_files_to_github_by_options(changed_filepaths: List[Path], options: Options):
     if options.push:
         return github.push_to_github(options.workdir, changed_filepaths, options.commit_msg)
 
 
-def create_changelog(options: Options):
+def create_changelog_by_options(options: Options):
     if options.changelog:
-        return core.create_changelog(
+        return create_changelog(
             options.workdir,
             repo_url=options.repo_url,
             push=options.push,
@@ -92,17 +94,17 @@ def create_changelog(options: Options):
 
 
 def integrate(options: Options):
-    logger.info(f"{options.workdir.absolute()} is starting to integration")
+    logger.info(f"Entegrasyon başlatıldı: {options.workdir.absolute()}")
 
-    generate_readmes(options)
-    recreate_summary(options)
+    generate_readmes_by_options(options)
+    recreate_summary_by_options(options)
 
-    changed_filepaths = update_sub_summaries(options)
-    push_changed_files_to_github(changed_filepaths, options)
+    changed_filepaths = update_sub_summaries_by_options(options)
+    push_changed_files_to_github_by_options(changed_filepaths, options)
 
-    create_changelog(options)
+    create_changelog_by_options(options)
 
-    logger.info(f"{options.workdir.absolute()} is integrated successfully")
+    logger.info(f"Entegrasyon tamamlandı: {options.workdir.absolute()}")
 
 
 def main():
@@ -125,7 +127,7 @@ def main():
                 options = Options.from_workdir(path, use_system_args)
                 integrate(options)
             else:
-                logger.error(f"{path.name} is not valid path")
+                logger.error(f"Geçerli bir yol değil: {path.name}")
 
 
 if __name__ == "__main__":

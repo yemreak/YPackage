@@ -1,12 +1,8 @@
 import logging
 import re
-from typing import AnyStr, Pattern, List
+from typing import AnyStr, Pattern
 
 logger = logging.getLogger(__name__)
-
-
-def find_in_content(pattern: str, content: str) -> List[str]:
-    results = re.findall(pattern, content)
 
 
 def words_regex(*words):
