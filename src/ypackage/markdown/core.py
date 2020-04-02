@@ -7,6 +7,8 @@ from deprecated import deprecated
 from .. import common, filesystem
 from .entity import Comment, Header, Indent, Link, SpecialFile
 
+# TODO: \n \n arasında olması gerekebilir
+
 
 def generate_insert_position_strings(index_string: str) -> Tuple[str]:
     """Verilen indeks için başlangıç ve bitiş index metni oluşturur
@@ -80,7 +82,7 @@ def find_all_headers(string, level=1) -> List[Header]:
 
 
 def find_all_headers_from_file(filepath, level=1) -> List[Header]:
-    if not filesystem.must_exist(filepath):
+    if not filepath.exists():
         return []
 
     content = filesystem.read_file(filepath)
@@ -128,7 +130,7 @@ def find_first_header_from_file(filepath, level=1) -> Union[Header, None]:
         >>> find_first_header_from_file(Path('docs/README.md'))
         Header('📦 YPackage', 1)
     """
-    if not filesystem.must_exist(filepath):
+    if not filepath.exists():
         return None
 
     content = filesystem.read_file(filepath)
@@ -179,7 +181,7 @@ def generate_header_section(name: str, level: str) -> str:
         >>> generate_header_section("YPackage", 1)
         '# YPackage\\n\\n'
     """
-    return str(Header(name, level)) + "\n\n"
+    return Header(name, level).to_str(is_section=True)
 
 
 def generate_name_for_file(filepath: Path) -> str:
@@ -214,10 +216,10 @@ def find_first_link(string) -> Link:
     return Link.find_first(string)
 
 
-def generate_custom_link_string(
+def generate_link_string(
     name: str,
     path: str,
-    indent: Indent = None,
+    indent_level=0,
     is_list: bool = False,
     single_line: bool = False
 ) -> str:
@@ -228,7 +230,7 @@ def generate_custom_link_string(
         path {str} -- Link'in adresi
 
     Keyword Arguments:
-        intent {Indent} -- Varsa girinti objesi (default: {None})
+        indent_level {int} -- Varsa girinti seviyesi (default: {0})
         is_list {bool} -- Liste elamanı olarak tanımlama '- ' ekler (default: {False})
         single_line {bool} -- Tek satırda yer alan link '\\n' ekler (default: {False})
 
@@ -240,21 +242,25 @@ def generate_custom_link_string(
         >>> generate_custom_link_string(\
             'YPackage',\
             'https://ypackage.yemreak.com',\
-            indent=Indent(2),\
+            indent_level=2,\
             is_list=True,\
             single_line=True\
         )
         '    - [YPackage](https://ypackage.yemreak.com)\\n'
 
     """
-    return Link(name, path).to_str(indent=indent, is_list=is_list, single_line=single_line)
+    return Link(name, path).to_str(
+        indent=Indent(indent_level),
+        is_list=is_list,
+        single_line=single_line
+    )
 
 
-def generate_file_link_string(
+def generate_filelink_string(
     filepath: Path,
     name: str = None,
     root: Path = None,
-    indent: Indent = None,
+    indent_level=0,
     is_list: bool = False,
     single_line: bool = False
 ) -> str:
@@ -265,7 +271,7 @@ def generate_file_link_string(
 
     Keyword Arguments:
         name {str} -- Link'in ismi
-        intent {Indent} -- Varsa girinti objesi (default: {None})
+        indent_level {int} -- Varsa girinti seviyesi (default: {0})
         is_list {bool} -- Liste elamanı olarak tanımlama '- ' ekler (default: {False})
         single_line {bool} -- Tek satırda yer alan link '\\n' ekler (default: {False})
 
@@ -273,13 +279,13 @@ def generate_file_link_string(
         {str} -- Oluşturulan link metni
 
     Examples:
-        >>> generate_file_link_string(           \
-            Path('./src/ypackage/markdown.py'),  \
-            name        = 'YPackage',            \
-            root        = Path('src/ypackage/'), \
-            indent      = Indent(2),             \
-            is_list     = True,                  \
-            single_line = True                   \
+        >>> generate_file_link_string(              \
+            Path('./src/ypackage/markdown.py'),     \
+            name         = 'YPackage',              \
+            root         = Path('src/ypackage/'),   \
+            indent_level = 2,                       \
+            is_list      = True,                    \
+            single_line  = True                     \
         )
         '    - [YPackage](markdown.py)\\n'
     """
@@ -293,10 +299,10 @@ def generate_file_link_string(
 
     filepath_string = encode_filepath(filepath)
 
-    return generate_custom_link_string(
+    return generate_link_string(
         name,
         filepath_string,
-        indent=indent,
+        indent_level=indent_level,
         is_list=is_list,
         single_line=single_line
     )
@@ -323,7 +329,7 @@ def encode_filepath(filepath: Path) -> str:
     return filepath_string
 
 
-def generate_dir_link_string(
+def generate_dirlink_string(
     dirpath: Path,
     root: Path = Path.cwd(),
     indent: Indent = None,
@@ -355,10 +361,10 @@ def generate_dir_link_string(
         '    [README.md](ypackage/markdown.py/README.md)\\n'
     """
 
-    readmepath = SpecialFile.README.get_filepath(dirpath)
+    readme_path = readme_path_for_dir(dirpath)
 
-    return generate_file_link_string(
-        readmepath if readmepath else dirpath,
+    return generate_filelink_string(
+        readme_path if readme_path else dirpath,
         root=root,
         indent=indent,
         single_line=single_line
@@ -417,6 +423,13 @@ def list_nonmarkdown_files(dirpath: Path) -> List[Path]:
 
     Returns:
         List[Path] -- Sıralı markdown olmayan dosya listesi
+
+    Examles:
+        >>> list_markdown_files(Path('docs'))
+        []
+        >>> nonmarkdowns = list_nonmarkdown_files(Path('.'))
+        >>> Path('LICENSE') in nonmarkdowns
+        True
     """
 
     nonmarkdown_filepaths = []
@@ -425,6 +438,30 @@ def list_nonmarkdown_files(dirpath: Path) -> List[Path]:
         if path.is_file() and ".md" not in path.name:
             nonmarkdown_filepaths.append(path)
     return nonmarkdown_filepaths
+
+
+def list_markdown_files(dirpath: Path) -> List[Path]:
+    """Markdown olmayan dosyaların listesini sıralı olarak döndürür
+
+    Arguments:
+        dirpath {Path} -- Dizin yolu objesi
+
+    Returns:
+        List[Path] -- Sıralı markdown olmayan dosya listesi
+    Examles:
+        >>> list_markdown_files(Path('.'))
+        []
+        >>> markdowns = list_markdown_files(Path('docs'))
+        >>> Path('docs/README.md') in markdowns
+        True
+    """
+
+    markdown_filepaths = []
+
+    for path in sorted(dirpath.iterdir()):
+        if path.is_file() and is_markdown(path):
+            markdown_filepaths.append(path)
+    return markdown_filepaths
 
 
 def readme_path_for_dir(dirpath: Path) -> Path:
@@ -520,11 +557,11 @@ def has_readme_file(dirpath: Path) -> bool:
         >>> has_readme_file(Path('docs'))
         True
     """
-    filepath = SpecialFile.README.get_filepath(dirpath)
+    filepath = readme_path_for_dir(dirpath)
     return filepath.exists()
 
 
-def has_changelo_file(dirpath: Path) -> bool:
+def has_changelog_file(dirpath: Path) -> bool:
     """Verilen dizinde README dosyasını varlığını kontrol eder
 
     Arguments:
@@ -534,10 +571,10 @@ def has_changelo_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_readme_file(Path('docs'))
+        >>> has_changelog_file(Path('docs'))
         True
     """
-    filepath = SpecialFile.CHANGELOG.get_filepath(dirpath)
+    filepath = changelog_path_for_dir(dirpath)
     return filepath.exists()
 
 
@@ -554,7 +591,7 @@ def has_code_of_conduct_file(dirpath: Path) -> bool:
         >>> has_code_of_conduct_file(Path('.'))
         False
     """
-    filepath = SpecialFile.CODE_OF_CONDUCT.get_filepath(dirpath)
+    filepath = code_of_conduct_path_for_dir(dirpath)
     return filepath.exists()
 
 
@@ -571,7 +608,7 @@ def has_contributing_file(dirpath: Path) -> bool:
         >>> has_contributing_file(Path('docs'))
         True
     """
-    filepath = SpecialFile.CONTRIBUTING.get_filepath(dirpath)
+    filepath = contributing_path_for_dir(dirpath)
     return filepath.exists()
 
 
@@ -588,7 +625,7 @@ def has_license_file(dirpath: Path) -> bool:
         >>> has_license_file(Path('.'))
         True
     """
-    filepath = SpecialFile.LICENSE.get_filepath(dirpath)
+    filepath = license_path_for_dir(dirpath)
     return filepath.exists()
 
 
@@ -608,3 +645,22 @@ def is_markdown(filepath: Path) -> bool:
         False
     """
     return filepath.name[-3:] == ".md"
+
+
+def is_readme(filepath: Path) -> bool:
+    """Verilen dosyanın README olmasını kontrol eder
+
+    Arguments:
+        filepath {Path} -- Dosya yolu objesi
+
+    Returns:
+        bool -- Markdown ise True
+
+    Examples:
+        >>> is_readme(Path('docs/README.md'))
+        True
+        >>> is_readme(Path('LICENSE'))
+        False
+    """
+    result = filepath.name == SpecialFile.README
+    return result

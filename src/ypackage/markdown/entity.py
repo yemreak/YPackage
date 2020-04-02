@@ -63,7 +63,7 @@ class Indent(Template):
 
 class Header(Template):
 
-    REGEX = r"(#+) (.*)"
+    REGEX = r"(#+) *(.*)"
     HEADER_CHAR = "#"
 
     def __init__(self, name: str, level: int = 1):
@@ -76,12 +76,12 @@ class Header(Template):
     def __str__(self):
         return (self.level * Header.HEADER_CHAR) + " " + self.name
 
-    def to_str(self):
-        return self.__str__()
+    def to_str(self, is_section=False):
+        return self.__str__() + "\n\n"
 
     @classmethod
     def find_first(cls, content: str, level=1) -> Union[Any, None]:
-        """İçerik içerisindeki ilk header'ı bulma
+        """İçerik içerisindeki ilk header objesini bulma
 
         Arguments:
             string {str} -- İçerik
@@ -103,7 +103,7 @@ class Header(Template):
         result = re.search(cls.REGEX, content)
         if result:
             lvl = result[1].count(cls.HEADER_CHAR)
-            name = result[2]
+            name = result[2].strip()
 
             return cls(name, level=lvl)
 
@@ -133,7 +133,7 @@ class Header(Template):
         results = re.findall(cls.REGEX, string)
         for result in results:
             lvl = result[0].count(cls.HEADER_CHAR)
-            name = result[1]
+            name = result[1].strip()
 
             if lvl == level:
                 headers.append(cls(name, level=lvl))
@@ -210,6 +210,8 @@ class Link(Template):
 
 
 class SpecialFile(Enum):
+
+    # TODO: Bu yapının değişmesi lazım
 
     README = "README.md"
     CHANGELOG = "CHANGELOG.md"

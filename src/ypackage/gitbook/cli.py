@@ -12,29 +12,19 @@ logger = logging.getLogger(__name__)
 
 def generate_readmes(options: Options):
     if options.generate:
-        options.depth_limit -= 1
-        for dirpath in filesystem.list_nonhidden_dirs(options.workdir):
-            core.generate_readme_for_dir(dirpath, options.index, must_inserted=True)
-
-            options.workdir = dirpath
-            generate_readmes(options)
+        core.generate_readme_for_project(
+            options.workdir,
+            options.index,
+            True
+        )
 
 
 def recreate_summary(options: Options):
     if options.recreate:
-        filestr = core.generate_summary_filestr(
+        core.generate_summary_for_dir(
             options.workdir,
-            depth_limit=options.depth_limit,
-            ignore_folders=options.ignore_folders,
-            footer_path=options.footer_path
-        )
-
-        core.create_summary_file(options.workdir)
-        core.insert_summary_file(
-            options.workdir,
-            filestr,
-            index=options.index,
-            new_index=options.new_index
+            options.index,
+            must_inserted=True
         )
 
 
@@ -56,10 +46,10 @@ def fix_links_of_subsummary(content: str) -> str:
 
 
 def insert_description(description: str, content: str) -> str:
-    return core.generate_description(description) + content
+    return core.generate_description_section(description) + content
 
 
-def update_sub_summeries(options: Options) -> str:
+def update_sub_summaries(options: Options) -> str:
     changed_filepaths = []
     if options.update:
         for submodule in options.submodules:
@@ -105,7 +95,7 @@ def integrate(options: Options):
     generate_readmes(options)
     recreate_summary(options)
 
-    changed_filepaths = update_sub_summeries(options)
+    changed_filepaths = update_sub_summaries(options)
     push_changed_files_to_github(changed_filepaths, options)
 
     create_changelog(options)

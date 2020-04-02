@@ -69,7 +69,7 @@ def list_difference(list1: list, list2: list, safe: bool = True) -> list:
 
 
 def generate_substrings(string: str, index: str) -> list:
-    """String içerisinde verilen indeksler arasında kalan stringleri döndürür
+    """String içerisinde verilen indeksler arasında kalan metinleri döndürür
 
     Arguments:
             string {str} -- Aramanın yapılacağı metin
@@ -105,7 +105,7 @@ def prod(numbers: list) -> int:
     return result
 
 
-def read_config(cpath: Path) -> dict:
+def read_config(configpath: Path) -> dict:
     """Read configuration file
 
     Arguments:
@@ -116,7 +116,7 @@ def read_config(cpath: Path) -> dict:
     """
     try:
         config = ConfigParser(inline_comment_prefixes="#")
-        config.read(cpath, encoding="utf-8")
+        config.read(configpath, encoding="utf-8")
     except Exception as e:
         logger.error(f"Cannot read config file {e}")
         return {}
@@ -205,7 +205,7 @@ def insert_to_string_by_string(
     Returns:
         str -- Değiştirilmiş içerik
 
-    Exampls:
+    Examples:
         >>> insert_to_string_by_string(     \
                 'YPackage',                 \
                 'Merhaba YEmreAk Merhaba',  \
