@@ -5,7 +5,7 @@ import unittest
 
 import pytest
 
-from ...ypackage.entity.markdown import Comment, Header, Indent, Link
+from ...ypackage.model.markdown import Comment, Header, Indent, Link
 
 
 class LinkTest(unittest.TestCase):

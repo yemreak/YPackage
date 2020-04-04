@@ -4,8 +4,8 @@ from urllib.parse import quote
 
 from deprecated import deprecated
 
-from .. import common, filesystem
-from ..entity.markdown import Comment, Header, Indent, Link, SpecialFile
+from ..model.markdown import Comment, Header, Indent, Link, SpecialFile
+from . import common, filesystem
 
 # TODO: \n \n arasında olması gerekebilir
 
