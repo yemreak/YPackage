@@ -42,11 +42,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
       
-    - name: 📦 Installing dependencies
-      run: |
-        ${{matrix.INSTALL}}
-  
-    - name: ⏬ Downloading test repos
+    - name: ⏬ Downloading test repository
       run: |
         git clone https://github.com/YEmreAk/YLib ../YLib
         git clone https://github.com/YEmreAk/YPython ../YPython
@@ -54,9 +50,7 @@ jobs:
   
     - name: ⚗️ Functional testing
       run: |
-        pip install pytest
-        mkdir test-results
-        python -m pytest --junitxml=test-results/junit.xml
+        python3 setup.py test
         
     - name: 🧐 Lint with flake8
       run: |

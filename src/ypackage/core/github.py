@@ -5,6 +5,8 @@ from typing import List
 
 from . import markdown
 
+logger = logging.getLogger(__name__)
+
 # TODO: Class yapısına dahil olmalı
 DIFF_TEMPLATE = "{}/commit/{}?diff=split"
 
