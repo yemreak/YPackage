@@ -4,8 +4,8 @@ import subprocess
 def _check(command: str, args: str):
     return subprocess.check_output(
         f"{command} {args}",
-        universal_newlines=True,
-        shell=True
+        shell=True,
+        encoding="utf-8"
     )
 
 

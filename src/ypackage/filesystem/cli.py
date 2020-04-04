@@ -35,7 +35,7 @@ def main():
         paths = [Path(p) for p in glob(path)]
         for path in paths:
             if path.is_dir():
-                options = Options.from_sytem_args(path)
+                options = Options.from_system_args(path)
                 rename(options)
             else:
                 logger.error(f"{path.name} is not valid path")

@@ -35,7 +35,7 @@ def recreate_summary_by_options(options: Options):
 def fix_title_of_subsummary(content: str) -> str:
     link = markdown.find_first_link(content)
     if link:
-        content = markdown.change_title_of_string(link.name, content)
+        content = markdown.update_title_of_markdown(link.name, content)
     return content
 
 
@@ -46,7 +46,7 @@ def fix_links_of_subsummary(content: str, url: str) -> str:
             link.path = url + "/" + link.path
             link.path = link.path.replace(".md", "").replace("README", "")
 
-    content = markdown.map_links(content, fix_link)
+    content = markdown.map_links_in_string(content, fix_link)
     return content
 
 
@@ -60,7 +60,10 @@ def update_sub_summaries_by_options(options: Options) -> str:
         for submodule in options.submodules:
             content = read_summary_from_url(submodule.url)
 
-            substring = markdown.generate_substrings(content, options.index)
+            substring = markdown.find_substrings_by_commentstring(
+                content,
+                options.index
+            )
             if substring:
                 content = substring[0]
 

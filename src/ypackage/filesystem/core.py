@@ -175,14 +175,14 @@ def has_indexes(filepath: Path, start_string: str, end_string: str) -> bool:
     return result
 
 
-def insert_to_file(
+def update_file_by_stringindexes(
     string: str,
     filepath: Path,
     start_string: str,
     end_string: str,
     must_inserted=False
 ) -> bool:
-    """Verilen stringler arasına istenen stringi yerleştirir
+    """Metin arasına istenen metni yerleştirir
 
     Arguments:
         string {str} -- Yerleştirilecek metin
@@ -198,7 +198,12 @@ def insert_to_file(
     """
 
     content = read_file(filepath)
-    new_content = common.insert_to_string_by_string(string, content, start_string, end_string)
+    new_content = common.update_string_by_stringindexes(
+        string,
+        content,
+        start_string,
+        end_string
+    )
 
     if new_content == content:
         insert_conditions = must_inserted

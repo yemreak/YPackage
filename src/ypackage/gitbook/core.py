@@ -25,7 +25,7 @@ GITHUB_USERNAME = "yedhrab"
 
 def generate_readme_for_project(
     projectpath: Path,
-    index_string: str,
+    commentindex: str,
     ignored_folders: List[str] = [],
     must_inserted=False
 ) -> bool:
@@ -34,7 +34,7 @@ def generate_readme_for_project(
 
     Arguments:
         dirpath {Path} -- Dizin yolu objesi
-        index_string {str} -- İndeks metni
+        commentindex {str} -- İndeks metni
         ignored_folders {List[str]} -- Görmezden gelinecek dizin isimleri
 
     Keyword Arguments:
@@ -51,12 +51,12 @@ def generate_readme_for_project(
         if dirpath.name not in ignored_folders:
             generate_readme_for_dir(
                 dirpath,
-                index_string,
+                commentindex,
                 must_inserted=must_inserted
             )
             generate_readme_for_project(
                 dirpath,
-                index_string,
+                commentindex,
                 ignored_folders=ignored_folders,
                 must_inserted=must_inserted
             )
@@ -78,13 +78,13 @@ def generate_readme_for_dir(dirpath: Path, index_string: str, must_inserted=Fals
         {bool} -- Değişim varsa True
     """
 
-    content = generate_nonmarkdown_filelist_string(dirpath)
+    content = markdown.generate_nonmarkdown_fileliststring(dirpath)
     if not content:
         return False
 
-    readme_path = markdown.readme_path_for_dir(dirpath)
+    readme_path = markdown.readmepath_for_dir(dirpath)
     if not readme_path.exists():
-        markdown.create_markdown_file(readme_path, header=dirpath.name)
+        markdown.create_markdownfile(readme_path, header=dirpath.name)
 
     return insert_to_file(
         content,
@@ -113,7 +113,7 @@ def insert_to_file(
     Returns:
         bool -- Dosyada değişiklik olduysa True
     """
-    return markdown.insert_to_file(
+    return markdown.update_markdownfile_by_commentstring(
         string,
         filepath,
         index_string,
@@ -157,13 +157,13 @@ def generate_filelink_string(
     """
 
     if github_link:
-        name = markdown.generate_name_for_file(filepath)
+        name = markdown.generate_name_for_markdownfile(filepath)
         rawlink = github.get_github_raw_link(
             GITHUB_USERNAME,
             "YPackage" if Path.cwd().name == "project" else Path.cwd().name,  # TODO: burayı düzelt
             filepath
         )
-        return markdown.generate_link_string(
+        return markdown.generate_linkstring(
             name,
             rawlink,
             indent_level=indent_level,
@@ -171,7 +171,7 @@ def generate_filelink_string(
             is_list=is_list
         )
 
-    return markdown.generate_filelink_string(
+    return markdown.generate_filelinkstring(
         filepath,
         root=root,
         indent_level=indent_level,
@@ -219,27 +219,6 @@ def has_summary_file(projectpath: Path) -> bool:
     return summary_path.exists()
 
 
-def generate_nonmarkdown_filelist_string(dirpath: Path) -> str:
-    # TODO: Markdown içine alınabilir
-    nonmarkdown_filepaths = markdown.list_nonmarkdown_files(dirpath)
-
-    if not nonmarkdown_filepaths:
-        return ""
-
-    filelink_strings = []
-    for filepath in nonmarkdown_filepaths:
-        filelink_strings.append(
-            generate_filelink_string(
-                filepath,
-                root=dirpath,
-                is_list=True
-            )
-        )
-
-    content = common.merge_lines(filelink_strings)
-    return content
-
-
 def generate_description_section(string: str) -> str:
     """GitBook için açıklama metni oluşturur
 
@@ -255,8 +234,8 @@ def generate_description_section(string: str) -> str:
     return DESCRIPTION_TEMPLATE.format(string)
 
 
-def generate_summary_filelist_string(projectpath: Path, ignored_folders: List[str] = []) -> str:
-    content = generate_summary_header_section()
+def generate_summary_fileliststring(projectpath: Path, ignored_folders: List[str] = []) -> str:
+    content = generate_summary_headersection()
     content += generate_summary_filelinks_string(
         projectpath,
         projectpath,
@@ -275,7 +254,7 @@ def generate_summary_filelinks_string(
 ) -> str:
     content = ""
 
-    readme_path = markdown.readme_path_for_dir(dirpath)
+    readme_path = markdown.readmepath_for_dir(dirpath)
     content += generate_filelink_string(
         readme_path,
         root=projectpath,
@@ -284,7 +263,7 @@ def generate_summary_filelinks_string(
         is_list=True
     )
 
-    mpaths = markdown.list_markdown_files(dirpath)
+    mpaths = markdown.list_markdownfiles(dirpath)
     if readme_path in mpaths:
         mpaths.remove(readme_path)
 
@@ -310,17 +289,17 @@ def generate_summary_filelinks_string(
     return content
 
 
-def generate_summary_header_section() -> str:
+def generate_summary_headersection() -> str:
     """SUMMARY dosyası için başlık metnin oluşturur
 
     Returns:
         str -- Oluşturulan metin
 
     Examles:
-        >>> generate_summary_header_section()
+        >>> generate_summary_headersection()
         '# 📋 Table of Contents\\n\\n'
     """
-    header_section = markdown.generate_header_section(SUMMARY_FILE_HEADER, 1)
+    header_section = markdown.generate_headersection(1, SUMMARY_FILE_HEADER)
     return header_section
 
 
@@ -345,14 +324,14 @@ def generate_summary_for_project(
         {bool} -- Değişim varsa True
     """
 
-    content = generate_summary_filelist_string(projectpath, ignored_folders=ignored_folders)
+    content = generate_summary_fileliststring(projectpath, ignored_folders=ignored_folders)
     if not content:
         return False
 
     summary_path = summary_path_for_project(projectpath)
     if not summary_path.exists():
         create_summary_file(summary_path)
-        markdown.create_markdown_file
+        markdown.create_markdownfile
 
     return insert_to_file(
         content,
@@ -372,7 +351,7 @@ def create_summary_file(filepath: Path) -> bool:
         bool -- Oluşturma başarılı ise True
     """
 
-    return markdown.create_markdown_file(filepath, header=SUMMARY_FILE_HEADER)
+    return markdown.create_markdownfile(filepath, header=SUMMARY_FILE_HEADER)
 
 
 # -------------------- OLD ONES --------------------------
@@ -392,7 +371,7 @@ def generate_fs_link(
     # RES: Decalator kavramının araştırılması lazım olabilir
 
     def append_rootlink(lines: list, root: Path, level: int) -> str:
-        dirlink_string = markdown.generate_dirlink_string(
+        dirlink_string = markdown.generate_dirlinkstring(
             root,
             root=startpath,
             indent=markdown.Indent(level),
@@ -403,7 +382,7 @@ def generate_fs_link(
         return lines
 
     def append_filelink(lines: list, fpath: Path, level: int):
-        filelink_string = markdown.generate_filelink_string(
+        filelink_string = markdown.generate_filelinkstring(
             fpath,
             root=startpath,
             indent=markdown.Indent(level),

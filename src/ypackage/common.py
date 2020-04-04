@@ -2,18 +2,41 @@ import logging
 import re
 from configparser import ConfigParser
 from pathlib import Path
-from typing import AnyStr, List, Pattern, Tuple
+from typing import AnyStr, List, Pattern, Tuple, Any
 
 logger = logging.getLogger(__name__)
 
 
-class Options:
+def repr_class_variables(anyclass: Any):
+    return ', '.join([f"{key}={repr(value)}" for key, value in vars(anyclass).items()])
+
+
+class Base:
+
+    def __str__(self):
+        raise NotImplementedError
+
+    def __repr__(self):
+        return type(self).__name__ + "(" \
+            + ', '.join([f"{key}={repr(value)}" for key, value in vars(self).items()]) \
+            + ")"
+
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return False
+
+        items = vars(self)
+        for key, value in vars(other).items():
+            if not items[key] == value:
+                return False
+
+        return True
+
+
+class Options(Base):
 
     LOG_LOAD_TEMPLATE = "{} ile komut çalıştırılıyor"
     LOG_LOAD_SYSTEM_ARGS = "Parametreler"
-
-    def __repr__(self):
-        raise NotImplementedError
 
     def load_system_args(self, workdir: Path):
         raise NotImplementedError
@@ -66,28 +89,6 @@ def list_difference(list1: list, list2: list, safe: bool = True) -> list:
         return [x for x in list1 if x not in list2]
     else:
         return list(set(list1) - set(list2))
-
-
-def generate_substrings(string: str, index: str) -> list:
-    """String içerisinde verilen indeksler arasında kalan metinleri döndürür
-
-    Arguments:
-            string {str} -- Aramanın yapılacağı metin
-            index {str} -- İndeks
-
-    Returns:
-            list -- Bulunan alt metinler
-    """
-    substrings = []
-
-    keys = [m.start() for m in re.finditer(index, string)]
-    length = len(index)
-    for i in range(0, len(keys), 2):
-        start = keys[i] + length
-        stop = keys[i + 1] if i + 1 != len(keys) else None
-        substrings.append(string[start:stop])
-
-    return substrings
 
 
 def prod(numbers: list) -> int:
@@ -161,14 +162,7 @@ def rename_string(regex: Pattern[AnyStr], to: str, string: str) -> str:
     return string
 
 
-def generate_insertion_string(string: str, index: str) -> str:
-    insertion_string = index + "\n\n"
-    insertion_string += string + "\n\n"
-    insertion_string += index + "\n"
-    return insertion_string
-
-
-def insert_to_string(string: str, content: str, start_pos: int, end_pos: int) -> str:
+def update_string_by_indexes(string: str, content: str, start_pos: int, end_pos: int) -> str:
     """String içerisideki verilen konumdaki metni değiştirme
 
     Arguments:
@@ -180,24 +174,43 @@ def insert_to_string(string: str, content: str, start_pos: int, end_pos: int) ->
     Returns:
         str -- Eklenme yapılmış string
 
-    Exampls:
-        >>> insert_to_string('Selam', 'Merhaba YEmreAk', 0, 7)
+    Examples:
+        >>> update_string_by_indexes('Selam', 'Merhaba YEmreAk', 0, 7)
         'Selam YEmreAk'
     """
-    content = content[:start_pos] + string + content[end_pos:]
-    return content
+    new_content = content[:start_pos] + string + content[end_pos:]
+    return new_content
 
 
-def insert_to_string_by_string(
+def find_substring(content: str, start_pos: int, end_pos: int) -> str:
+    """Metin içerisinde metin arama
+
+    Arguments:
+        content {str} -- Metin
+        start_pos {int} -- Başlangıç indeksi (dahil)
+        end_pos {int} -- Bitiş indeksi (dahil değil)
+
+    Returns:
+        str -- Bulunan metin
+
+    Examles:
+        >>> find_substring('YEmreAk', 1, 5)
+        'Emre'
+    """
+    new_content = content[start_pos:end_pos]
+    return new_content
+
+
+def update_string_by_stringindexes(
         string: str,
         content: str,
         start_string: str,
         end_string: str
 ) -> str:
-    """İçerik içerisideki verilen indekslerin arasındaki metni değiştirme
+    """Metnin içerisideki indekslerin arasındaki metni değiştirme
 
     Arguments:
-        string {str} -- Eklenecek string
+        string {str} -- Yeni metin
         content {str} -- Asıl içerik
         start_string {str} -- Başlangıç metni
         end_string {str} -- Bitiş metni
@@ -206,21 +219,21 @@ def insert_to_string_by_string(
         str -- Değiştirilmiş içerik
 
     Examples:
-        >>> insert_to_string_by_string(     \
+        >>> update_string_by_stringindexes( \
                 'YPackage',                 \
                 'Merhaba YEmreAk Merhaba',  \
                 'Merhaba ',                 \
                 ' Merhaba'                  \
             )
         'Merhaba YPackage Merhaba'
-        >>> insert_to_string_by_string(     \
+        >>> update_string_by_stringindexes( \
                 'YPackage',                 \
                 'Merhaba YEmreAk Merhaba',  \
                 'Heey ',                    \
                 ' Merhaba'                  \
             )
         'Merhaba YEmreAk Merhaba'
-        >>> insert_to_string_by_string(     \
+        >>> update_string_by_stringindexes( \
                 'YPackage',                 \
                 'Merhaba YEmreAk Merhaba',  \
                 'Merhaba',                  \
@@ -231,10 +244,42 @@ def insert_to_string_by_string(
 
     positions = position_index_from_string_index(content, start_string, end_string)
     for start_pos, end_pos in positions:
-        start_pos = start_pos + len(start_string)
-        content = insert_to_string(string, content, start_pos, end_pos)
+        content = update_string_by_indexes(string, content, start_pos, end_pos)
 
     return content
+
+
+def find_substrings_by_strings(
+    content: str,
+    start_index: str,
+    end_index: str
+) -> List[str]:
+    """Metnin içerisideki indekslerin arasındaki metinleri alma
+
+    Arguments:
+        content {str} -- Metin
+        start_string {str} -- Başlangıç metni
+        end_string {str} -- Bitiş metni
+
+    Returns:
+        List[str] -- Bulunan metinlerin listesi
+
+    Examles:
+        >>> find_substrings_by_strings('- Yeni - A - Yapıt -', '-', '-')
+        [' Yeni ', ' A ', ' Yapıt ']
+        >>> find_substrings_by_strings('Sıkıcı bir gün oldu', ' ', ' ')
+        ['bir', 'gün']
+        >>> find_substrings_by_strings('Sıkıcı _bir gün_ oldu', '_', '_')
+        ['bir gün']
+    """
+    substrings = []
+
+    positions = position_index_from_string_index(content, start_index, end_index)
+    for start_pos, end_pos in positions:
+        substring = find_substring(content, start_pos, end_pos)
+        substrings.append(substring)
+
+    return substrings
 
 
 def position_index_from_string_index(
@@ -242,7 +287,7 @@ def position_index_from_string_index(
     start_string: str,
     end_string: str
 ) -> List[Tuple[int, int]]:
-    spos = [m.start() for m in re.finditer(start_string, content)]
+    spos = [m.start() + len(start_string) for m in re.finditer(start_string, content)]
     epos = [m.start() for m in re.finditer(end_string, content)]
 
     positions = match_start_and_end_positions(spos, epos)
@@ -253,26 +298,26 @@ def match_start_and_end_positions(spos: list, epos: list) -> List[Tuple[int, int
     """[summary]
 
     Arguments:
-        spos {list} -- [description]
-        epos {list} -- [description]
+        spos {list} - - [description]
+        epos {list} - - [description]
 
     Returns:
-        List[Tuple[int, int]] -- [description]
+        List[Tuple[int, int]] - - [description]
 
     Examples:
-        >>> match_start_and_end_positions(  \
-            [1, 3, 5],                      \
-            [2, 4, 7]                       \
+        >> > match_start_and_end_positions(
+            [1, 3, 5],
+            [2, 4, 7]
             )
         [(1, 2), (3, 4), (5, 7)]
-        >>> match_start_and_end_positions(  \
-            [1, 3, 5],                      \
-            [1, 5, 9]                       \
+        >> > match_start_and_end_positions(
+            [1, 3, 5],
+            [1, 5, 9]
             )
         [(1, 5), (5, 9)]
-        >>> match_start_and_end_positions(  \
-            [131],                          \
-            [130, 275]                      \
+        >> > match_start_and_end_positions(
+            [131],
+            [130, 275]
             )
         [(131, 275)]
     """
@@ -299,5 +344,4 @@ def match_start_and_end_positions(spos: list, epos: list) -> List[Tuple[int, int
 
 def has_indexes(content: str, start_string: str, end_string: str) -> bool:
     positions = position_index_from_string_index(content, start_string, end_string)
-    result = bool(positions)
-    return result
+    return bool(positions)

@@ -10,19 +10,13 @@ from .. import common
 logger = logging.getLogger(__name__)
 
 
-class IntegrationOptions:
+class IntegrationOptions(common.Base):
 
     ATTR_ARGS = "args"
 
     def __init__(self, name: str = "", args: list = []):
         self.name = name
         self.args = args
-
-    def __repr__(self):
-        return f"IntegrationOptions(" + \
-            "name=" + repr(self.name) + \
-            ", args=" + repr(self.args) + \
-            ")"
 
     @staticmethod
     def from_module(name: str, module: dict):
@@ -32,7 +26,7 @@ class IntegrationOptions:
         )
 
 
-class SubmoduleOptions:
+class SubmoduleOptions(common.Base):
 
     ATTR_DESCRIPTION = "description"
     ATTR_PATH = "path"
@@ -55,16 +49,6 @@ class SubmoduleOptions:
         self.url = url
         self.root = root
         self.until = until
-
-    def __repr__(self):
-        return f"SubmoduleOptions(" + \
-            "name=" + repr(self.name) + \
-            ", description=" + repr(self.description) + \
-            ", path=" + repr(self.path) + \
-            ", url=" + repr(self.url) + \
-            ", root=" + repr(self.root) + \
-            ", until=" + repr(self.until) + \
-            ")"
 
     @staticmethod
     def from_module(name: str, module: dict, root="."):
@@ -90,7 +74,7 @@ class SubmoduleOptions:
         )
 
 
-class ConfigOptions:
+class ConfigOptions(common.Base):
 
     FILENAME = ".ygitbookintegration"
 
@@ -111,13 +95,6 @@ class ConfigOptions:
         self.workdir = workdir
         self.integration = integration_options
         self.submodules = submodule_options
-
-    def __repr__(self):
-        return f"ConfigOptions(" + \
-            "workdir=" + repr(self.workdir) + \
-            ", integration=" + repr(self.integration) + \
-            ", submodules=" + repr(self.submodules) + \
-            ")"
 
     @property
     def filepath(self) -> Path:
@@ -158,7 +135,7 @@ class ConfigOptions:
         return ConfigOptions(workdir, integration, submodules)
 
 
-class OptionParser(ArgumentParser):
+class OptionParser(common.Base):
 
     def __init__(self):
         self.parser = ArgumentParser(
@@ -325,27 +302,6 @@ class Options(common.Options):
         self.footer_path = footer_path
 
         self.submodules = submodules
-
-    def __repr__(self):
-        return f"Options(" + \
-            "workdir=" + repr(self.workdir) + \
-            ", update=" + repr(self.update) + \
-            ", recreate=" + repr(self.recreate) + \
-            ", generate=" + repr(self.generate) + \
-            ", changelog=" + repr(self.changelog) + \
-            ", depth_limit=" + repr(self.depth_limit) + \
-            ", debug=" + repr(self.debug) + \
-            ", store=" + repr(self.store) + \
-            ", push=" + repr(self.push) + \
-            ", repo_url=" + repr(self.repo_url) + \
-            ", commit_msg=" + repr(self.commit_msg) + \
-            ", ignored_commits=" + repr(self.ignore_commits) + \
-            ", ignored_folders=" + repr(self.ignored_folders) + \
-            ", index=" + repr(self.index) + \
-            ", new_index=" + repr(self.new_index) + \
-            ", footer_path=" + repr(self.footer_path) + \
-            ", submodules=" + repr(self.submodules) + \
-            ")"
 
     def load_integration_from_config(self, config: ConfigOptions):
         sys.argv = [__file__, str(self.workdir)] + config.integration.args

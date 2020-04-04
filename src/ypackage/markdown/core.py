@@ -1,6 +1,6 @@
 from copy import deepcopy
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import Callable, List, Tuple, Union
 from urllib.parse import quote
 
 from deprecated import deprecated
@@ -11,7 +11,9 @@ from .entity import Comment, Header, Indent, Link, SpecialFile
 # TODO: \n \n arasında olması gerekebilir
 
 
-def generate_insert_position_strings(index_string: str) -> Tuple[str]:
+def generate_stringindexes_by_commentstring(
+    index_string: str
+) -> Tuple[str]:
     """Verilen indeks için başlangıç ve bitiş index metni oluşturur
 
     Arguments:
@@ -21,23 +23,35 @@ def generate_insert_position_strings(index_string: str) -> Tuple[str]:
         Tuple -- (başlangıç, bitiş) indeks metinleri
 
     Examples:
-        >>> generate_insert_position_strings('Index')
-        ('\\n<!-- Index -->\\n\\n', '\\n\\n<!-- Index -->\\n')
+        >>> generate_stringindexes_by_commentstring('Index')
+        ('\\n<!--Index-->\\n\\n', '\\n\\n<!--Index-->\\n')
     """
     start_string = "\n" + Comment(index_string) + "\n\n"
     end_string = "\n\n" + Comment(index_string) + "\n"
     return start_string, end_string
 
 
-def make_index_string(string: str) -> str:
-    s1, s2 = generate_insert_position_strings(string)
+def generate_indexsection_for_markdown(string: str) -> str:
+    """Markdown metni için indeks alanı oluşturur
+
+    Arguments:
+        string {str} -- indeks metni
+
+    Returns:
+        str -- Oluşturulan indeks alanı
+
+    Examples:
+        >>> generate_indexsection_for_markdown('Index')
+        '\\n<!--Index-->\\n\\n\\n\\n<!--Index-->\\n'
+    """
+    s1, s2 = generate_stringindexes_by_commentstring(string)
     return s1 + s2
 
 
-def insert_to_file(
+def update_markdownfile_by_commentstring(
     string: str,
     filepath: Path,
-    index_string: str,
+    commentstring: str,
     must_inserted=False
 ) -> bool:
     """Verilen metni markdown dosyasına indeks metinlerini yorum satırlarına alarak ekler
@@ -45,7 +59,7 @@ def insert_to_file(
     Arguments:
         string {str} -- Yerleştirilecek metin
         filepath {Path} -- Dosya yolu objesi
-        index_string {str} -- Başlangıç metni
+        commentstring {str} -- Yorum satırı metni
 
     Keyword Arguments:
         must_inserted {bool} -- Verilen indeksler bulunamazsa dosyanın sonuna indeksler ile ekler
@@ -54,8 +68,10 @@ def insert_to_file(
         bool -- Dosyada değişiklik olduysa True
     """
 
-    start_string, end_string = generate_insert_position_strings(index_string)
-    return filesystem.insert_to_file(
+    start_string, end_string = generate_stringindexes_by_commentstring(
+        commentstring
+    )
+    return filesystem.update_file_by_stringindexes(
         string,
         filepath,
         start_string,
@@ -64,7 +80,7 @@ def insert_to_file(
     )
 
 
-def create_markdown_file(filepath: Path, header: str = None) -> bool:
+def create_markdownfile(filepath: Path, header: str = None) -> bool:
     """Markdown dosyası oluşturur
 
     Arguments:
@@ -80,18 +96,55 @@ def create_markdown_file(filepath: Path, header: str = None) -> bool:
     if not header:
         header = filepath.name
 
-    content = generate_header_section(header, 1)
+    content = generate_headersection(1, header)
     return filesystem.write_to_file(filepath, content)
 
 
-def generate_substrings(content, index):
-    index = str(Comment(index))
-    return common.generate_substrings(content, index)
+def find_substrings_by_commentstring(content: str, commentstring: str):
+    """Markdown metni içerisideki indekslerin arasındaki metinleri alma
+
+    Arguments:
+        content {str} -- Metin
+        commentstring {str} -- Yorum satırı metni
+
+    Returns:
+        List[str] -- Bulunan metinlerin listesi
+
+    Examles:
+        >>> find_substrings_by_commentstring(                               \
+            'A\\n<!--Index-->\\n\\n YEmreAk \\n\\n<!--Index-->\\nB',    \
+            'Index'                                                         \
+            )
+        [' YEmreAk ']
+    """
+    start_string, end_string = generate_stringindexes_by_commentstring(
+        commentstring
+    )
+    return common.find_substrings_by_strings(
+        content,
+        start_string,
+        end_string
+    )
 
 
-def find_all_headers(string, level=1) -> List[Header]:
-    headers = Header.find_all(string, level=level)
-    return headers
+def find_all_headers(content) -> List[Header]:
+    """İçerik içerisindeki tüm başlıkları bulur
+
+    Arguments:
+        content {str} -- İçerik metni
+
+    Keyword Arguments:
+        level {int} -- Bulunacak header seviyesi (default: {1})
+
+    Returns:
+        List[Header] -- Header listesi
+
+    Examples:
+        >>> find_all_headers('# HEHO\\n# HOHO')
+        [Header(level=1, name='HEHO'), Header(level=1, name='HOHO')]
+    """
+
+    return Header.find_all(content)
 
 
 def find_all_headers_from_file(filepath, level=1) -> List[Header]:
@@ -103,31 +156,27 @@ def find_all_headers_from_file(filepath, level=1) -> List[Header]:
     return headers
 
 
-def find_first_header(string, level=1) -> Union[Header, None]:
-    """İçerik içerisindeki ilk header'ı bulma
+def find_first_header(content) -> Union[Header, None]:
+    """İçerik içerisindeki ilk başlığı bulma
 
     Arguments:
-        string {str} -- İçerik
+        content {str} -- İçerik
 
     Keyword Arguments:
         level {int} -- Header seviyesi (default: {1})
 
     Returns:
-        Union[Any, None] -- Bulunan Header objesi
+        Union[Header, None] -- Bulunan Header objesi
 
     Examples:
-        >>> header = Header.find_first('# HEHO\\n#HOHO')
-        >>> header.name
-        'HEHO'
-        >>> header.level
-        1
+        >>> find_first_header('# HEHO\\n#HOHO')
+        Header(level=1, name='HEHO')
     """
 
-    header = Header.find_first(string, level=level)
-    return header
+    return Header.find_first(content)
 
 
-def find_first_header_from_file(filepath, level=1) -> Union[Header, None]:
+def find_first_header_from_file(filepath) -> Union[Header, None]:
     """Markdown dosyasının ilk başlığını okuma
 
     Arguments:
@@ -141,19 +190,34 @@ def find_first_header_from_file(filepath, level=1) -> Union[Header, None]:
 
     Examples:
         >>> find_first_header_from_file(Path('docs/README.md'))
-        Header('📦 YPackage', 1)
+        Header(level=1, name='📦 YPackage')
     """
     if not filepath.exists():
         return None
 
     content = filesystem.read_file(filepath)
-    header = find_first_header(content, level=level)
+    header = find_first_header(content)
     return header
 
 
-def change_title_of_string(title: str, content: str) -> str:
-    # DEV: Test yaz
-    title = Header(title, 1).to_str()
+def update_title_of_markdown(title: str, content: str) -> str:
+    """Markdown metninin başlığını değiştirir
+
+    Arguments:
+        title {str} -- Yeni başlık metni
+        content {str} -- Markdown metni
+
+    Returns:
+        str -- Değiştirilen markdown metni
+
+    Examles:
+        >>> update_title_of_markdown(                       \
+            'YEmreAk',                                      \
+            '# Selam\\n## Yeni işler\\n## Yeni Kodlar\\n'   \
+            )
+        '# YEmreAk\\n## Yeni işler\\n## Yeni Kodlar\\n'
+    """
+    title = Header(1, title).to_str()
     title_changed = False
 
     lines = common.parse_to_lines(content)
@@ -176,13 +240,13 @@ def change_title_of_string(title: str, content: str) -> str:
     return common.merge_lines(lines)
 
 
-def change_title_of_file(title: str, filepath: Path):
+def update_title_of_markdownfile(title: str, filepath: Path) -> bool:
     content = filesystem.read_file(filepath)
-    content = change_title_of_string(title, content)
-    filesystem.write_file(filepath, content)
+    content = update_title_of_markdown(title, content)
+    return filesystem.write_file(filepath, content)
 
 
-def generate_header_section(name: str, level: str) -> str:
+def generate_headersection(level: str, name: str) -> str:
     """Markdown dosyaları için standartlara uygun header alanı metni oluşturur
 
     Arguments:
@@ -193,14 +257,14 @@ def generate_header_section(name: str, level: str) -> str:
         str -- Oluşturulan başlık alanı metni
 
     Examples:
-        >>> generate_header_section("YPackage", 1)
+        >>> generate_headersection(1, "YPackage")
         '# YPackage\\n\\n'
     """
-    return Header(name, level).to_str(is_section=True)
+    return Header(level, name).to_str(is_section=True)
 
 
-def generate_name_for_file(filepath: Path) -> str:
-    """Markdown dosyası için isim belirleme
+def generate_name_for_markdownfile(filepath: Path) -> str:
+    """Markdown dosyası için isim belirler
 
     Arguments:
         filepath {Path} -- Markdown dosyasının yolu
@@ -209,14 +273,14 @@ def generate_name_for_file(filepath: Path) -> str:
         str -- Başlığı varsa başlığı, yoksa dosya ismini döndürür
 
     Examples:
-        >>> generate_name_for_file(Path('docs/README.md'))
+        >>> generate_name_for_markdownfile(Path('docs/README.md'))
         '📦 YPackage'
-        >>> generate_name_for_file(Path('LICENSE'))
+        >>> generate_name_for_markdownfile(Path('LICENSE'))
         'LICENSE'
     """
 
     header = None
-    if is_markdown(filepath):
+    if is_markdownfile(filepath):
         header = find_first_header_from_file(filepath)
 
     name = header.name if header else filepath.name
@@ -224,14 +288,38 @@ def generate_name_for_file(filepath: Path) -> str:
 
 
 def find_all_links(string) -> List[Link]:
+    """Metin içerisindeki ilk bağlantıyı bulur
+
+    Arguments:
+        content {str} -- Metin
+
+    Returns:
+        Link -- Bulunan bağlantı objesi
+
+    Examles:
+        >>> find_all_links('[name1](path1) [name2](path2)')
+        [Link(name='name1', path='path1'), Link(name='name2', path='path2')]
+    """
     return Link.find_all(string)
 
 
-def find_first_link(string) -> Link:
-    return Link.find_first(string)
+def find_first_link(content: str) -> Link:
+    """Metin içerisindeki ilk bağlantıyı bulur
+
+    Arguments:
+        content {str} -- Metin
+
+    Returns:
+        Link -- Bulunan bağlantı objesi
+
+    Examles:
+        >>> find_first_link('[name1](path1) [name2](path2)')
+        Link(name='name1', path='path1')
+    """
+    return Link.find_first(content)
 
 
-def generate_link_string(
+def generate_linkstring(
     name: str,
     path: str,
     indent_level=0,
@@ -254,7 +342,7 @@ def generate_link_string(
         {str} -- Oluşturulan link metni
 
     Examples:
-        >>> generate_link_string(           \
+        >>> generate_linkstring(            \
             'YPackage',                     \
             'https://ypackage.yemreak.com', \
             indent_level = 2,               \
@@ -271,7 +359,7 @@ def generate_link_string(
     )
 
 
-def generate_filelink_string(
+def generate_filelinkstring(
     filepath: Path,
     name: str = None,
     root: Path = None,
@@ -294,7 +382,7 @@ def generate_filelink_string(
         {str} -- Oluşturulan link metni
 
     Examples:
-        >>> generate_filelink_string(               \
+        >>> generate_filelinkstring(                \
             Path('./src/ypackage/markdown.py'),     \
             name         = 'YPackage',              \
             root         = Path('src/ypackage/'),   \
@@ -305,7 +393,7 @@ def generate_filelink_string(
         '    - [YPackage](markdown.py)\\n'
     """
     if not name:
-        name = generate_name_for_file(filepath)
+        name = generate_name_for_markdownfile(filepath)
 
     if root:
         root = root.absolute()
@@ -314,13 +402,33 @@ def generate_filelink_string(
 
     filepath_string = encode_filepath(filepath)
 
-    return generate_link_string(
+    return generate_linkstring(
         name,
         filepath_string,
         indent_level=indent_level,
         is_list=is_list,
         single_line=single_line
     )
+
+
+def generate_nonmarkdown_fileliststring(dirpath: Path) -> str:
+    nonmarkdown_filepaths = list_nonmarkdownfiles(dirpath)
+
+    if not nonmarkdown_filepaths:
+        return ""
+
+    filelink_strings = []
+    for filepath in nonmarkdown_filepaths:
+        filelink_strings.append(
+            generate_filelinkstring(
+                filepath,
+                root=dirpath,
+                is_list=True
+            )
+        )
+
+    content = common.merge_lines(filelink_strings)
+    return content
 
 
 def encode_filepath(filepath: Path) -> str:
@@ -344,7 +452,7 @@ def encode_filepath(filepath: Path) -> str:
     return filepath_string
 
 
-def generate_dirlink_string(
+def generate_dirlinkstring(
     dirpath: Path,
     root: Path = Path.cwd(),
     indent_level=0,
@@ -366,7 +474,7 @@ def generate_dirlink_string(
         {str} -- Oluşturulan link metni
 
     Examples:
-        >>> generate_dirlink_string(                \
+        >>> generate_dirlinkstring(                 \
             Path('src/ypackage/markdown.py'),       \
             Path('src'),                            \
             indent_level=2,                         \
@@ -376,9 +484,9 @@ def generate_dirlink_string(
         '    [README.md](ypackage/markdown.py/README.md)\\n'
     """
 
-    readme_path = readme_path_for_dir(dirpath)
+    readme_path = readmepath_for_dir(dirpath)
 
-    return generate_filelink_string(
+    return generate_filelinkstring(
         readme_path if readme_path else dirpath,
         root=root,
         indent_level=indent_level,
@@ -396,43 +504,39 @@ def check_links(fpath):
                     print(link.path)
 
 
-def map_links(content: str, func: Link.map_function) -> str:
-    """Dosyadaki tüm linkler için verilen fonksiyonu uygular
+def map_links_in_string(content: str, func: Callable[[Link], None]) -> str:
+    """Metindeki tüm linkler için verilen fonksiyonu uygular
 
     Arguments:
         content {str} -- Metin içeriği
-        func {Link.map_function} -- Link alan ve değiştiren fonksiyon
+        func {Callable[[Link], None]} -- Link alan ve değiştiren fonksiyon
 
     Returns:
         str -- Değişen metin içeriği
     """
 
-    # DEV: Test yaz
-    # TODO: Fonksiyon kopyalanmıyor
-    # TODO: Map yapısını diğer objelere de yap
-    # RES: Şu kopyalanma olayını iyi öğren
-    lines = common.parse_to_lines(content)
-    for i, line in enumerate(lines):
-        links = Link.find_all(line)
-        for link in links:
-            link_string = str(link)
-            func(link)
-            newlink_string = str(link)
-            lines[i] = lines[i].replace(link_string, newlink_string)
-
-    return common.merge_lines(lines)
+    return Link.map(content, func)
 
 
-def replace_in_links(content: str, old: str, new: str) -> str:
+def map_links_in_string_in_markdownfile(
+    filepath: Path,
+    func: Callable[[Link], None]
+) -> bool:
+    """Dosyadaki tüm linkler için verilen fonksiyonu uygular
 
-    def replace_link(link: Link):
-        link.path = link.path.replace(old, new)
-        return link
+    Arguments:
+        filepath {Path} -- Dosya yolu objesi
+        func {Callable[[Link], None]} -- Link alan ve değiştiren fonksiyon
 
-    map_links(content, replace_link)
+    Returns:
+        bool -- Değişim olduysa True
+    """
+    content = filesystem.read_file(filepath)
+    content = map_links_in_string(content, func)
+    return filesystem.write_to_file(filepath)
 
 
-def list_nonmarkdown_files(dirpath: Path) -> List[Path]:
+def list_nonmarkdownfiles(dirpath: Path) -> List[Path]:
     """Markdown olmayan dosyaların listesini sıralı olarak döndürür
 
     Arguments:
@@ -442,9 +546,9 @@ def list_nonmarkdown_files(dirpath: Path) -> List[Path]:
         List[Path] -- Sıralı markdown olmayan dosya listesi
 
     Examles:
-        >>> list_nonmarkdown_files(Path('docs'))
+        >>> list_nonmarkdownfiles(Path('docs'))
         []
-        >>> nonmarkdowns = list_nonmarkdown_files(Path('.'))
+        >>> nonmarkdowns = list_nonmarkdownfiles(Path('.'))
         >>> Path('LICENSE') in nonmarkdowns
         True
     """
@@ -457,7 +561,7 @@ def list_nonmarkdown_files(dirpath: Path) -> List[Path]:
     return nonmarkdown_filepaths
 
 
-def list_markdown_files(dirpath: Path) -> List[Path]:
+def list_markdownfiles(dirpath: Path) -> List[Path]:
     """Markdown olmayan dosyaların listesini sıralı olarak döndürür
 
     Arguments:
@@ -466,9 +570,9 @@ def list_markdown_files(dirpath: Path) -> List[Path]:
     Returns:
         List[Path] -- Sıralı markdown olmayan dosya listesi
     Examles:
-        >>> list_markdown_files(Path('.'))
+        >>> list_markdownfiles(Path('.'))
         []
-        >>> markdowns = list_markdown_files(Path('docs'))
+        >>> markdowns = list_markdownfiles(Path('docs'))
         >>> Path('docs/README.md') in markdowns
         True
     """
@@ -476,12 +580,12 @@ def list_markdown_files(dirpath: Path) -> List[Path]:
     markdown_filepaths = []
 
     for path in sorted(dirpath.iterdir()):
-        if path.is_file() and is_markdown(path):
+        if path.is_file() and is_markdownfile(path):
             markdown_filepaths.append(path)
     return markdown_filepaths
 
 
-def readme_path_for_dir(dirpath: Path) -> Path:
+def readmepath_for_dir(dirpath: Path) -> Path:
     """Dizin için README dosya yolu objesi oluşturur
 
     Arguments:
@@ -491,13 +595,13 @@ def readme_path_for_dir(dirpath: Path) -> Path:
         Path -- README dosya yolu objesi
 
     Examples:
-        >>> readme_path_for_dir(Path('.')).as_posix()
+        >>> readmepath_for_dir(Path('.')).as_posix()
         'README.md'
     """
     return SpecialFile.README.get_filepath(dirpath)
 
 
-def changelog_path_for_dir(dirpath: Path) -> Path:
+def changelogpath_for_dir(dirpath: Path) -> Path:
     """Dizin için CHANGELOG dosya yolu objesi oluşturur
 
     Arguments:
@@ -507,13 +611,13 @@ def changelog_path_for_dir(dirpath: Path) -> Path:
         Path -- README dosya yolu objesi
 
     Examples:
-        >>> changelog_path_for_dir(Path('.')).as_posix()
+        >>> changelogpath_for_dir(Path('.')).as_posix()
         'CHANGELOG.md'
     """
     return SpecialFile.CHANGELOG.get_filepath(dirpath)
 
 
-def license_path_for_dir(dirpath: Path) -> Path:
+def licensepath_for_dir(dirpath: Path) -> Path:
     """Dizin için LICENSE dosya yolu objesi oluşturur
 
     Arguments:
@@ -523,13 +627,13 @@ def license_path_for_dir(dirpath: Path) -> Path:
         Path -- README dosya yolu objesi
 
     Examples:
-        >>> license_path_for_dir(Path('.')).as_posix()
+        >>> licensepath_for_dir(Path('.')).as_posix()
         'LICENSE'
     """
     return SpecialFile.LICENSE.get_filepath(dirpath)
 
 
-def code_of_conduct_path_for_dir(dirpath: Path) -> Path:
+def codeofconductpath_for_dir(dirpath: Path) -> Path:
     """Dizin için CODE_OF_CONDUCT dosya yolu objesi oluşturur
 
     Arguments:
@@ -539,13 +643,13 @@ def code_of_conduct_path_for_dir(dirpath: Path) -> Path:
         Path -- README dosya yolu objesi
 
     Examples:
-        >>> code_of_conduct_path_for_dir(Path('.')).as_posix()
+        >>> codeofconductpath_for_dir(Path('.')).as_posix()
         'CODE_OF_CONDUCT.md'
     """
     return SpecialFile.CODE_OF_CONDUCT.get_filepath(dirpath)
 
 
-def contributing_path_for_dir(dirpath: Path) -> Path:
+def contributingpath_for_dir(dirpath: Path) -> Path:
     """Dizin için CONTRIBUTING dosya yolu objesi oluşturur
 
     Arguments:
@@ -555,13 +659,13 @@ def contributing_path_for_dir(dirpath: Path) -> Path:
         Path -- README dosya yolu objesi
 
     Examples:
-        >>> contributing_path_for_dir(Path('.')).as_posix()
+        >>> contributingpath_for_dir(Path('.')).as_posix()
         'CONTRIBUTING.md'
     """
     return SpecialFile.CONTRIBUTING.get_filepath(dirpath)
 
 
-def has_readme_file(dirpath: Path) -> bool:
+def has_readmefile(dirpath: Path) -> bool:
     """Verilen dizinde README dosyasını varlığını kontrol eder
 
     Arguments:
@@ -571,14 +675,14 @@ def has_readme_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_readme_file(Path('docs'))
+        >>> has_readmefile(Path('docs'))
         True
     """
-    filepath = readme_path_for_dir(dirpath)
+    filepath = readmepath_for_dir(dirpath)
     return filepath.exists()
 
 
-def has_changelog_file(dirpath: Path) -> bool:
+def has_changelogfile(dirpath: Path) -> bool:
     """Verilen dizinde README dosyasını varlığını kontrol eder
 
     Arguments:
@@ -588,14 +692,14 @@ def has_changelog_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_changelog_file(Path('docs'))
+        >>> has_changelogfile(Path('docs'))
         True
     """
-    filepath = changelog_path_for_dir(dirpath)
+    filepath = changelogpath_for_dir(dirpath)
     return filepath.exists()
 
 
-def has_code_of_conduct_file(dirpath: Path) -> bool:
+def has_codeofconductfile(dirpath: Path) -> bool:
     """Verilen dizinde CODE_OF_CONDUCT dosyasını varlığını kontrol eder
 
     Arguments:
@@ -605,14 +709,14 @@ def has_code_of_conduct_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_code_of_conduct_file(Path('.'))
+        >>> has_codeofconductfile(Path('.'))
         False
     """
-    filepath = code_of_conduct_path_for_dir(dirpath)
+    filepath = codeofconductpath_for_dir(dirpath)
     return filepath.exists()
 
 
-def has_contributing_file(dirpath: Path) -> bool:
+def has_contributingfile(dirpath: Path) -> bool:
     """Verilen dizinde CONTRIBUTING dosyasını varlığını kontrol eder
 
     Arguments:
@@ -622,14 +726,14 @@ def has_contributing_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_contributing_file(Path('docs'))
+        >>> has_contributingfile(Path('docs'))
         True
     """
-    filepath = contributing_path_for_dir(dirpath)
+    filepath = contributingpath_for_dir(dirpath)
     return filepath.exists()
 
 
-def has_license_file(dirpath: Path) -> bool:
+def has_licensefile(dirpath: Path) -> bool:
     """Verilen dizinde LICENSE dosyasını varlığını kontrol eder
 
     Arguments:
@@ -639,14 +743,14 @@ def has_license_file(dirpath: Path) -> bool:
         bool -- Varsa True
 
     Examples:
-        >>> has_license_file(Path('.'))
+        >>> has_licensefile(Path('.'))
         True
     """
-    filepath = license_path_for_dir(dirpath)
+    filepath = licensepath_for_dir(dirpath)
     return filepath.exists()
 
 
-def is_markdown(filepath: Path) -> bool:
+def is_markdownfile(filepath: Path) -> bool:
     """Verilen dosyanın markdown mı
 
     Arguments:
@@ -656,15 +760,15 @@ def is_markdown(filepath: Path) -> bool:
         bool -- Markdown ise True
 
     Examples:
-        >>> is_markdown(Path('docs/README.md'))
+        >>> is_markdownfile(Path('docs/README.md'))
         True
-        >>> is_markdown(Path('LICENSE'))
+        >>> is_markdownfile(Path('LICENSE'))
         False
     """
     return filepath.name[-3:] == ".md"
 
 
-def is_readme(filepath: Path) -> bool:
+def is_readmefile(filepath: Path) -> bool:
     """Verilen dosyanın README olmasını kontrol eder
 
     Arguments:
@@ -674,9 +778,9 @@ def is_readme(filepath: Path) -> bool:
         bool -- Markdown ise True
 
     Examples:
-        >>> is_readme(Path('docs/README.md'))
+        >>> is_readmefile(Path('docs/README.md'))
         True
-        >>> is_readme(Path('LICENSE'))
+        >>> is_readmefile(Path('LICENSE'))
         False
     """
     result = filepath.name == SpecialFile.README.value
