@@ -11,10 +11,11 @@ jobs:
       - python/load-cache
       - python/save-cache
 
-      - run:
-          name: 📦 Package installation
+       - run:
+          name: 🧐 Lint with flake8
           command: |
-            sudo -H pip3 install .
+            flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+            flake8 . --count --exit-zero --max-complexity=10 --max-line-length=99 --statistics
 
       - run:
           name: ⏬ Downloading test repositories
@@ -27,7 +28,7 @@ jobs:
           name: ⚗️ Functional testing
           command: |
             python3 setup.py test
-
+     
       - store_test_results:
           path: test-results
 

@@ -5,8 +5,15 @@ from .commands import check_googlesearch
 
 class GoogleSearchTest(unittest.TestCase):
 
-    def setUp(self):
-        pass
+    def test_help(self):
+        with self.assertRaises(SystemExit) as cm:
+            check_googlesearch(['-h'])
+            self.assertEqual(cm.exception.code, 0)
+
+    def test_unknown(self):
+        with self.assertRaises(SystemExit) as cm:
+            check_googlesearch(['-ü'])
+            self.assertEqual(cm.exception.code, 2)
 
     def test_simple_case(self):
         return
@@ -18,7 +25,7 @@ class GoogleSearchTest(unittest.TestCase):
 
     def test_exclude(self):
         return
-        check_googlesearch("site:lib.yemreak.com -ex knowed_url.txt")
+        check_googlesearch("site:lib.yemreak.com -ex known_urls.txt")
 
     def test_output(self):
         return
@@ -34,6 +41,3 @@ class GoogleSearchTest(unittest.TestCase):
             + "site:iuce.yemreak.com"
             + "-sc 404 -o wrong_urls.txt"
         )
-
-    def tearDown(self):
-        pass

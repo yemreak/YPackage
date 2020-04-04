@@ -5,8 +5,15 @@ from .commands import check_gitbook
 
 class IntegrationTest(unittest.TestCase):
 
-    def setUp(self):
-        pass
+    def test_help(self):
+        with self.assertRaises(SystemExit) as cm:
+            check_gitbook(['-h'])
+            self.assertEqual(cm.exception.code, 0)
+
+    def test_unknown(self):
+        with self.assertRaises(SystemExit) as cm:
+            check_gitbook(['-ü'])
+            self.assertEqual(cm.exception.code, 2)
 
     def test_dot(self):
         check_gitbook(".")
@@ -36,10 +43,3 @@ class IntegrationTest(unittest.TestCase):
 
     def test_base_integration(self):
         check_gitbook("ygitbookintegration ../YLib -c")
-
-    def tearDown(self):
-        pass
-
-
-if __name__ == "__main__":
-    unittest.main()

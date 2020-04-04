@@ -1,15 +1,26 @@
-import subprocess
+import shlex
+import sys
+
+from ...ypackage.cli import filesystem, gdrive, gitbook, gsearch, theme_creator
+
+CONSOLE_SCRIPTS = {
+    "ygitbookintegration": gitbook.main,
+    "yfilerenamer": filesystem.main,
+    "ygoogledrive": gdrive.main,
+    "ygooglesearch": gsearch.main,
+    "ythemecreator": theme_creator.main
+}
 
 
-def _check(command: str, args: str):
-    return subprocess.check_output(
-        f"{command} {args}",
-        shell=True,
-        encoding="utf-8"
-    )
+def _check(command: str, args: list):
+    if isinstance(args, str):
+        args = shlex.split(args)
+
+    sys.argv = [command] + args
+    return CONSOLE_SCRIPTS[command]()
 
 
-def check_filerenamer(args: str):
+def check_filerenamer(args: list):
     return _check("yfilerenamer", args)
 
 
