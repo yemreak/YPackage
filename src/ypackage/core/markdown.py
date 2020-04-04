@@ -2,8 +2,6 @@ from pathlib import Path
 from typing import Callable, List, Tuple, Union
 from urllib.parse import quote
 
-from deprecated import deprecated
-
 from ..model.markdown import Comment, Header, Indent, Link, SpecialFile
 from . import common, filesystem
 
@@ -493,7 +491,6 @@ def generate_dirlinkstring(
     )
 
 
-@deprecated
 def check_links(fpath):
     with open(fpath, "r", encoding="utf-8") as f:
         for line in f:

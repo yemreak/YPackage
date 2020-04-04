@@ -84,7 +84,6 @@ setup(
         "drive",
         "renamer",
         "bulk",
-        "deprecated"
     ],
     python_requires='>=3',
     install_requires=[
