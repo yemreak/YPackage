@@ -139,8 +139,8 @@ def find_all_headers(content) -> List[Header]:
         List[Header] -- Header listesi
 
     Examples:
-        >>> find_all_headers('# HEHO\\n# HOHO')
-        [Header(level=1, name='HEHO'), Header(level=1, name='HOHO')]
+        >>> find_all_headers('# Hey\\n# Hello')
+        [Header(level=1, name='Hey'), Header(level=1, name='Hello')]
     """
 
     return Header.find_all(content)
@@ -168,8 +168,8 @@ def find_first_header(content) -> Union[Header, None]:
         Union[Header, None] -- Bulunan Header objesi
 
     Examples:
-        >>> find_first_header('# HEHO\\n#HOHO')
-        Header(level=1, name='HEHO')
+        >>> find_first_header('# Hey\\n#Hello')
+        Header(level=1, name='Hey')
     """
 
     return Header.find_first(content)

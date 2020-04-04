@@ -140,13 +140,13 @@ class OptionParser(common.Base):
 
     def __init__(self):
         self.parser = ArgumentParser(
-            description="Helpfuly scripts helps to syncronize GitBook & GitHub"
+            description="Helpfully scripts helps to synchronize GitBook & GitHub"
         )
         self.parser.add_argument(
             "paths",
             nargs="+",
             metavar="paths",
-            help="Path of GitHub repos",
+            help="Path of GitHub repositories",
         )
         self.parser.add_argument(
             "--update",

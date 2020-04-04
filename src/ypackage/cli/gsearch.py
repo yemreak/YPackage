@@ -1,11 +1,11 @@
 import logging
+import os
 import re
 from argparse import ArgumentParser
 
 import googlesearch
 import requests
 
-import os
 from .common import initialize_logging
 
 logger = logging.getLogger(__name__)
@@ -74,7 +74,7 @@ def initialize_parser() -> ArgumentParser:
         '--exclude',
         "-ex",
         dest='exclude',
-        help='Verilen dosya içerisindeki urlleri raporlamaz',
+        help='Verilen dosya içerisindeki URL bağlantılarını raporlamaz',
     )
 
     parser.add_argument(

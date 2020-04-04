@@ -38,7 +38,7 @@ def generate_path_from_name(theme_name: str, postfix: str = "") -> str:
 
 
 def generate_theme(coretheme: dict, theme_settings: dict, outdir: Path, coretheme_info=()):
-    # Copy core theme to remove referance
+    # Copy core theme to remove reference
     new_theme = deepcopy(coretheme)
 
     # Replace colors with new ones

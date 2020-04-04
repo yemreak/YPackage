@@ -102,8 +102,8 @@ setup(
     setup_requires=["pytest-runner", ],
     entry_points={
         # Komut isteminden çalıştırma
-        # örndeğin: ypackage
-        # Kullanım: "ypacakge = ypackage.ypackage:main
+        # örneğin: ypackage
+        # Kullanım: "ypackage = ypackage.ypackage:main
         "console_scripts": [
             "ygitbookintegration = ypackage.cli.gitbook:main",
             "yfilerenamer = ypackage.cli.filesystem:main",

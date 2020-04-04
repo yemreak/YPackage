@@ -18,7 +18,7 @@ jobs:
             sudo -H pip3 install .
 
       - run:
-          name: ⏬ Downloading test repos
+          name: ⏬ Downloading test repositories
           command: |
             git clone https://github.com/YEmreAk/YLib ../YLib
             git clone https://github.com/YEmreAk/YPython ../YPython
@@ -27,8 +27,7 @@ jobs:
       - run:
           name: ⚗️ Functional testing
           command: |
-            mkdir test-results
-            python -m pytest --junitxml=test-results/junit.xml
+            python3 setup.py test
 
       - store_test_results:
           path: test-results
