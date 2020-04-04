@@ -1,5 +1,6 @@
 import logging
 import re
+from configparser import ConfigParser
 from json import dumps as dumps_json
 from json import loads as loads_json
 from os import listdir as os_listdir
@@ -12,7 +13,7 @@ from typing import AnyStr, List, Pattern, Tuple
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
-from .. import common
+from . import common
 
 logger = logging.getLogger(__name__)
 
@@ -373,3 +374,22 @@ def list_nonhidden_files(dirpath: Path) -> List[Path]:
         if path.is_file() and not is_hidden(path):
             dirlist.append(path)
     return dirlist
+
+
+def read_config(configpath: Path) -> dict:
+    """Read configuration file
+
+    Arguments:
+        cpath {Path} -- Configuration file path
+
+    Returns:
+        dict -- Dictionary that contains config keys
+    """
+    try:
+        config = ConfigParser(inline_comment_prefixes="#")
+        config.read(configpath, encoding="utf-8")
+    except Exception as e:
+        logger.error(f"Cannot read config file {e}")
+        return {}
+
+    return config

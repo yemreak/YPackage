@@ -3,8 +3,8 @@ from glob import glob
 from pathlib import Path
 
 from .. import common
-from .core import rename_files, rename_folders
-from .entity import OptionParser, Options
+from ..core.filesystem import rename_files, rename_folders
+from ..entity.filesystem import OptionParser, Options
 
 logger = logging.getLogger(__name__)
 
