@@ -1,4 +1,3 @@
-from copy import deepcopy
 from pathlib import Path
 from typing import Callable, List, Tuple, Union
 from urllib.parse import quote
@@ -6,7 +5,7 @@ from urllib.parse import quote
 from deprecated import deprecated
 
 from .. import common, filesystem
-from .entity import Comment, Header, Indent, Link, SpecialFile
+from ..entity.markdown import Comment, Header, Indent, Link, SpecialFile
 
 # TODO: \n \n arasında olması gerekebilir
 

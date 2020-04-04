@@ -4,10 +4,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from .. import common, filesystem, github, markdown
+from . import filesystem, github, markdown
 
 logger = logging.getLogger(__name__)
 
+# TODO: Class yapısına alınmalı
 DESCRIPTION_TEMPLATE = """---
 description: >-
   {}
@@ -357,84 +358,6 @@ def create_summary_file(filepath: Path) -> bool:
 # -------------------- OLD ONES --------------------------
 
 
-def get_specialfile_header(specialfile: markdown.SpecialFile) -> str:
-    if specialfile == markdown.entity.SpecialFile.CHANGELOG:
-        return CHANGELOG_HEADER
-    elif specialfile == markdown.SpecialFile.CONTRIBUTING:
-        return CONTRIBUTING_HEADER
-
-
-def generate_fs_link(
-        lines: list, root: Path, startpath: Path = None, depth_limit: int = -1, ignore_folders=[]
-) -> list:
-    # TODO: Buranın markdown'a aktarılması lazım
-    # RES: Decalator kavramının araştırılması lazım olabilir
-
-    def append_rootlink(lines: list, root: Path, level: int) -> str:
-        dirlink_string = markdown.generate_dirlinkstring(
-            root,
-            root=startpath,
-            indent=markdown.Indent(level),
-            is_list=True,
-            single_line=True
-        )
-        lines.append(dirlink_string)
-        return lines
-
-    def append_filelink(lines: list, fpath: Path, level: int):
-        filelink_string = markdown.generate_filelinkstring(
-            fpath,
-            root=startpath,
-            indent=markdown.Indent(level),
-            is_list=True,
-            single_line=True
-        )
-        lines.append(filelink_string)
-        return lines
-
-    def append_sublinks(lines: list, root: Path, level: int, dirs_only=False):
-        dirs, files = filesystem.listdir_grouped(root, ignore_folders=ignore_folders)
-        for dpath in dirs:
-            lines = generate_fs_link(lines, dpath, startpath=startpath,
-                                     ignore_folders=ignore_folders)
-
-        if not dirs_only:
-            for fpath in files:
-                if all([
-                    ".md" in fpath.name,
-                    markdown.SpecialFile.README.value not in fpath.name
-                ]):
-                    lines = append_filelink(lines, fpath, level)
-
-        return lines
-
-    def append_links(lines: list):
-        nonlocal startpath
-        if startpath is None:
-            startpath = root
-            level = filesystem.find_level(root, startpath)
-            if depth_limit == -1 or level <= depth_limit:
-                lines = append_sublinks(lines, root, level + 1, dirs_only=True)
-        else:
-            level = filesystem.find_level(root, startpath)
-            if depth_limit == -1 or level <= depth_limit:
-                lines = append_rootlink(lines, root, level)
-                lines = append_sublinks(lines, root, level + 1)
-        return lines
-
-    return append_links(lines)
-
-
-def get_summary_path(workdir: Path) -> Path:
-    return workdir / SUMMARY_FILE
-
-
-def create_summary_file(workdir: Path):
-    filepath = get_summary_path(workdir)
-    if not filepath.exists():
-        filesystem.write_to_file(filepath, SUMMARY_FILE_HEADER + "\n\n")
-
-
 def get_summary_url_from_repo_url(repo_url):
     return github.generate_raw_url_from_repo_url(repo_url) + "/" + SUMMARY_FILE
 
@@ -442,11 +365,6 @@ def get_summary_url_from_repo_url(repo_url):
 def read_summary_from_url(repo_url):
     raw_url = get_summary_url_from_repo_url(repo_url)
     return filesystem.read_file_from_url(raw_url)
-
-
-def check_summary(path):
-    spath = os.path.join(path, SUMMARY_FILE)
-    markdown.check_links(spath)
 
 
 def create_changelog(

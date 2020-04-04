@@ -1,14 +1,11 @@
 import logging
 import os
-# from pydriller import RepositoryMining
-from datetime import datetime
 from pathlib import Path
 from typing import List
 
 from . import markdown
 
-logger = logging.getLogger(__name__)
-
+# TODO: Class yapısına dahil olmalı
 DIFF_TEMPLATE = "{}/commit/{}?diff=split"
 
 
@@ -100,8 +97,10 @@ def get_remote_url(path) -> str:
 
 
 def list_commit_links(
-    path: Path, repo_url=None, ignore_commits=[],
-    since: datetime = None, to: datetime = None, table_form=False
+    path: Path,
+    repo_url=None,
+    ignore_commits=[],
+    table_form=False
 ) -> List[str]:
     from pydriller import RepositoryMining
     logging.getLogger('pydriller').setLevel(logging.ERROR)
