@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 from pathlib import Path
 from typing import List
 
+from ..core import filesystem
 from . import common
 
 logger = logging.getLogger(__name__)
@@ -108,7 +109,7 @@ class ConfigOptions(common.Base):
     def from_file(filepath: Path):
         workdir = filepath.parent
 
-        config = common.read_config(filepath)
+        config = filesystem.read_config(filepath)
 
         integration = IntegrationOptions()
         submodules = []

@@ -105,8 +105,8 @@ setup(
         # örndeğin: ypackage
         # Kullanım: "ypacakge = ypackage.ypackage:main
         "console_scripts": [
-            "ygitbookintegration = ypackage.gitbook.cli:main",
-            "yfilerenamer = ypackage.filesystem.cli:main",
+            "ygitbookintegration = ypackage.cli.gitbook:main",
+            "yfilerenamer = ypackage.cli.filesystem:main",
             "ygoogledrive = ypackage.cli.gdrive:main",
             "ygooglesearch = ypackage.cli.gsearch:main",
             "ythemecreator = ypackage.cli.theme_creator:main"

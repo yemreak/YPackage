@@ -3,7 +3,8 @@ from glob import glob
 from pathlib import Path
 from typing import List
 
-from ..core import common, filesystem, github, markdown
+from ..cli import common
+from ..core import filesystem, github, markdown
 from ..core.gitbook import (create_changelog, generate_description_section,
                             generate_readme_for_project,
                             generate_summary_for_project,

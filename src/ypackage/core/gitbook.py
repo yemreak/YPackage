@@ -367,8 +367,7 @@ def read_summary_from_url(repo_url):
 
 
 def create_changelog(
-    path: Path, ignore_commits=[], repo_url=None, since: datetime = None,
-    to: datetime = None, push=False, commit_msg=None
+    path: Path, ignore_commits=[], repo_url=None, push=False, commit_msg=None
 ):
     if not commit_msg:
         commit_msg = "💫 YGitBookIntegration"
@@ -381,7 +380,7 @@ def create_changelog(
     filestr += "\n\n"
 
     links = github.list_commit_links(
-        path, repo_url=repo_url, since=since, to=to,
+        path, repo_url=repo_url,
         ignore_commits=ignore_commits + [commit_msg]
     )
 
