@@ -4,8 +4,8 @@ from argparse import ArgumentParser
 from copy import deepcopy
 from pathlib import Path
 
-from ..common import initialize_logging
-from ..filesystem import copy_file, read_jsonc, write_json_to_file
+from ..core.filesystem import copy_file, read_jsonc, write_json_to_file
+from .common import initialize_logging
 
 logger = logging.getLogger(__name__)
 

@@ -4,10 +4,11 @@ from pathlib import Path
 from typing import List
 
 from .. import common, filesystem, github, markdown
-from .core import (create_changelog, generate_description_section,
-                   generate_readme_for_project, generate_summary_for_project,
-                   read_summary_from_url)
-from .entity import OptionParser, Options
+from ..core.gitbook import (create_changelog, generate_description_section,
+                            generate_readme_for_project,
+                            generate_summary_for_project,
+                            read_summary_from_url)
+from ..entity.gitbook import OptionParser, Options
 
 logger = logging.getLogger(__name__)
 

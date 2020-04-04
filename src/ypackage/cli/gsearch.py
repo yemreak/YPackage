@@ -6,7 +6,7 @@ import googlesearch
 import requests
 
 import os
-from ..common import initialize_logging
+from .common import initialize_logging
 
 logger = logging.getLogger(__name__)
 

@@ -2,9 +2,9 @@ import logging
 from glob import glob
 from pathlib import Path
 
-from .. import common
 from ..core.filesystem import rename_files, rename_folders
 from ..entity.filesystem import OptionParser, Options
+from . import common
 
 logger = logging.getLogger(__name__)
 

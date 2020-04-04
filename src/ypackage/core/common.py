@@ -1,8 +1,5 @@
-import logging
 import re
 from typing import AnyStr, List, Pattern, Tuple
-
-logger = logging.getLogger(__name__)
 
 
 def has_indexes(content: str, start_string: str, end_string: str) -> bool:
@@ -244,23 +241,6 @@ def merge_lines(lines: List[str]) -> str:
         'Selam\\nNaber\\nNasılsın'
     """
     return "\n".join(lines)
-
-
-def initialize_logging(level=logging.INFO):
-    """Renkli raporlayıcı aktif eder
-
-    Keyword Arguments:
-        level {int} -- Raporlama seviyesi (default: {logging.INFO})
-    """
-    import coloredlogs
-
-    if level == logging.DEBUG:
-        log_format = r"%(name)s[%(process)d] %(levelname)s %(message)s"
-    else:
-        log_format = r"%(levelname)s %(message)s"
-
-    coloredlogs.install(fmt=log_format, level=level)
-    logger.debug("Renkli raporlayıcı aktif edildi")
 
 
 def prod(numbers: list) -> int:
