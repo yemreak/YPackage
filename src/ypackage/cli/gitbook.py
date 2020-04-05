@@ -104,6 +104,7 @@ def create_changelog_by_options(options: Options):
 def integrate(options: Options):
     logger.info(f"Entegrasyon başlatıldı: {options.workdir.absolute()}")
 
+    # TODO: Summary ve README gitbook.yml dosyası ile oluşturulsun
     generate_readmes_by_options(options)
     recreate_summary_by_options(options)
 
