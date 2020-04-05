@@ -1,14 +1,14 @@
 import shlex
 import sys
 
-from ...ypackage.cli import filesystem, gdrive, gitbook, gsearch, theme_creator
+from ...ypackage.cli import filesystem, gdrive, gitbook, gsearch, theme
 
 CONSOLE_SCRIPTS = {
     "ygitbookintegration": gitbook.main,
     "yfilerenamer": filesystem.main,
     "ygoogledrive": gdrive.main,
     "ygooglesearch": gsearch.main,
-    "ythemecreator": theme_creator.main
+    "ythemecreator": theme.main
 }
 
 

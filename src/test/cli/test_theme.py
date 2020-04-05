@@ -1,6 +1,7 @@
 import pytest
 
 from .commands import check_themecreator
+from ...ypackage.model.common import ConfigNotFoundError
 
 
 def test_help():
@@ -18,5 +19,5 @@ def test_simple_case():
 
 
 def test_error():
-    with pytest.raises(SystemExit, match="1"):
+    with pytest.raises(ConfigNotFoundError):
         check_themecreator("../DarkCode-Theme/core/darkcode.json")

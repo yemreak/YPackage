@@ -9,7 +9,7 @@ from os import walk as os_walk
 from os.path import join as os_path_join
 from pathlib import Path
 from shutil import copyfile
-from typing import AnyStr, List, Pattern, Tuple
+from typing import AnyStr, Dict, List, Pattern, Tuple
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
@@ -148,7 +148,8 @@ def read_file_from_url(url: str, encoding="utf-8") -> str:
         file.close()
         logger.debug(f"URL üzerinden dosya okundu: {url}")
     except HTTPError as error:
-        logger.error(f"Dosya okunamadı: {error.url} <HTTPError {error.code}: {error.msg}>")
+        logger.error(
+            f"Dosya okunamadı: {error.url} <HTTPError {error.code}: {error.msg}>")
 
     return content
 
@@ -164,10 +165,10 @@ def write_to_file(filepath: Path, content: str) -> bool:
         return False
 
 
-def write_json_to_file(filepath: Path, content: str, indent=4, eof_line=True):
-    content = dumps_json(content, indent=4)
-    content += "\n" if eof_line else ""
-    return write_to_file(filepath, content)
+def write_json_to_file(filepath: Path, jsonstr: Dict[str, str], indent=4, eof_line=True):
+    jsonstr = dumps_json(jsonstr, indent=4)
+    jsonstr += "\n" if eof_line else ""
+    return write_to_file(filepath, jsonstr)
 
 
 def has_indexes(filepath: Path, start_string: str, end_string: str) -> bool:
@@ -208,7 +209,8 @@ def update_file_by_stringindexes(
 
     if new_content == content:
         insert_conditions = must_inserted
-        insert_conditions &= not has_indexes(filepath, start_string, end_string)
+        insert_conditions &= not has_indexes(
+            filepath, start_string, end_string)
         if insert_conditions:
             new_content += start_string + string + end_string
             return write_to_file(filepath, new_content)
@@ -219,9 +221,9 @@ def update_file_by_stringindexes(
 
 
 def copy_file(src: Path, dst: Path):
-    copyfile(src, dst)
-
+    result = copyfile(src, dst)
     logger.info(f"Dosya taşındı: {src} -> {dst}")
+    return result
 
 
 def rename(regex: Pattern[AnyStr], to: str, path: str) -> bool:

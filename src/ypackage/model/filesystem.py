@@ -4,7 +4,7 @@ from pathlib import Path
 from . import common
 
 
-class OptionParser(ArgumentParser):
+class OptionParser:
 
     def __init__(self):
         self.parser = ArgumentParser(

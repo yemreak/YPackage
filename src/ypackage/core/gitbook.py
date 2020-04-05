@@ -25,7 +25,7 @@ GITHUB_USERNAME = "yedhrab"
 def generate_readme_for_project(
     projectpath: Path,
     commentindex: str,
-    ignored_folders: List[str] = [],
+    ignore: List[str] = [],
     must_inserted=False
 ) -> bool:
     """Proje için markdown olmayan dosyaların bağlantılarının listesini README
@@ -34,7 +34,7 @@ def generate_readme_for_project(
     Arguments:
         dirpath {Path} -- Dizin yolu objesi
         commentindex {str} -- İndeks metni
-        ignored_folders {List[str]} -- Görmezden gelinecek dizin isimleri
+        ignore {List[str]} -- Görmezden gelinecek dizin isimleri
 
     Keyword Arguments:
         must_inserted {bool} -- Dosyada indeks olmaza, dosya sonuna indeks ile ekler \
@@ -47,7 +47,7 @@ def generate_readme_for_project(
     # TODO: Depth özelliği eklenmeli
     dirpaths = filesystem.list_nonhidden_dirs(projectpath)
     for dirpath in dirpaths:
-        if dirpath.name not in ignored_folders:
+        if dirpath.name not in ignore:
             generate_readme_for_dir(
                 dirpath,
                 commentindex,
@@ -56,7 +56,7 @@ def generate_readme_for_project(
             generate_readme_for_project(
                 dirpath,
                 commentindex,
-                ignored_folders=ignored_folders,
+                ignore=ignore,
                 must_inserted=must_inserted
             )
 
@@ -233,23 +233,20 @@ def generate_description_section(string: str) -> str:
     return DESCRIPTION_TEMPLATE.format(string)
 
 
-def generate_summary_fileliststring(projectpath: Path, ignored_folders: List[str] = []) -> str:
-    content = generate_summary_headersection()
-    content += generate_summary_filelinks_string(
+def generate_summary_fileliststring(projectpath: Path, ignore: List[str] = []) -> str:
+    return generate_summary_filelinks_string(
         projectpath,
         projectpath,
         indent_level=0,
-        ignored_folders=ignored_folders
+        ignore=ignore
     )
-
-    return content
 
 
 def generate_summary_filelinks_string(
     projectpath: Path,
     dirpath: Path,
     indent_level=1,
-    ignored_folders: List[str] = []
+    ignore: List[str] = []
 ) -> str:
     content = ""
 
@@ -267,22 +264,23 @@ def generate_summary_filelinks_string(
         mpaths.remove(readme_path)
 
     for mpath in mpaths:
-        content += generate_filelink_string(
-            mpath,
-            root=projectpath,
-            indent_level=indent_level + 1,
-            single_line=True,
-            is_list=True
-        )
+        if mpath.name not in ignore:
+            content += generate_filelink_string(
+                mpath,
+                root=projectpath,
+                indent_level=indent_level + 1,
+                single_line=True,
+                is_list=True
+            )
 
     directories = filesystem.list_nonhidden_dirs(dirpath)
     for directory in directories:
-        if directory.name not in ignored_folders:
+        if directory.name not in ignore:
             content += generate_summary_filelinks_string(
                 projectpath,
                 directory,
                 indent_level=indent_level + 1,
-                ignored_folders=ignored_folders
+                ignore=ignore
             )
 
     return content
@@ -305,7 +303,7 @@ def generate_summary_headersection() -> str:
 def generate_summary_for_project(
     projectpath: Path,
     index_string: str,
-    ignored_folders: List[str] = [],
+    ignore: List[str] = [],
     must_inserted=False
 ) -> bool:
     """Verilen dizin için markdown dosyalarının bağlantılarının listesini SUMMARY
@@ -314,7 +312,7 @@ def generate_summary_for_project(
     Arguments:
         projectpath {Path} -- Proje dizini yolu
         index_string {str} -- [description]
-        ignored_folders {List[str]} -- Görmezden gelinecek dizin isimleri
+        ignore {List[str]} -- Görmezden gelinecek dizin isimleri
 
     Keyword Arguments:
         must_inserted {bool} -- [description] (default: {False})
@@ -323,14 +321,16 @@ def generate_summary_for_project(
         {bool} -- Değişim varsa True
     """
 
-    content = generate_summary_fileliststring(projectpath, ignored_folders=ignored_folders)
+    summary_path = summary_path_for_project(projectpath)
+    if not all([summary_path.exists(), filesystem.read_file(summary_path)]):
+        create_summary_file(summary_path)
+
+    content = generate_summary_fileliststring(
+        projectpath,
+        ignore=ignore
+    )
     if not content:
         return False
-
-    summary_path = summary_path_for_project(projectpath)
-    if not summary_path.exists():
-        create_summary_file(summary_path)
-        markdown.create_markdownfile
 
     return insert_to_file(
         content,

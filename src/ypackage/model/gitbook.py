@@ -233,12 +233,12 @@ class OptionParser(common.Base):
             help="Generated links will be inserted between given indexes",
         )
         self.parser.add_argument(
-            "--ignore-folders",
-            "-if",
+            "--ignore",
+            "-ig",
             nargs="+",
-            metavar="ignore_folders",
-            default=["res", "__pycache__"],
-            help="List of folder names that will ignored",
+            metavar="ignore",
+            default=[],
+            help="List of folder and file names that will ignored",
         )
         self.parser.add_argument(
             "--footer-path",
@@ -276,7 +276,7 @@ class Options(common.Options):
         repo_url="",
         commit_msg="",
         ignore_commits: List[str] = [],
-        ignored_folders: List[str] = ["res", "__pycache__"],
+        ignore: List[str] = [],
         index="",
         new_index="",
         footer_path="",
@@ -297,7 +297,7 @@ class Options(common.Options):
         self.repo_url = repo_url
         self.commit_msg = commit_msg
         self.ignore_commits = ignore_commits
-        self.ignored_folders = ignored_folders
+        self.ignore = ignore
         self.index = index
         self.new_index = new_index
         self.footer_path = footer_path
@@ -344,7 +344,7 @@ class Options(common.Options):
         self.repo_url = args.repo_url
         self.commit_msg = args.commit_msg
         self.ignore_commits = args.ignore_commits
-        self.ignore_folders = args.ignore_folders
+        self.ignore = args.ignore
         self.index = args.index
         self.new_index = args.new_index
         self.footer_path = args.footer_path

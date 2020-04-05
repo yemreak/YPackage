@@ -19,7 +19,7 @@ def generate_readmes_by_options(options: Options):
         generate_readme_for_project(
             options.workdir,
             options.index,
-            ignored_folders=options.ignored_folders,
+            ignore=options.ignore,
             must_inserted=True
         )
 
@@ -29,7 +29,7 @@ def recreate_summary_by_options(options: Options):
         generate_summary_for_project(
             options.workdir,
             options.index,
-            ignored_folders=options.ignored_folders,
+            ignore=options.ignore,
             must_inserted=True
         )
 

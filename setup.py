@@ -108,7 +108,7 @@ setup(
             "yfilerenamer = ypackage.cli.filesystem:main",
             "ygoogledrive = ypackage.cli.gdrive:main",
             "ygooglesearch = ypackage.cli.gsearch:main",
-            "ythemecreator = ypackage.cli.theme_creator:main"
+            "ythemecreator = ypackage.cli.theme:main"
         ]
     },
     cmdclass={'verify': VerifyVersionCommand},
