@@ -4,7 +4,8 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  build-and-test:
+
+  test:
     executor: python/default
     steps:
       - checkout
@@ -65,19 +66,12 @@ jobs:
             twine upload dist/*
 
 workflows:
-  version: 2
   test:
     jobs:
-      - build-and-test
-  build_and_deploy:
+      - test
+  deploy:
     jobs:
-      - build:
-          filters:
-            tags:
-              only: /.*/
       - deploy:
-          requires:
-            - build
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
