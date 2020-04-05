@@ -1,7 +1,7 @@
 import logging
 from argparse import ArgumentParser
 
-from ..common import initialize_logging
+from .common import initialize_logging
 
 PATTERN_ID = "?id="
 URL_DRIVE = "https://drive.google.com"
@@ -46,7 +46,7 @@ def initialize_parser() -> ArgumentParser:
         "-r",
         action="store_true",
         dest="revers",
-        help="Direkt urlden önizlenebilir url oluşturma (Kullanıcılar için)"
+        help="Direkt urlden ön izlenebilir url oluşturma (Kullanıcılar için)"
     )
     parser.add_argument(
         "--debug",

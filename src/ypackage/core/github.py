@@ -1,14 +1,13 @@
 import logging
 import os
-# from pydriller import RepositoryMining
-from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from .markdown import create_link, encodedpath
+from . import markdown
 
 logger = logging.getLogger(__name__)
 
+# TODO: Class yapısına dahil olmalı
 DIFF_TEMPLATE = "{}/commit/{}?diff=split"
 
 
@@ -20,18 +19,32 @@ def get_github_userprofile_url(username) -> str:
     return get_github_url() + "/" + username
 
 
-def get_github_repo_url(username) -> str:
-    return get_github_userprofile_url(username) + "/" + os.path.basename(os.getcwd())
+def get_github_repo_url(username: str, projectname: str) -> str:
+    return get_github_userprofile_url(username) + "/" + projectname
 
 
-def get_raw_master_url(username) -> str:
-    return get_github_repo_url(username) + "/raw/master"
+def get_raw_master_url(username: str, projectname: str) -> str:
+    return get_github_repo_url(username, projectname) + "/raw/master"
 
 
-def get_github_raw_link(username, filepath: str) -> str:
-    filepath = os.path.relpath(filepath, start=os.getcwd())
-    filepath = encodedpath(filepath)
-    return get_raw_master_url(username) + "/" + filepath
+def get_github_raw_link(username: str, projectname: str, filepath: Path) -> str:
+    """GitHub raw dosyalarına URL metni oluşturur
+
+    Arguments:
+        username {str} -- GitHub kullanıcı adı
+        filepath {Path} -- Dosya yolu objesi
+
+    Returns:
+        str -- URL metni
+
+    Examples:
+        >>> get_github_raw_link('yedhrab', 'YPackage', Path('src'))
+        'https://github.com/yedhrab/YPackage/raw/master/src'
+    """
+    filepath = filepath.absolute().relative_to(Path.cwd())
+    filepath_string = filepath.as_posix()
+
+    return get_raw_master_url(username, projectname) + "/" + filepath_string
 
 
 def split_repo_url(repo_url) -> tuple:
@@ -86,10 +99,13 @@ def get_remote_url(path) -> str:
 
 
 def list_commit_links(
-    path: Path, repo_url=None, ignore_commits=[],
-    since: datetime = None, to: datetime = None, table_form=False
+    path: Path,
+    repo_url=None,
+    ignore_commits=[],
+    table_form=False
 ) -> List[str]:
     from pydriller import RepositoryMining
+    logging.getLogger('pydriller').setLevel(logging.ERROR)
 
     if not repo_url:
         repo_url = get_remote_url(path)
@@ -118,12 +134,13 @@ def list_commit_links(
             time = commit.author_date.strftime("%d/%m/%Y - %H:%M:%S")
             url = DIFF_TEMPLATE.format(repo_url, hash_value)
 
-            link = create_link(url, header=title).replace("- ", "").replace("\n", "")
+            link = markdown.Link(title, url)
+            link_str = link.to_str()
 
             if table_form:
-                link = f"|{str(time)}|{link}|{author}|"
+                link_str = f"|{str(time)}|{link_str}|{author}|"
             else:
-                link = f"- {str(time)} - {link} ~ {author}"
+                link = f"- {str(time)} - {link_str} ~ {author}"
 
             links.append(link)
 

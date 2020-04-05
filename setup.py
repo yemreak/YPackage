@@ -6,7 +6,7 @@ from os.path import basename, splitext
 from setuptools import find_packages, setup
 from setuptools.command.install import install
 
-VERSION = "2.7.4.3"
+VERSION = "3.0.0"
 README_PATH = "docs/README.md"
 
 test_requirements = ["pytest"]  # "behave", "behave-classy",
@@ -98,17 +98,17 @@ setup(
         #   "rst": ["docutils>=0.11"],
         #   ":python_version=="2.6"": ["argparse"],
     },
-    setup_requires=["pytest-runner",],
+    setup_requires=["pytest-runner", ],
     entry_points={
         # Komut isteminden çalıştırma
-        # örndeğin: ypackage
-        # Kullanım: "ypacakge = ypackage.ypackage:main
+        # örneğin: ypackage
+        # Kullanım: "ypackage = ypackage.ypackage:main
         "console_scripts": [
-            "ygitbookintegration = ypackage.gitbook.cli:main",
+            "ygitbookintegration = ypackage.cli.gitbook:main",
+            "yfilerenamer = ypackage.cli.filesystem:main",
             "ygoogledrive = ypackage.cli.gdrive:main",
             "ygooglesearch = ypackage.cli.gsearch:main",
-            "yfilerenamer = ypackage.cli.file_renamer:main",
-            "ythemecreator = ypackage.cli.theme_creator:main",
+            "ythemecreator = ypackage.cli.theme:main"
         ]
     },
     cmdclass={'verify': VerifyVersionCommand},

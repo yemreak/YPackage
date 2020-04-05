@@ -25,13 +25,3 @@ def delayed(duration):
 
         return inner
     return background
-
-
-if __name__ == "__main__":
-
-    @delayed(1)
-    def test(val1, val2):
-        for i in range(val1, val2):
-            print(i)
-
-    test(3, 20)
