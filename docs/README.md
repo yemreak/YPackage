@@ -26,18 +26,19 @@ description: "\U0001F935 Kişisel python paketlerim"
 ## 👨‍💻 Geliştirici Notları
 
 * 🧱 Temel kullanım `import ypackage` şeklindedir
-* 🖤 CLI işlemlerine `ypackage.cli` içerisinde bulunur
-* 💎 Çekirdek modüllere `ypackage.<modül>` şeklinde erişilir
+* 🖤 CLI işlemleri `ypackage.cli` içerisinde bulunur
+* 💎 Çekirdek modüller `ypackage.core` içerisinde bulunur
+* ⭐ Objeler `ypackage.model` içerisinde bulunur
 
 | 🍱 Modül | 📝 Açıklama |
 | :--- | :--- |
 | `common` | 🌟 Sık kullandığum metotlar |
 | `filesystem` | 📂 Dosya işlemleri |
-| `gdrive` | 🔗 Google drive link dönüştürücü |
 | `gitbook` | 📖 GitBook için scriptlerim |
 | `github` | 🐙 GitHub işlemleri |
 | `markdown` | 📑 Markdown scriptlerim |
-| `regex` | 💎 Regex scriptlerim \(yapılm aşamasında\) |
+
+> 🙄 `gdrive` ve `gsearch` sadece CLI olarak tanımlanmıştır
 
 ## 💖 Destek ve İletişim
 

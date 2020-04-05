@@ -1,5 +1,14 @@
 # 👀 What's New
 
+## 🏷️ 3.0.0
+
+- 🏗️ Yapıda köklü değişiklikler yapıldı
+- 🚀 Kararlı dizin yapısı kuruldu
+- 👨‍🔧 Büyük hata düzeltmeleri uygulandı
+- 📈 Verimlilik artırıldı
+
+> 📝 Belgelendirmeler yeni sürümler ile tamamlanacaktır.
+
 ## 🏷️ 2.7.3
 
 - 🌃 Background package added
