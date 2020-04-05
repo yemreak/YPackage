@@ -76,7 +76,7 @@ workflows:
       - test
   test-and-deploy:
     jobs:
-      - test
+      - test:
           tags:
             only: /.*/
       - deploy:
