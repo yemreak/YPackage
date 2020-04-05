@@ -56,6 +56,11 @@ jobs:
             echo -e "password = $PYPI_TOKEN" >> ~/.pypirc
 
       - run:
+          name: ⏬ Install dependencies
+          command: |
+            pip install --upgrade setuptools wheel tqdm twine
+      
+      - run:
           name: 📦 Create PYPI package
           command: |
             python setup.py sdist bdist_wheel
