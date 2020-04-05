@@ -75,11 +75,13 @@ workflows:
     jobs:
       - test
   deploy:
-    - deploy:
-        requires:
-          - test
-        filters:
-          tags:
-            only: /[0-9]+(\.[0-9]+)*/
-          branches:
-            ignore: /.*/
+    jobs:
+      - test
+      - deploy:
+          requires:
+            - test
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
