@@ -50,6 +50,6 @@ jobs:
         
     - name: ⚗️ Functional testing
       run: |
-        python3 setup.py test
+        python setup.py test
         
 

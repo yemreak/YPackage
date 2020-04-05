@@ -8,8 +8,6 @@ jobs:
     executor: python/default
     steps:
       - checkout
-      - python/load-cache
-      - python/save-cache
 
       - run:
           name: ⏬ Downloading test repositories
@@ -33,13 +31,14 @@ jobs:
 # Continuously Deploying Python Packages to PyPI with CircleCI
 # https://circleci.com/blog/continuously-deploying-python-packages-to-pypi-with-circleci/
 
+# The built-in environment variable CIRCLE_TAG is not present
+# git push origin <tag-name>
+# https://support.circleci.com/hc/en-us/articles/360020342494-The-built-in-environment-variable-CIRCLE-TAG-is-not-present
+
   deploy:
     executor: python/default
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
 
       - run:
           name: 🏷️ Verify git tag version
@@ -66,13 +65,14 @@ jobs:
             twine upload dist/*
 
 workflows:
-  main:
+  version: 2
+  build_and_deploy:
     jobs:
       - build-and-test
       - deploy:
           requires:
             - build-and-test
-          filters:
+            filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*/
             branches:
