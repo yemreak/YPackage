@@ -74,9 +74,11 @@ workflows:
   test:
     jobs:
       - test
-  deploy:
+  test-and-deploy:
     jobs:
       - test
+          tags:
+            only: /.*/
       - deploy:
           requires:
             - test
