@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from . import filesystem, github, markdown
 
@@ -122,7 +122,7 @@ def insert_to_file(
 
 def generate_filelink_string(
     filepath: Path,
-    root: Path = None,
+    root: Optional[Path] = None,
     github_link=False,
     indent_level=0,
     single_line=False,

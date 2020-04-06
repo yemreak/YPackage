@@ -1,6 +1,5 @@
 import logging
 from argparse import ArgumentParser
-from json import dumps
 from pathlib import Path
 from typing import Dict, List
 

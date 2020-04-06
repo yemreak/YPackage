@@ -82,9 +82,8 @@ def find_level(filepath: Path, root: Path) -> int:
 def read_file(filepath: Path) -> str:
     content = ""
     try:
-        with filepath.open("r", encoding="utf-8") as file:
-            logger.debug(f"Dosya okunuyor: {filepath}")
-            content = file.read()
+        logger.debug(f"Dosya okunuyor: {filepath}")
+        content = filepath.read_text(encoding="utf-8")
     except Exception:
         logger.debug(f"Dosya okunamadı: {filepath}")
     return content
@@ -156,10 +155,9 @@ def read_file_from_url(url: str, encoding="utf-8") -> str:
 
 def write_to_file(filepath: Path, content: str) -> bool:
     try:
-        with filepath.open("w", encoding="utf-8") as file:
-            file.write(content)
-            logger.info(f"Dosya güncellendi: {filepath}")
-            return True
+        filepath.write_text(content, encoding="utf-8")
+        logger.info(f"Dosya güncellendi: {filepath}")
+        return True
     except Exception:
         logger.exception(f"Dosyaya yazılamadı: {filepath}")
         return False

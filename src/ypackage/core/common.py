@@ -3,7 +3,37 @@ from typing import AnyStr, List, Pattern, Tuple
 
 
 def has_indexes(content: str, start_string: str, end_string: str) -> bool:
-    # DEV: Dokuman lazım
+    """Metin içerisinde string indekslerinin varlığını kontrol eder
+
+    Arguments:
+        content {str} -- Metin
+        start_string {str} -- Başlangıç indeksi
+        end_string {str} -- Bitiş indeksi
+
+    Returns:
+        bool -- Var ise `True`
+
+    Examples:
+        >>> has_indexes(                \
+                'Selam ben YEmreAk',    \
+                'Selam',                \
+                'YEmreAk'               \
+            )
+        True
+        >>> has_indexes(                \
+                'Selam ben YEmreAk',    \
+                'YPackage',             \
+                'YEmreAk'               \
+            )
+        False
+        >>> has_indexes(                \
+                'Selam ben YEmreAk',    \
+                'YEmreAk',              \
+                'Selam'                 \
+            )
+        False
+
+    """
     positions = position_index_from_string_index(content, start_string, end_string)
     return bool(positions)
 
@@ -13,7 +43,36 @@ def position_index_from_string_index(
     start_string: str,
     end_string: str
 ) -> List[Tuple[int, int]]:
-    # DEV: Dokuman lazım
+    """String indekslerinde pozisyon indeksleri üretir
+
+    Arguments:
+        content {str} -- İndekslerin aranacağı metin
+        start_string {str} -- Başlangıç indeksi
+        end_string {str} -- Bitiş indeksi
+
+    Returns:
+        List[Tuple[int, int]] -- Üretilen pozisyon indeksleri
+
+    Examples:
+        >>> position_index_from_string_index( \
+                'Merhaba YEmreAk Merhaba',  \
+                'Merhaba ',                 \
+                ' Merhaba'                  \
+            )
+        [(8, 15)]
+        >>> position_index_from_string_index( \
+                'Merhaba YEmreAk Merhaba',  \
+                'Hey ',                    \
+                ' Merhaba'                  \
+            )
+        []
+        >>> position_index_from_string_index( \
+                'Merhaba YEmreAk Merhaba',  \
+                'Merhaba',                  \
+                'Merhaba'                   \
+            )
+        [(7, 16)]
+    """
     spos = [m.start() + len(start_string) for m in re.finditer(start_string, content)]
     epos = [m.start() for m in re.finditer(end_string, content)]
 
@@ -49,7 +108,7 @@ def update_string_by_stringindexes(
         >>> update_string_by_stringindexes( \
                 'YPackage',                 \
                 'Merhaba YEmreAk Merhaba',  \
-                'Heey ',                    \
+                'Hey ',                    \
                 ' Merhaba'                  \
             )
         'Merhaba YEmreAk Merhaba'
@@ -102,30 +161,30 @@ def find_substrings_by_strings(
     return substrings
 
 
-def match_start_and_end_positions(spos: list, epos: list) -> List[Tuple[int, int]]:
-    """[summary]
+def match_start_and_end_positions(spos: List[int], epos: List[int]) -> List[Tuple[int, int]]:
+    """Başlangıç ve bitiş pozisyonları listesine göre başlangıç bitiş ikilisi oluşturur
 
     Arguments:
-        spos {list} - - [description]
-        epos {list} - - [description]
+        spos {List[int]} -- Başlangıç pozisyonları listesi
+        epos {List[int]} -- Bitiş pozisyonları listesi
 
     Returns:
-        List[Tuple[int, int]] - - [description]
+        List[Tuple[int, int]] -- Başlangıç-bitiş ikilisi listesi
 
     Examples:
-        >> > match_start_and_end_positions(
-            [1, 3, 5],
-            [2, 4, 7]
+        >>> match_start_and_end_positions(  \
+                [1, 3, 5],                  \
+                [2, 4, 7]                   \
             )
         [(1, 2), (3, 4), (5, 7)]
-        >> > match_start_and_end_positions(
-            [1, 3, 5],
-            [1, 5, 9]
+        >>> match_start_and_end_positions(  \
+                [1, 3, 5],                  \
+                [1, 5, 9]                   \
             )
         [(1, 5), (5, 9)]
-        >> > match_start_and_end_positions(
-            [131],
-            [130, 275]
+        >>> match_start_and_end_positions(  \
+                [131],                      \
+                [130, 275]                  \
             )
         [(131, 275)]
     """
@@ -243,14 +302,18 @@ def merge_lines(lines: List[str]) -> str:
     return "\n".join(lines)
 
 
-def prod(numbers: list) -> int:
+def prod_list(numbers: list) -> int:
     """Verilen listedeki tüm elemanları çarpar
 
     Arguments:
-            numbers {list} -- Sayı listesi
+        numbers {list} -- Sayı listesi
 
     Returns:
-            int -- Çarpımın sonucu
+        int -- Çarpımın sonucu
+
+    Examples:
+        >>> prod_list([2, 3, 5])
+        30
     """
     result = 1
     for number in numbers:
@@ -258,7 +321,7 @@ def prod(numbers: list) -> int:
     return result
 
 
-def list_difference(list1: list, list2: list, safe: bool = True) -> list:
+def substract_list(list1: list, list2: list, safe: bool = True) -> list:
     """İki listenin farkını alır
 
     Arguments:
@@ -270,6 +333,10 @@ def list_difference(list1: list, list2: list, safe: bool = True) -> list:
 
     Returns:
         list -- Sonuç listesi
+
+    Examples:
+        >>> substract_list([1, 2, 3], [2, 4, 1])
+        [3]
     """
     if safe:
         list2 = set(list2)
