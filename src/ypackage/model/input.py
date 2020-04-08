@@ -183,7 +183,6 @@ class Recoder(common.Base):
 
 class MouseRecorder(Recoder):
 
-    # TODO: Bu yapıyı diğerlerine de uygula
     def __init__(self):
         super().__init__("Fare")
 

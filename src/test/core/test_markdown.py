@@ -2,8 +2,6 @@ from os import makedirs, remove
 from pathlib import Path
 from shutil import rmtree
 
-import pytest
-
 from ...ypackage.core.markdown import (create_markdownfile,
                                        find_all_headers_from_file,
                                        find_first_header_from_file,
