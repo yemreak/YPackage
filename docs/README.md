@@ -32,11 +32,12 @@ description: "\U0001F935 Kişisel python paketlerim"
 
 | 🍱 Modül | 📝 Açıklama |
 | :--- | :--- |
-| `common` | 🌟 Sık kullandığum metotlar |
+| `common` | 🧱 Temel kütüphane |
 | `filesystem` | 📂 Dosya işlemleri |
-| `gitbook` | 📖 GitBook için scriptlerim |
+| `gitbook` | 📖 GitBook entegrasyonu |
 | `github` | 🐙 GitHub işlemleri |
-| `markdown` | 📑 Markdown scriptlerim |
+| `markdown` | 📑 Markdown yönetimi |
+| `input` | 🔴 Girdi kaydedici  |
 
 > 🙄 `gdrive` ve `gsearch` sadece CLI olarak tanımlanmıştır
 

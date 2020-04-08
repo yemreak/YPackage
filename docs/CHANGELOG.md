@@ -2,6 +2,7 @@
 
 ## 🏷️ 3.0.1
 
+- ⏺ Input record sınıfı sınıfları eklendi (👨‍🔬)
 - 🎉 Markdown testleri tamamlandı
 - 🎉 Common testleri tamamlandı
 - 👨‍🔧 Index alanındaki hatalar düzeltildi

@@ -80,6 +80,15 @@ def find_level(filepath: Path, root: Path) -> int:
 
 
 def read_file(filepath: Path) -> str:
+    """Dosyayı okur.
+    Dosya bulunamazsa ekrana raporlar hata fırlatmaz
+
+    Arguments:
+        filepath {Path} -- Okunacak dosyanın yolu
+
+    Returns:
+        str -- Okunan metin veya ''
+    """
     content = ""
     try:
         logger.debug(f"Dosya okunuyor: {filepath}")
@@ -90,12 +99,30 @@ def read_file(filepath: Path) -> str:
 
 
 def read_json(filepath: Path, strict=False) -> dict:
+    """Dosya içerisindeki JSON metnini okur.
+    Dosya bulunamazsa ekrana raporlar hata fırlatmaz
+
+    Arguments:
+        filepath {Path} -- Okunacak dosyanın yolu
+
+    Returns:
+        str -- Okunan metin veya ''
+    """
     content = read_file(filepath)
     json_object = loads_json(content, strict=strict)
     return json_object
 
 
 def read_jsonc(filepath: Path, strict=False) -> dict:
+    """Dosya içerisindeki yorum satırlı JSON metnini okur.
+    Dosya bulunamazsa ekrana raporlar hata fırlatmaz
+
+    Arguments:
+        filepath {Path} -- Okunacak dosyanın yolu
+
+    Returns:
+        str -- Okunan metin veya ''
+    """
     content = read_file(filepath)
     content = re.sub("//.*", "", content)
     return loads_json(content, strict=strict)
@@ -154,6 +181,15 @@ def read_file_from_url(url: str, encoding="utf-8") -> str:
 
 
 def write_to_file(filepath: Path, content: str) -> bool:
+    """Dosyaya 'utf-8' metni yazar.
+    Dosya bulunamazsa ekrana raporlar hata fırlatmaz
+
+    Arguments:
+        filepath {Path} -- Okunacak dosyanın yolu
+
+    Returns:
+        bool -- Yazma işlemi başarılı ise `True`
+    """
     try:
         filepath.write_text(content, encoding="utf-8")
         logger.info(f"Dosya güncellendi: {filepath}")
@@ -163,13 +199,35 @@ def write_to_file(filepath: Path, content: str) -> bool:
         return False
 
 
-def write_json_to_file(filepath: Path, jsonstr: Dict[str, str], indent=4, eof_line=True):
+def write_json_to_file(filepath: Path, jsonstr: Dict[str, str], indent: int = 4, eof_line=True):
+    """Dosyaya JSON yazar.
+    Dosya bulunamazsa ekrana raporlar hata fırlatmaz
+
+    Arguments:
+        filepath {Path} -- Okunacak dosyanın yolu
+        jsonstr {Dict[str, str]} -- JSON objesi
+        indent {int} -- JSON yazımı için varsayılan girinti uzunluğu
+        eof_line {bool} -- Dosyanın sonuna '\\n' koyar
+
+    Returns:
+        bool -- Yazma işlemi başarılı ise `True`
+    """
     jsonstr = dumps_json(jsonstr, indent=4)
     jsonstr += "\n" if eof_line else ""
     return write_to_file(filepath, jsonstr)
 
 
 def has_indexes(filepath: Path, start_string: str, end_string: str) -> bool:
+    """Dosya içerisinde string indekslerinin varlığını kontrol eder
+
+    Arguments:
+        content {str} -- Metin
+        start_string {str} -- Başlangıç indeksi
+        end_string {str} -- Bitiş indeksi
+
+    Returns:
+        bool -- Var ise `True`
+    """
     content = read_file(filepath)
     result = common.has_indexes(content, start_string, end_string)
     return result
@@ -218,10 +276,19 @@ def update_file_by_stringindexes(
     return write_to_file(filepath, new_content)
 
 
-def copy_file(src: Path, dst: Path):
+def copy_file(src: Path, dst: Path) -> bool:
+    """Dosyayı kopyalar
+
+    Arguments:
+        src {Path} -- Kopyalanacak dosyanın yolu
+        dst {Path} -- Kopyalanacağı yol
+
+    Returns:
+        bool -- Kopyalama başarılı ise `True`
+    """
     result = copyfile(src, dst)
     logger.info(f"Dosya taşındı: {src} -> {dst}")
-    return result
+    return bool(result)
 
 
 def rename(regex: Pattern[AnyStr], to: str, path: str) -> bool:
