@@ -92,6 +92,8 @@ setup(
         "requests",
         "pydriller",
         "coloredlogs",
+        "keyboard",
+        "mouse"
     ],
     extras_require={
         # eg:
