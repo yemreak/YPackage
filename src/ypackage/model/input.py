@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Callable, List, Union
+from typing import Callable, List, Optional, Union
 
 import keyboard
 import mouse
@@ -27,7 +27,7 @@ class KeyboardEvent(keyboard.KeyboardEvent, Event):
             keyboard.release(key)
 
 
-class ButtonEvent(Event):
+class ClickEvent(Event):
 
     def __init__(self, button_event: mouse.ButtonEvent):
         self.event_type = button_event.event_type
@@ -62,37 +62,17 @@ class WheelEvent(Event):
         mouse.wheel(self.event.delta)
 
 
-class InputEvent(Event):
+class InputEvent(KeyboardEvent, ClickEvent, MoveEvent, WheelEvent):
 
-    def __init__(self, event: Union[
-        KeyboardEvent,
-        ButtonEvent,
-        WheelEvent,
-        MoveEvent
-    ]):
-        self.event = event
-        self.last_time = None
-
-    def play(
-        self,
-        speed_factor=1.0,
-        include_clicks=True,
-        include_moves=True,
-        include_wheel=True
-    ):
-        if speed_factor > 0 and self.last_time is not None:
-            time.sleep((self.event.time - self.last_time) / speed_factor)
-        self.last_time = self.event.time
-
-        condition = any([
-            isinstance(self.event, keyboard.KeyboardEvent),
-            isinstance(self.event, mouse.ButtonEvent) and include_clicks,
-            isinstance(self.event, mouse.MoveEvent) and include_moves,
-            isinstance(self.event, mouse.WheelEvent) and include_wheel
-        ])
-
-        if condition:
-            self.event.play()
+    def __init__(self, event):
+        if isinstance(self.event, keyboard.KeyboardEvent):
+            self.type = "key"
+        elif isinstance(self.event, mouse.ButtonEvent):
+            self.type = "button"
+        elif isinstance(self.event, mouse.MoveEvent):
+            self.type = "move"
+        elif isinstance(self.event, mouse.WheelEvent):
+            self.type = "wheel"
 
 
 class Recoder(common.Base):
@@ -142,7 +122,7 @@ class Recoder(common.Base):
         controller = self.name.lower()
         if controller in ["mouse", "fare"]:
             mouse.unhook(self.add_event)
-        elif controller == ["keyboard", "klavye"]:
+        elif controller in ["keyboard", "klavye"]:
             keyboard.unhook(self.add_event)
         else:
             raise ValueError(f"Hatalı değer: {controller} 'mouse' veya 'keyboard' olmalı")
@@ -180,14 +160,19 @@ class Recoder(common.Base):
         logger.info(f"{self.name} kaydı durduruldu")
         return True
 
+    def reset(self):
+        """Eski kayıtları temizler
+        """
+        self.events = []
+
 
 class MouseRecorder(Recoder):
 
     def __init__(self):
         super().__init__("Fare")
 
-    def _add_event(self, event: Union[MoveEvent, WheelEvent, ButtonEvent]):
-        return self._add_event(event)
+    def _add_event(self, event: Union[MoveEvent, WheelEvent, ClickEvent]):
+        return super()._add_event(event)
 
 
 class KeyboardRecorder(Recoder):
@@ -196,7 +181,7 @@ class KeyboardRecorder(Recoder):
         super().__init__("Klavye")
 
     def _add_event(self, event: KeyboardEvent):
-        return self._add_event(event)
+        return super()._add_event(event)
 
 
 class InputRecorder(Recoder):
@@ -217,10 +202,13 @@ class InputRecorder(Recoder):
         self.mouse_recorder._stop()
         self.keyboard_recorder._stop()
 
+    def _add_event(self, event: InputEvent):
+        return super()._add_event(event)
+
     def _store_events(self):
         _events = self.mouse_recorder.events + self.keyboard_recorder.events
-        _events = _events.sort(key=lambda x: x.time)
-        self.events = [InputEvent(_event) for _event in _events]
+        _events.sort(key=lambda x: x.time)
+        self.events: List[InputEvent] = [InputEvent(_event) for _event in _events]
 
     def stop(self) -> bool:
         """Klavye ve mouse kaydını durdurur
@@ -236,6 +224,10 @@ class InputRecorder(Recoder):
 
         return True
 
+    def reset(self):
+        self.mouse_recorder.reset()
+        self.keyboard_recorder.reset()
+
     def play(self, speed_factor=1.0, include_clicks=True, include_moves=True, include_wheel=True):
         """Tüm kayıtları oynatır
         Oynatma arkaplanda yapılmaz
@@ -246,5 +238,18 @@ class InputRecorder(Recoder):
             include_moves {bool} -- Mouse hareketlerini dahil elder (default: {True})
             include_wheel {bool} -- Mouse tekerleğini dahil eder (default: {True})
         """
+        last_time: Optional[float] = None
         for event in self.events:
-            event.play()
+            if speed_factor > 0 and last_time:
+                time.sleep((self.event.time - last_time) / speed_factor)
+            last_time = event.time
+
+            condition = any([
+                event.type == "key",
+                event.type == "button" and include_clicks,
+                event.type == "move" and include_moves,
+                event.type == "wheel" and include_wheel
+            ])
+
+            if condition:
+                event.play()
