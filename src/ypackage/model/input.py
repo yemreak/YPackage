@@ -5,7 +5,6 @@ from typing import Callable, List, Optional, Union
 import keyboard
 import mouse
 
-from ..core import background
 from . import common
 
 logger = logging.getLogger(__name__)
@@ -15,6 +14,9 @@ class Event(common.Base):
 
     def play(self):
         raise NotImplementedError
+
+    def __str__(self):
+        return super().__repr__()
 
 
 class KeyboardEvent(keyboard.KeyboardEvent, Event):
@@ -27,12 +29,12 @@ class KeyboardEvent(keyboard.KeyboardEvent, Event):
             keyboard.release(key)
 
 
-class ClickEvent(Event):
+class ButtonEvent(Event):
 
-    def __init__(self, button_event: mouse.ButtonEvent):
-        self.event_type = button_event.event_type
-        self.button = button_event.button
-        self.time = button_event.time
+    def __init__(self, event_type: str, button: str, time: float):
+        self.event_type = event_type
+        self.button = button
+        self.time = time
 
     def play(self):
         if self.event_type == mouse.UP:
@@ -43,67 +45,33 @@ class ClickEvent(Event):
 
 class MoveEvent(Event):
 
-    def __init__(self, button_event: mouse.MoveEvent):
-        self.x = button_event.x
-        self.y = button_event.y
-        self.time = button_event.time
+    def __init__(self, x: int, y: int, time: float):
+        self.x = x
+        self.y = y
+        self.time = time
 
     def play(self):
-        mouse.move(self.event.x, self.event.y)
+        mouse.move(self.x, self.y)
 
 
 class WheelEvent(Event):
 
-    def __init__(self, button_event: mouse.WheelEvent):
-        self.delta = button_event.delta
-        self.time = button_event.time
+    def __init__(self, delta: float, time: float):
+        self.delta = delta
+        self.time = time
 
     def play(self):
-        mouse.wheel(self.event.delta)
-
-
-class InputEvent(KeyboardEvent, ClickEvent, MoveEvent, WheelEvent):
-
-    def __init__(self, event):
-        if isinstance(self.event, keyboard.KeyboardEvent):
-            self.type = "key"
-        elif isinstance(self.event, mouse.ButtonEvent):
-            self.type = "button"
-        elif isinstance(self.event, mouse.MoveEvent):
-            self.type = "move"
-        elif isinstance(self.event, mouse.WheelEvent):
-            self.type = "wheel"
+        mouse.wheel(self.delta)
 
 
 class Recoder(common.Base):
 
-    @background.do_background
-    @staticmethod
-    def record_custom(controller: str, hook: Callable[[Event], None]):
-        if controller == "mouse":
-            mouse.hook(hook)
-        elif controller == "keyboard":
-            keyboard.hook(hook)
-        else:
-            raise ValueError("Hatalı değer: 'mouse' veya 'keyboard' olmalı")
-
-    @staticmethod
-    def stop_custom(controller: str, hook: Callable[[Event], None]):
-        if controller == "mouse":
-            mouse.unhook(hook)
-        elif controller == "keyboard":
-            keyboard.unhook(hook)
-        else:
-            raise ValueError("Hatalı değer: 'mouse' veya 'keyboard' olmalı")
-
     def __init__(self, name: str):
         self.name = name
-
-        self.events: List[Event] = []
         self.recording = False
 
     def _add_event(self, event: List[Event]):
-        self.events.append(event)
+        raise NotImplementedError
 
     def add_event(self, event: List[Event]):
         self._add_event(event)
@@ -160,28 +128,62 @@ class Recoder(common.Base):
         logger.info(f"{self.name} kaydı durduruldu")
         return True
 
-    def reset(self):
-        """Eski kayıtları temizler
-        """
-        self.events = []
-
 
 class MouseRecorder(Recoder):
 
     def __init__(self):
         super().__init__("Fare")
+        self.events: List[Union[MoveEvent, WheelEvent, ButtonEvent]] = []
 
-    def _add_event(self, event: Union[MoveEvent, WheelEvent, ClickEvent]):
-        return super()._add_event(event)
+    def _add_event(self, event: Union[MoveEvent, WheelEvent, ButtonEvent]):
+        if isinstance(event, (ButtonEvent, MoveEvent, WheelEvent)):
+            pass
+        elif isinstance(event, mouse.MoveEvent):
+            event = MoveEvent(
+                event.x,
+                event.y,
+                event.time
+            )
+        elif isinstance(event, mouse.ButtonEvent):
+            event = MoveEvent(
+                event.event_type,
+                event.button,
+                event.time
+            )
+        elif isinstance(event, mouse.WheelEvent):
+            event = MoveEvent(
+                event.delta,
+                event.time
+            )
+        else:
+            raise ValueError(f"Olay tipi tanımlı değil: {type(event)}")
+
+        self.events.append(event)
 
 
 class KeyboardRecorder(Recoder):
 
     def __init__(self):
         super().__init__("Klavye")
+        self.events: List[KeyboardEvent] = []
 
     def _add_event(self, event: KeyboardEvent):
-        return super()._add_event(event)
+        if isinstance(event, KeyboardEvent):
+            pass
+        if isinstance(event, keyboard.KeyboardEvent):
+            event = KeyboardEvent(
+                event.event_type,
+                event.scan_code,
+                event.name,
+                event.time,
+                event.device,
+                event.modifiers,
+                event.is_keypad
+            )
+        else:
+            raise ValueError(f"Olay tipi tanımlı değil: {type(event)}")
+
+        self.events.append(event)
 
 
 class InputRecorder(Recoder):
@@ -194,6 +196,27 @@ class InputRecorder(Recoder):
         self.mouse_recorder = MouseRecorder()
         self.keyboard_recorder = KeyboardRecorder()
 
+    @property
+    def events(self) -> List[Union[KeyboardEvent, ButtonEvent, MoveEvent, WheelEvent]]:
+        events = self.mouse_recorder.events + self.keyboard_recorder.events
+        events.sort(key=lambda x: x.time)
+        return events
+
+    @events.setter
+    def events(self, events):
+        mouse_events = []
+        keyboard_events = []
+        for event in events:
+            if isinstance(event, (ButtonEvent, MoveEvent, WheelEvent)):
+                mouse_events.append(event)
+            elif isinstance(event, KeyboardEvent):
+                keyboard_events.append(event)
+            else:
+                raise ValueError(f"Olay tipi tanımlı değil: {type(event)}")
+
+        self.mouse_recorder.events = mouse_events
+        self.keyboard_recorder.events = keyboard_events
+
     def _record(self):
         self.mouse_recorder._record()
         self.keyboard_recorder._record()
@@ -202,54 +225,50 @@ class InputRecorder(Recoder):
         self.mouse_recorder._stop()
         self.keyboard_recorder._stop()
 
-    def _add_event(self, event: InputEvent):
-        return super()._add_event(event)
+    def _add_event(self, event: Union[KeyboardEvent, ButtonEvent, MoveEvent, WheelEvent]):
+        if isinstance(event, (ButtonEvent, MoveEvent, WheelEvent)):
+            self.mouse_recorder.add_event(event)
+        elif isinstance(event, KeyboardEvent):
+            self.keyboard_recorder.add_event(event)
+        else:
+            raise ValueError(f"Olay tipi tanımlı değil: {type(event)}")
 
-    def _store_events(self):
-        _events = self.mouse_recorder.events + self.keyboard_recorder.events
-        _events.sort(key=lambda x: x.time)
-        self.events: List[InputEvent] = [InputEvent(_event) for _event in _events]
-
-    def stop(self) -> bool:
-        """Klavye ve mouse kaydını durdurur
-
-        Returns:
-            bool -- Kayıt başlatıldıysa `True`
-        """
-        if not super().stop():
-            return False
-
-        self._store_events()
-        logger.info("Kaydedilen olaylar işlendi")
-
-        return True
-
-    def reset(self):
-        self.mouse_recorder.reset()
-        self.keyboard_recorder.reset()
-
-    def play(self, speed_factor=1.0, include_clicks=True, include_moves=True, include_wheel=True):
+    def play(
+        self,
+        speed_factor=1.0,
+        include_buttons=True,
+        include_moves=True,
+        include_wheels=True
+    ) -> bool:
         """Tüm kayıtları oynatır
         Oynatma arkaplanda yapılmaz
 
         Keyword Arguments:
             speed_factor {float} -- Kayıtların oynatılma hızı (default: {1.0})
-            include_clicks {bool} -- Tıklamaları dahil eder (default: {True})
+            include_buttons {bool} -- Mouse butonları dahil eder (default: {True})
             include_moves {bool} -- Mouse hareketlerini dahil elder (default: {True})
             include_wheel {bool} -- Mouse tekerleğini dahil eder (default: {True})
+
+        Returns:
+            bool -- Herhangi bir oynatma olduysa True
         """
+        if not self.events:
+            return False
+
         last_time: Optional[float] = None
         for event in self.events:
             if speed_factor > 0 and last_time:
-                time.sleep((self.event.time - last_time) / speed_factor)
+                time.sleep((event.time - last_time) / speed_factor)
             last_time = event.time
 
             condition = any([
-                event.type == "key",
-                event.type == "button" and include_clicks,
-                event.type == "move" and include_moves,
-                event.type == "wheel" and include_wheel
+                isinstance(event, KeyboardEvent),
+                include_buttons and isinstance(event, ButtonEvent),
+                include_moves and isinstance(event, MoveEvent),
+                include_wheels and isinstance(event, WheelEvent)
             ])
 
             if condition:
                 event.play()
+
+        return True
