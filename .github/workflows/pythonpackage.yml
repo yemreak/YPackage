@@ -5,9 +5,9 @@ name: Python package
 
 on:
   push:
-    branches: *
+    branches: [ "**" ]
   pull_request:
-    branches: [ master, beta ]
+    branches: [ "**" ]
 
 jobs:
   build:
@@ -51,5 +51,3 @@ jobs:
     - name: ⚗️ Functional testing
       run: |
         python setup.py test
-        
-
