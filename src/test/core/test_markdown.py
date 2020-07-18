@@ -16,10 +16,10 @@ WRONG_PATH = Path("./.")
 TEMP_DIRPATH = Path("temp")
 TEMP_FILES = [
     Path("hello.md"),
-    Path("esma.py"),
+    Path("yunus.py"),
     Path("yunus.md"),
     Path("emre.py"),
-    Path("asmaa.pdf")
+    Path("yunuss.pdf")
 ]
 
 
@@ -158,9 +158,9 @@ def test_update_title_of_markdownfile():
 def test_generate_nonmarkdown_fileliststring():
     content = generate_nonmarkdown_fileliststring(TEMP_DIRPATH)
     assert content == (
-        "- [asmaa.pdf](asmaa.pdf)\n"
+        "- [yunuss.pdf](yunuss.pdf)\n"
         "- [emre.py](emre.py)\n"
-        "- [esma.py](esma.py)"
+        "- [yunus.py](yunus.py)"
     )
 
 
