@@ -10,7 +10,7 @@ from . import common
 logger = logging.getLogger(__name__)
 
 
-class Event(common.Base):
+class EventBase(common.Base):
 
     def play(self):
         raise NotImplementedError
@@ -19,7 +19,7 @@ class Event(common.Base):
         return super().__repr__()
 
 
-class KeyboardEvent(keyboard.KeyboardEvent, Event):
+class KeyboardEvent(keyboard.KeyboardEvent, EventBase):
 
     def play(self):
         key = self.scan_code or self.name
@@ -29,7 +29,7 @@ class KeyboardEvent(keyboard.KeyboardEvent, Event):
             keyboard.release(key)
 
 
-class ButtonEvent(Event):
+class ButtonEvent(EventBase):
 
     def __init__(self, event_type: str, button: str, time: float):
         self.event_type = event_type
@@ -43,7 +43,7 @@ class ButtonEvent(Event):
             mouse.press(self.button)
 
 
-class MoveEvent(Event):
+class MoveEvent(EventBase):
 
     def __init__(self, x: int, y: int, time: float):
         self.x = x
@@ -54,7 +54,7 @@ class MoveEvent(Event):
         mouse.move(self.x, self.y)
 
 
-class WheelEvent(Event):
+class WheelEvent(EventBase):
 
     def __init__(self, delta: float, time: float):
         self.delta = delta
@@ -64,16 +64,20 @@ class WheelEvent(Event):
         mouse.wheel(self.delta)
 
 
+MouseEvent = Union[MoveEvent, WheelEvent, ButtonEvent]
+Event = Union[KeyboardEvent, MouseEvent]
+
+
 class Recoder(common.Base):
 
     def __init__(self, name: str):
         self.name = name
         self.recording = False
 
-    def _add_event(self, event: List[Event]):
+    def _add_event(self, event: List[EventBase]):
         raise NotImplementedError
 
-    def add_event(self, event: List[Event]):
+    def add_event(self, event: List[EventBase]):
         self._add_event(event)
         logger.debug(f"{self.name} olayı eklendi: {event}")
 
@@ -133,9 +137,9 @@ class MouseRecorder(Recoder):
 
     def __init__(self):
         super().__init__("Fare")
-        self.events: List[Union[MoveEvent, WheelEvent, ButtonEvent]] = []
+        self.events: List[MouseEvent] = []
 
-    def _add_event(self, event: Union[MoveEvent, WheelEvent, ButtonEvent]):
+    def _add_event(self, event: MouseEvent):
         if isinstance(event, (ButtonEvent, MoveEvent, WheelEvent)):
             pass
         elif isinstance(event, mouse.MoveEvent):
@@ -197,13 +201,13 @@ class InputRecorder(Recoder):
         self.keyboard_recorder = KeyboardRecorder()
 
     @property
-    def events(self) -> List[Union[KeyboardEvent, ButtonEvent, MoveEvent, WheelEvent]]:
+    def events(self) -> List[Event]:
         events = self.mouse_recorder.events + self.keyboard_recorder.events
         events.sort(key=lambda x: x.time)
         return events
 
     @events.setter
-    def events(self, events):
+    def events(self, events: List[Event]):
         mouse_events = []
         keyboard_events = []
         for event in events:
@@ -225,7 +229,7 @@ class InputRecorder(Recoder):
         self.mouse_recorder._stop()
         self.keyboard_recorder._stop()
 
-    def _add_event(self, event: Union[KeyboardEvent, ButtonEvent, MoveEvent, WheelEvent]):
+    def _add_event(self, event: Event):
         if isinstance(event, (ButtonEvent, MoveEvent, WheelEvent)):
             self.mouse_recorder.add_event(event)
         elif isinstance(event, KeyboardEvent):
