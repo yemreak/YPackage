@@ -1,5 +1,15 @@
 # 👀 What's New
 
+## 🏷️ 3.0.1
+
+- ⏺ Input record sınıfı sınıfları eklendi (👨‍🔬)
+- 🎉 Markdown testleri tamamlandı
+- 🎉 Common testleri tamamlandı
+- 👨‍🔧 Index alanındaki hatalar düzeltildi
+- 🐞 Çalışmayan metotlar düzeltildi
+
+> 📝 Belgelendirmeler yeni sürümler ile tamamlanacaktır.
+
 ## 🏷️ 3.0.0
 
 - 🏗️ Yapıda köklü değişiklikler yapıldı

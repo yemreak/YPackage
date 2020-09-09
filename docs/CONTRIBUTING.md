@@ -37,3 +37,12 @@
 | change_operation | encode, decode |
 | somewhere | file, content, string |
 | something | link, header, file, name, markdown, readme, changelog |
+
+
+### 👮‍♂️ Alt Metot Kuralları
+
+- `_` ile alt metotlar başlar
+- Alt metotlarda raporlama ve kontrol yapılmaz
+- Alt metotlar class içerisi hariç, direkt olarak kullanılmamalıdır
+
+> Alt metotların temel amacı sadelik ve hızdır

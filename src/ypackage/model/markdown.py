@@ -2,9 +2,10 @@ import re
 from copy import deepcopy
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable, List, Union
+from typing import Any, Callable, List, Optional, Union
 
-from . import common, filesystem
+from ..core import filesystem
+from . import common
 
 
 class Base(common.Base):
@@ -38,6 +39,10 @@ class Base(common.Base):
         return self.__str__()
 
     @classmethod
+    def remove_all(cls, content: str) -> str:
+        return re.sub(cls.REGEX, "", content)
+
+    @classmethod
     def find_all(cls, content: str) -> List[Any]:
         if not cls.REGEX:
             raise NotImplementedError
@@ -54,8 +59,10 @@ class Base(common.Base):
         return anylist
 
     @classmethod
-    def find_first(cls, content: str) -> Union[Any, None]:
-        return cls.find_all(content)[0]
+    def find_first(cls, content: str) -> Optional[Any]:
+        results = cls.find_all(content)
+        if results:
+            return results[0]
 
     @classmethod
     def find_all_in_markdownfile(cls, filepath: Path) -> List[Any]:
@@ -128,7 +135,7 @@ class Indent(Base):
 
 class Header(Base):
 
-    REGEX = r"(#+) *(.*)"
+    REGEX = r"(#{1,6}) *(.*)"
     TEMPLATE = "{} {}"
 
     CHAR = "#"
@@ -171,9 +178,9 @@ class Link(Base):
 
     def to_str(
         self,
-        indent: Indent = None,
-        is_list: bool = False,
-        single_line: bool = False
+        indent: Optional[Indent] = None,
+        is_list: Optional[bool] = None,
+        single_line: Optional[bool] = None
     ) -> str:
         string = indent.to_str() if indent else ""
         string += "- " if is_list else ""

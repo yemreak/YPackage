@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, Optional, Tuple
 from urllib.parse import quote
 
 from ..model.markdown import Comment, Header, Indent, Link, SpecialFile
@@ -21,10 +21,10 @@ def generate_stringindexes_by_commentstring(
 
     Examples:
         >>> generate_stringindexes_by_commentstring('Index')
-        ('\\n<!--Index-->\\n\\n', '\\n\\n<!--Index-->\\n')
+        ('<!--Index-->\\n\\n', '\\n\\n<!--Index-->')
     """
-    start_string = "\n" + Comment(index_string) + "\n\n"
-    end_string = "\n\n" + Comment(index_string) + "\n"
+    start_string = Comment(index_string) + "\n\n"
+    end_string = "\n\n" + Comment(index_string)
     return start_string, end_string
 
 
@@ -39,7 +39,7 @@ def generate_indexsection_for_markdown(string: str) -> str:
 
     Examples:
         >>> generate_indexsection_for_markdown('Index')
-        '\\n<!--Index-->\\n\\n\\n\\n<!--Index-->\\n'
+        '<!--Index-->\\n\\n\\n\\n<!--Index-->'
     """
     s1, s2 = generate_stringindexes_by_commentstring(string)
     return s1 + s2
@@ -64,7 +64,6 @@ def update_markdownfile_by_commentstring(
     Returns:
         bool -- Dosyada değişiklik olduysa True
     """
-
     start_string, end_string = generate_stringindexes_by_commentstring(
         commentstring
     )
@@ -77,7 +76,7 @@ def update_markdownfile_by_commentstring(
     )
 
 
-def create_markdownfile(filepath: Path, header: str = None) -> bool:
+def create_markdownfile(filepath: Path, header: Optional[str] = None) -> bool:
     """Markdown dosyası oluşturur
 
     Arguments:
@@ -91,7 +90,7 @@ def create_markdownfile(filepath: Path, header: str = None) -> bool:
     """
 
     if not header:
-        header = filepath.name
+        header = filepath.stem.capitalize()
 
     content = generate_headersection(1, header)
     return filesystem.write_to_file(filepath, content)
@@ -108,9 +107,9 @@ def find_substrings_by_commentstring(content: str, commentstring: str):
         List[str] -- Bulunan metinlerin listesi
 
     Examles:
-        >>> find_substrings_by_commentstring(                               \
+        >>> find_substrings_by_commentstring(                           \
             'A\\n<!--Index-->\\n\\n YEmreAk \\n\\n<!--Index-->\\nB',    \
-            'Index'                                                         \
+            'Index'                                                     \
             )
         [' YEmreAk ']
     """
@@ -123,15 +122,67 @@ def find_substrings_by_commentstring(content: str, commentstring: str):
         end_string
     )
 
+def remove_all_comments(content: str) -> str:
+    """Metin içerisindeki tüm yorumları kaldırır
+
+    Args:
+        content (str): İçerik metni
+
+    Returns:
+        str: Yorumları kaldırılan metin
+    
+    Examples:
+        >>> remove_all_comments('<!--This is comment-->Hello')
+        'Hello'
+        >>> remove_all_comments('<!--This is comment-->Hello<!--This is comment-->World')
+        'HelloWorld'
+    """
+    return Comment.remove_all(content)
+
+def remove_all_headers(content: str) -> str:
+    """Metin içerisindeki tüm başlıkları kaldırır
+
+    BUG: \n karakterleri kaldırılmıyor
+
+    Args:
+        content (str): İçerik metni
+
+    Returns:
+        str: Yorumları kaldırılan metin
+    
+    Examples:
+        >>> remove_all_headers('# Hello Guys')
+        ''
+        >>> remove_all_headers('# Hello\\nGuys')
+        '\\nGuys'
+        >>> remove_all_headers('# Hello\\n# Guys\\nWhaaat')
+        '\\n\\nWhaaat'
+    """
+    return Header.remove_all(content)
+
+def remove_all_links(content: str) -> str:
+    """Metin içerisindeki tüm bağantıları kaldırır
+
+    Args:
+        content (str): İçerik metni
+
+    Returns:
+        str: Yorumları kaldırılan metin
+    
+    Examples:
+        >>> remove_all_links('[First](https://www.yemreak.com)[Sec](https://www.yemreak.com)')
+        ''
+        >>> remove_all_links('-[First](https://www.yemreak.com)Hello\\n-[Sec](https://www.yemreak.com)World')
+        '-Hello\\n-World'
+    """
+    return Link.remove_all(content)
+
 
 def find_all_headers(content) -> List[Header]:
     """İçerik içerisindeki tüm başlıkları bulur
 
     Arguments:
         content {str} -- İçerik metni
-
-    Keyword Arguments:
-        level {int} -- Bulunacak header seviyesi (default: {1})
 
     Returns:
         List[Header] -- Header listesi
@@ -140,30 +191,34 @@ def find_all_headers(content) -> List[Header]:
         >>> find_all_headers('# Hey\\n# Hello')
         [Header(level=1, name='Hey'), Header(level=1, name='Hello')]
     """
-
     return Header.find_all(content)
 
 
-def find_all_headers_from_file(filepath, level=1) -> List[Header]:
+def find_all_headers_from_file(filepath) -> List[Header]:
+    """Dosya içerisindeki tüm başlıkları bulur
+
+    Arguments:
+        content {str} -- İçerik metni
+
+    Returns:
+        List[Header] -- Header listesi
+    """
     if not filepath.exists():
         return []
 
     content = filesystem.read_file(filepath)
-    headers = find_all_headers(content, level=level)
+    headers = find_all_headers(content)
     return headers
 
 
-def find_first_header(content) -> Union[Header, None]:
+def find_first_header(content) -> Optional[Header]:
     """İçerik içerisindeki ilk başlığı bulma
 
     Arguments:
         content {str} -- İçerik
 
-    Keyword Arguments:
-        level {int} -- Header seviyesi (default: {1})
-
     Returns:
-        Union[Header, None] -- Bulunan Header objesi
+        Optional[Header] -- Bulunan Header objesi
 
     Examples:
         >>> find_first_header('# Hey\\n#Hello')
@@ -173,14 +228,11 @@ def find_first_header(content) -> Union[Header, None]:
     return Header.find_first(content)
 
 
-def find_first_header_from_file(filepath) -> Union[Header, None]:
+def find_first_header_from_file(filepath) -> Header:
     """Markdown dosyasının ilk başlığını okuma
 
     Arguments:
         filepath {Path} -- Markdown dosyasının yolu
-
-    Keywords Arguments:
-        level {int} -- Başlık seviyesi
 
     Returns:
         str -- Başlığı varsa başlığı, yoksa dosya ismini döndürür
@@ -189,9 +241,6 @@ def find_first_header_from_file(filepath) -> Union[Header, None]:
         >>> find_first_header_from_file(Path('docs/README.md'))
         Header(level=1, name='📦 YPackage')
     """
-    if not filepath.exists():
-        return None
-
     content = filesystem.read_file(filepath)
     header = find_first_header(content)
     return header
@@ -238,9 +287,18 @@ def update_title_of_markdown(title: str, content: str) -> str:
 
 
 def update_title_of_markdownfile(title: str, filepath: Path) -> bool:
+    """Markdown dosyasının başlığını değiştirir
+
+    Arguments:
+        title {str} -- Yeni başlık metni
+        content {str} -- Markdown metni
+
+    Returns:
+        str -- Değiştirilen markdown metni
+    """
     content = filesystem.read_file(filepath)
     content = update_title_of_markdown(title, content)
-    return filesystem.write_file(filepath, content)
+    return filesystem.write_to_file(filepath, content)
 
 
 def generate_headersection(level: str, name: str) -> str:
@@ -358,8 +416,8 @@ def generate_linkstring(
 
 def generate_filelinkstring(
     filepath: Path,
-    name: str = None,
-    root: Path = None,
+    name: Optional[str] = None,
+    root: Optional[Path] = None,
     indent_level=0,
     is_list: bool = False,
     single_line: bool = False
@@ -409,6 +467,14 @@ def generate_filelinkstring(
 
 
 def generate_nonmarkdown_fileliststring(dirpath: Path) -> str:
+    """Markdown olmayan dosyalar için link metni oluşturma
+
+    Arguments:
+        dirpath {Path} -- Dosya yolu objesi
+
+    Returns:
+        {str} -- Oluşturulan link metni
+    """
     nonmarkdown_filepaths = list_nonmarkdownfiles(dirpath)
 
     if not nonmarkdown_filepaths:
@@ -509,12 +575,19 @@ def map_links_in_string(content: str, func: Callable[[Link], None]) -> str:
 
     Returns:
         str -- Değişen metin içeriği
+
+    Examples:
+        >>> def do(link: Link):
+        ...     link.name += "a"
+        ...     link.path += "b"
+        >>> map_links_in_string('[name1](path1) [name2](path2)', do)
+        '[name1a](path1b) [name2a](path2b)'
     """
 
     return Link.map(content, func)
 
 
-def map_links_in_string_in_markdownfile(
+def map_links_in_markdownfile(
     filepath: Path,
     func: Callable[[Link], None]
 ) -> bool:
@@ -529,7 +602,7 @@ def map_links_in_string_in_markdownfile(
     """
     content = filesystem.read_file(filepath)
     content = map_links_in_string(content, func)
-    return filesystem.write_to_file(filepath)
+    return filesystem.write_to_file(filepath, content)
 
 
 def list_nonmarkdownfiles(dirpath: Path) -> List[Path]:
