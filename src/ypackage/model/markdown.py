@@ -39,6 +39,10 @@ class Base(common.Base):
         return self.__str__()
 
     @classmethod
+    def remove_all(cls, content: str) -> str:
+        return re.sub(cls.REGEX, "", content)
+
+    @classmethod
     def find_all(cls, content: str) -> List[Any]:
         if not cls.REGEX:
             raise NotImplementedError
@@ -131,7 +135,7 @@ class Indent(Base):
 
 class Header(Base):
 
-    REGEX = r"(#+) *(.*)"
+    REGEX = r"(#{1,6}) *(.*)"
     TEMPLATE = "{} {}"
 
     CHAR = "#"

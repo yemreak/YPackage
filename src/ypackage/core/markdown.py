@@ -122,6 +122,61 @@ def find_substrings_by_commentstring(content: str, commentstring: str):
         end_string
     )
 
+def remove_all_comments(content: str) -> str:
+    """Metin içerisindeki tüm yorumları kaldırır
+
+    Args:
+        content (str): İçerik metni
+
+    Returns:
+        str: Yorumları kaldırılan metin
+    
+    Examples:
+        >>> remove_all_comments('<!--This is comment-->Hello')
+        'Hello'
+        >>> remove_all_comments('<!--This is comment-->Hello<!--This is comment-->World')
+        'HelloWorld'
+    """
+    return Comment.remove_all(content)
+
+def remove_all_headers(content: str) -> str:
+    """Metin içerisindeki tüm başlıkları kaldırır
+
+    BUG: \n karakterleri kaldırılmıyor
+
+    Args:
+        content (str): İçerik metni
+
+    Returns:
+        str: Yorumları kaldırılan metin
+    
+    Examples:
+        >>> remove_all_headers('# Hello Guys')
+        ''
+        >>> remove_all_headers('# Hello\\nGuys')
+        '\\nGuys'
+        >>> remove_all_headers('# Hello\\n# Guys\\nWhaaat')
+        '\\n\\nWhaaat'
+    """
+    return Header.remove_all(content)
+
+def remove_all_links(content: str) -> str:
+    """Metin içerisindeki tüm bağantıları kaldırır
+
+    Args:
+        content (str): İçerik metni
+
+    Returns:
+        str: Yorumları kaldırılan metin
+    
+    Examples:
+        >>> remove_all_links('[First](https://www.yemreak.com)[Sec](https://www.yemreak.com)')
+        ''
+        >>> remove_all_links('-[First](https://www.yemreak.com)Hello\\n-[Sec](https://www.yemreak.com)World')
+        '-Hello\\n-World'
+    """
+    return Link.remove_all(content)
+
 
 def find_all_headers(content) -> List[Header]:
     """İçerik içerisindeki tüm başlıkları bulur
@@ -136,7 +191,6 @@ def find_all_headers(content) -> List[Header]:
         >>> find_all_headers('# Hey\\n# Hello')
         [Header(level=1, name='Hey'), Header(level=1, name='Hello')]
     """
-
     return Header.find_all(content)
 
 
