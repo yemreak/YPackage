@@ -158,9 +158,9 @@ def test_update_title_of_markdownfile():
 def test_generate_nonmarkdown_fileliststring():
     content = generate_nonmarkdown_fileliststring(TEMP_DIRPATH)
     assert content == (
-        "- [yunuss.pdf](yunuss.pdf)\n"
         "- [emre.py](emre.py)\n"
-        "- [yunus.py](yunus.py)"
+        "- [yunus.py](yunus.py)\n"
+        "- [yunuss.pdf](yunuss.pdf)"
     )
 
 
