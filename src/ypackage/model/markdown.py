@@ -183,7 +183,7 @@ class Link(Base):
         single_line: Optional[bool] = None
     ) -> str:
         string = indent.to_str() if indent else ""
-        string += "- " if is_list else ""
+        string += "* " if is_list else ""
         string += self.__str__()
         string += "\n" if single_line else ""
 

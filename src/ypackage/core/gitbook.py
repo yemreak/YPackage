@@ -245,7 +245,7 @@ def generate_summary_fileliststring(projectpath: Path, ignore: List[str] = []) -
 def generate_summary_filelinks_string(
     projectpath: Path,
     dirpath: Path,
-    indent_level=1,
+    indent_level: int =0,
     ignore: List[str] = []
 ) -> str:
     content = ""
@@ -254,7 +254,7 @@ def generate_summary_filelinks_string(
     content += generate_filelink_string(
         readme_path,
         root=projectpath,
-        indent_level=indent_level,
+        indent_level=indent_level - 1 if indent_level else 0,
         single_line=True,
         is_list=True
     )
@@ -268,7 +268,7 @@ def generate_summary_filelinks_string(
             content += generate_filelink_string(
                 mpath,
                 root=projectpath,
-                indent_level=indent_level + 1,
+                indent_level=indent_level,
                 single_line=True,
                 is_list=True
             )
