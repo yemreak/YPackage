@@ -245,7 +245,7 @@ def generate_summary_fileliststring(projectpath: Path, ignore: List[str] = []) -
 def generate_summary_filelinks_string(
     projectpath: Path,
     dirpath: Path,
-    indent_level: int =0,
+    indent_level: int = 0,
     ignore: List[str] = []
 ) -> str:
     content = ""
