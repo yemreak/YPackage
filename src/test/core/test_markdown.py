@@ -35,10 +35,10 @@ def markdownfile(func):
             "# 📅 Vize \| CNaT\n"
             "<!--Index-->\n"
             "\n"
-            "- [Chapter_1_V7.01.pdf](Chapter_1_V7.01.pdf)\n"
-            "- [Chapter_2_V7.01.pdf](Chapter_2_V7.01.pdf)\n"
-            "- [Chapter_3_V7.01.pdf](Chapter_3_V7.01.pdf)\n"
-            "- [Chapter_4_V7.01.pdf](Chapter_4_V7.01.pdf)\n"
+            "* [Chapter_1_V7.01.pdf](Chapter_1_V7.01.pdf)\n"
+            "* [Chapter_2_V7.01.pdf](Chapter_2_V7.01.pdf)\n"
+            "* [Chapter_3_V7.01.pdf](Chapter_3_V7.01.pdf)\n"
+            "* [Chapter_4_V7.01.pdf](Chapter_4_V7.01.pdf)\n"
             "\n"
             "<!--Index-->\n"
             "## 🕐 Temp\n"
@@ -158,9 +158,9 @@ def test_update_title_of_markdownfile():
 def test_generate_nonmarkdown_fileliststring():
     content = generate_nonmarkdown_fileliststring(TEMP_DIRPATH)
     assert content == (
-        "- [emre.py](emre.py)\n"
-        "- [yunus.py](yunus.py)\n"
-        "- [yunuss.pdf](yunuss.pdf)"
+        "* [emre.py](emre.py)\n"
+        "* [yunus.py](yunus.py)\n"
+        "* [yunuss.pdf](yunuss.pdf)"
     )
 
 
@@ -176,10 +176,10 @@ def test_map_links_in_markdownfile():
         "# 📅 Vize \| CNaT\n"
         "<!--Index-->\n"
         "\n"
-        "- [aChapter_1_V7.01.pdf](bChapter_1_V7.01.pdf)\n"
-        "- [aChapter_2_V7.01.pdf](bChapter_2_V7.01.pdf)\n"
-        "- [aChapter_3_V7.01.pdf](bChapter_3_V7.01.pdf)\n"
-        "- [aChapter_4_V7.01.pdf](bChapter_4_V7.01.pdf)\n"
+        "* [aChapter_1_V7.01.pdf](bChapter_1_V7.01.pdf)\n"
+        "* [aChapter_2_V7.01.pdf](bChapter_2_V7.01.pdf)\n"
+        "* [aChapter_3_V7.01.pdf](bChapter_3_V7.01.pdf)\n"
+        "* [aChapter_4_V7.01.pdf](bChapter_4_V7.01.pdf)\n"
         "\n"
         "<!--Index-->\n"
         "## 🕐 Temp\n"
