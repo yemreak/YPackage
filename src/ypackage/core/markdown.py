@@ -404,7 +404,7 @@ def generate_linkstring(
             is_list      = True,            \
             single_line  = True             \
         )
-        '    - [YPackage](https://ypackage.yemreak.com)\\n'
+        '    * [YPackage](https://ypackage.yemreak.com)\\n'
 
     """
     return Link(name, path).to_str(
@@ -445,7 +445,7 @@ def generate_filelinkstring(
             is_list      = True,                    \
             single_line  = True                     \
         )
-        '    - [YPackage](markdown.py)\\n'
+        '    * [YPackage](markdown.py)\\n'
     """
     if not name:
         name = generate_name_for_markdownfile(filepath)

@@ -147,7 +147,7 @@ def generate_filelink_string(
             single_line=True,             \
             is_list=True,                 \
         )
-        '- [📦 YPackage](README.md)\\n'
+        '* [📦 YPackage](README.md)\\n'
         >>> generate_filelink_string(    \
             Path('./docs/README.md'),     \
             github_link = True            \
@@ -311,11 +311,11 @@ def generate_summary_for_project(
 
     Arguments:
         projectpath {Path} -- Proje dizini yolu
-        index_string {str} -- [description]
+        index_string {str} -* [description]
         ignore {List[str]} -- Görmezden gelinecek dizin isimleri
 
     Keyword Arguments:
-        must_inserted {bool} -- [description] (default: {False})
+        must_inserted {bool} -* [description] (default: {False})
 
     Returns:
         {bool} -- Değişim varsa True
