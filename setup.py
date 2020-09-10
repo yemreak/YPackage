@@ -6,7 +6,7 @@ from os.path import basename, splitext
 from setuptools import find_packages, setup
 from setuptools.command.install import install
 
-VERSION = "3.0.1"
+VERSION = "3.0.2"
 README_PATH = "docs/README.md"
 
 test_requirements = ["pytest"]  # "behave", "behave-classy",
